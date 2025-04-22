@@ -17,7 +17,6 @@
   <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
-    自我介绍 |
     
     Hexo
   </title>
@@ -35,19 +34,17 @@
 
   
   
-    <meta name="description" content="关于我是01,24级二进制手,也是一名东方厨 我会在博客中分享一些二进制安全相关技术与ctf比赛经历 希望我的文章能帮助到你:)">
-<meta property="og:type" content="website">
-<meta property="og:title" content="自我介绍">
-<meta property="og:url" content="https://khighl.github.io.git/about/index.html">
+    <meta name="description" content="io_uring|0| 前言 在我打算认真了解前已经在校队面试,VN面试被问过io_uring,本来我想着考过就不会考的原则忽视这个内容,但昨晚被winmt大哥拷打完后又觉得不能自我欺骗,刚刚好复现actf_2023遇到了io_uring,打算认真了解一下.*  |1| 原理 io_uring是Linux 内核的高性能异步 I&#x2F;O 框架 io_uring 特点：完全异步，支持任意类型的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="https://khighl.github.io.git/2025/04/20/io_uring/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="关于我是01,24级二进制手,也是一名东方厨 我会在博客中分享一些二进制安全相关技术与ctf比赛经历 希望我的文章能帮助到你:)">
+<meta property="og:description" content="io_uring|0| 前言 在我打算认真了解前已经在校队面试,VN面试被问过io_uring,本来我想着考过就不会考的原则忽视这个内容,但昨晚被winmt大哥拷打完后又觉得不能自我欺骗,刚刚好复现actf_2023遇到了io_uring,打算认真了解一下.*  |1| 原理 io_uring是Linux 内核的高性能异步 I&#x2F;O 框架 io_uring 特点：完全异步，支持任意类型的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://khighl.github.io.git/images/banner.webp">
-<meta property="article:published_time" content="2025-04-15T13:50:00.000Z">
-<meta property="article:modified_time" content="2025-04-15T14:29:56.081Z">
+<meta property="article:published_time" content="2025-04-20T07:08:22.626Z">
+<meta property="article:modified_time" content="2025-04-22T11:40:18.941Z">
 <meta property="article:author" content="zer00ne">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://khighl.github.io.git/images/banner.webp">
   
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -174,11 +171,13 @@
 <header id="header">
   
     
-      <picture>
-        
-      </picture>
       
-        <img  fetchpriority="high" src="/images/banner.webp" alt="自我介绍">
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="">
+        
       
     
   
@@ -188,7 +187,7 @@
         
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">自我介绍</h1>
+            <h1 data-aos="slide-up">Hexo</h1>
           </a>
         
       
@@ -207,10 +206,20 @@
   
   
   
-  <div class="sidebar-wrapper ">
+  <div class="sidebar-wrapper wrap-sticky">
     <div class="sidebar-wrap" data-aos="fade-up">
       
-        <div class="sidebar-author">
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#io-uring"><span class="toc-number">1.</span> <span class="toc-text">io_uring</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">|0| 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">|1| 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-payload%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">|2| payload解析:</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
   <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
   <div class="sidebar-author-name">zer00ne</div>
   <div class="sidebar-description"></div>
@@ -269,8 +278,16 @@
     
   
 </div>
-
+</div>
+        
       
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
       
     </div>
   </div>
@@ -281,13 +298,13 @@
   
 </aside>
 
-          <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+          <section id="main"><article id="post-io_uring" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-inner" data-aos="fade-up">
     <div class="article-meta">
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
-    <time datetime="2025-04-15T13:50:00.000Z" itemprop="datePublished">2025-04-15</time>
-    <time style="display: none;" id="post-update-time">2025-04-15</time>
+    <time datetime="2025-04-20T07:08:22.626Z" itemprop="datePublished">2025-04-20</time>
+    <time style="display: none;" id="post-update-time">2025-04-22</time>
   </span>
 </div>
 
@@ -300,10 +317,83 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h2 id="关于"><a href="#关于" class="headerlink" title="关于"></a>关于</h2><pre><code>我是01,24级二进制手,也是一名东方厨
-我会在博客中分享一些二进制安全相关技术与ctf比赛经历
-希望我的文章能帮助到你:)
-</code></pre>
+        <h1 id="io-uring"><a href="#io-uring" class="headerlink" title="io_uring"></a>io_uring</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="|0| 前言"></a>|0| 前言</h2><ul>
+<li>在我打算认真了解前已经在校队面试,VN面试被问过io_uring,本来我想着考过就不会考的原则忽视这个内容,但昨晚被winmt大哥拷打完后又觉得不能自我欺骗,刚刚好复现actf_2023遇到了io_uring,打算认真了解一下.*</li>
+</ul>
+<h2 id="1-原理"><a href="#1-原理" class="headerlink" title="|1| 原理"></a>|1| 原理</h2><ul>
+<li>io_uring是Linux 内核的高性能异步 I&#x2F;O 框架</li>
+<li>io_uring 特点：完全异步，支持任意类型的 I&#x2F;O，灵活可拓展</li>
+<li>io_uring 提供两个接口，一个将 I&#x2F;O 请求提交到内核，一个从内核接收完成事件,io_uring 在当前进程和内核之间共享内存 (通过 <code>mmap</code> 在当前进程映射) ,通过操控共享内存与内核交互,避免了频繁调用<code>syscall</code>.</li>
+</ul>
+<h2 id="2-payload解析"><a href="#2-payload解析" class="headerlink" title="|2| payload解析:"></a>|2| payload解析:</h2><p>这篇payload是采用c语言编写,然后编译为机器码…总之先看看c语言源码吧,我尽量逐行解析:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">// gcc -o shellcode shellcode.c -luring -lseccomp -static</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;liburing.h&gt;</span><br><span class="line">#include &lt;seccomp.h&gt;</span><br><span class="line">#include &lt;syscall.h&gt;</span><br><span class="line"></span><br><span class="line">#define BUFFER_SIZE 4096</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    struct io_uring ring;</span><br><span class="line">    struct io_uring_cqe *cqe;</span><br><span class="line">    struct io_uring_sqe *sqe;</span><br><span class="line">    char buffer[BUFFER_SIZE] = &#123;0&#125;;</span><br><span class="line">    int fd;</span><br><span class="line">  </span><br><span class="line">    io_uring_queue_init(16, &amp;ring, 0);</span><br><span class="line">    sqe = io_uring_get_sqe(&amp;ring);</span><br><span class="line">    io_uring_prep_openat(sqe, AT_FDCWD, &quot;flag&quot;, O_RDONLY, 0);</span><br><span class="line">    io_uring_submit(&amp;ring);</span><br><span class="line">    io_uring_wait_cqe(&amp;ring, &amp;cqe);</span><br><span class="line">    fd = cqe-&gt;res;</span><br><span class="line"></span><br><span class="line">    sqe = io_uring_get_sqe(&amp;ring);</span><br><span class="line">    io_uring_prep_read(sqe, fd, buffer, BUFFER_SIZE, 0);</span><br><span class="line">    io_uring_submit(&amp;ring);</span><br><span class="line">    io_uring_wait_cqe(&amp;ring, &amp;cqe);</span><br><span class="line">  </span><br><span class="line">    sqe = io_uring_get_sqe(&amp;ring);</span><br><span class="line">    io_uring_prep_write(sqe, STDOUT_FILENO, buffer, BUFFER_SIZE, 0);</span><br><span class="line">    io_uring_submit(&amp;ring);</span><br><span class="line"></span><br><span class="line">    io_uring_queue_exit(&amp;ring);</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>初始化变量:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct io_uring ring;</span><br><span class="line">struct io_uring_cqe *cqe;</span><br><span class="line">struct io_uring_sqe *sqe;</span><br><span class="line">char buffer[BUFFER_SIZE] = &#123;0&#125;;</span><br><span class="line">int fd;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>struct io_uring ring</code>是io_uring 实例的核心控制结构，管理异步I&#x2F;O的提交队列(SQ)和完成队列(CQ).</li>
+<li><code>struct io_uring_cqe *cqe</code>指向完成队列条目（CQE），用于接收异步操作的结果。</li>
+<li><code>struct io_uring_sqe *sqe</code>指向提交队列条目（SQE），用于配置一个异步I&#x2F;O请求。</li>
+<li><code>char buffer[BUFFER_SIZE] = &#123;0&#125;</code>用于接受读入的flag</li>
+<li><code>int fd</code>接收flag文件的文件描述符</li>
+</ul>
+</li>
+<li><p>初始化队列:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">io_uring_queue_init(16, &amp;ring, 0);</span><br><span class="line">sqe = io_uring_get_sqe(&amp;ring);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>初始化 <code>io_uring</code> 实例，创建提交队列（SQ）和完成队列（CQ）。</li>
+<li>从提交队列（SQ）中获取一个空闲的 <strong>提交队列条目（SQE）</strong>，用于描述一个 I&#x2F;O 操作。(第一个操作为打开文件)</li>
+</ul>
+</li>
+<li><p>打开文件:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">io_uring_prep_openat(sqe, AT_FDCWD, &quot;flag&quot;, O_RDONLY, 0);</span><br><span class="line">io_uring_submit(&amp;ring);</span><br><span class="line">io_uring_wait_cqe(&amp;ring, &amp;cqe);</span><br><span class="line">fd = cqe-&gt;res;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>io_uring_prep_openat:准备一个 <strong>异步打开文件</strong> 操作的 SQE。</li>
+<li>函数原型  :  <code>void io_uring_prep_openat(struct io_uring_sqe *sqe,int dfd,const char *path,int flagsmode_t mode);</code><ol>
+<li><code>struct io_uring_sqe *sqe</code>:刚刚初始化的队列获取的空闲的提交队列条目</li>
+<li><code>int dfd</code>  :  基础目录的文件描述符，示例中为 <code>AT_FDCWD</code> 表示相对当前工作目录。(相当于’.&#x2F;‘)</li>
+<li><code>const char *path</code>  :  文件名的地址,这里使用”flag”字符串</li>
+<li><code>flags</code>  :  文件打开方式,这里选择只读(O_RDONLY)</li>
+<li><code>mode</code>  :  文件权限（0表示仅在创建文件时有效）。</li>
+</ol>
+</li>
+<li><code>io_uring_submit</code>:将提交队列（SQ）中所有准备好的 SQE 提交给内核执行</li>
+<li><code>io_uring_wait_cqe</code>:阻塞等待至少一个 <strong>完成队列条目（CQE）</strong> 可用,即文件成功打开</li>
+<li>使用fd接收flag文件的文件描述符</li>
+</ul>
+</li>
+<li><p>将flag从磁盘读入内存:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sqe = io_uring_get_sqe(&amp;ring);</span><br><span class="line">io_uring_prep_read(sqe, fd, buffer, BUFFER_SIZE, 0);</span><br><span class="line">io_uring_submit(&amp;ring);</span><br><span class="line">io_uring_wait_cqe(&amp;ring, &amp;cqe);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从提交队列（SQ）中获取一个空闲的 <strong>提交队列条目（SQE）</strong>，用于描述一个 I&#x2F;O 操作。</li>
+<li><code>io_uring_prep_read</code>:准备一个读取磁盘文件操作的 SQE,函数原型:<code> void io_uring_prep_read(struct io_uring_sqe *sqe,int fd,void *buf,unsigned nbytes,off_t offset);</code><ol>
+<li><code>struct io_uring_sqe *sqe</code>:刚刚初始化的队列获取的空闲的提交队列条目</li>
+<li><code>int fd</code> : 刚刚获取的文件描述符</li>
+<li><code>void *buf</code> : 数据缓冲区地址</li>
+<li>要读取的最大字节数（BUFFER_SIZE&#x3D;4096）</li>
+<li><code>offset</code> : 文件偏移量</li>
+</ol>
+</li>
+<li><code>io_uring_submit</code>:将提交队列（SQ）中所有准备好的 SQE 提交给内核执行</li>
+<li><code>io_uring_wait_cqe</code>:阻塞等待至少一个 <strong>完成队列条目（CQE）</strong> 可用,即文件成功打开</li>
+</ul>
+</li>
+<li><p>将buf中的内容打印到标准输出流:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sqe = io_uring_get_sqe(&amp;ring);</span><br><span class="line">io_uring_prep_write(sqe, STDOUT_FILENO, buffer, BUFFER_SIZE, 0);</span><br><span class="line">io_uring_submit(&amp;ring);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从提交队列（SQ）中获取一个空闲的 <strong>提交队列条目（SQE）</strong>，用于描述一个 I&#x2F;O 操作。io_uring_prep_openat:准备一个 **异步操作的 SQE。</li>
+<li>参数形式与io_uring_read基本相同</li>
+<li><code>io_uring_submit</code>:将提交队列（SQ）中所有准备好的 SQE 提交给内核执行</li>
+</ul>
+<p>此时我们在标准输出中获得了flag : )</p>
+</li>
+</ol>
 
       
     </div>
@@ -321,6 +411,28 @@
     </footer>
   </div>
   
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+        
+      
+      <a href="/2025/04/15/magic/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          Magic_gadget
+        
+      </h3>
+    </div>
+    
+  </nav>
+
 
 </article>
 
@@ -391,7 +503,17 @@
       <nav id="mobile-nav">
   <div class="sidebar-wrap">
     
-      <div class="sidebar-author">
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#io-uring"><span class="toc-number">1.</span> <span class="toc-text">io_uring</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">|0| 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">|1| 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-payload%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">|2| payload解析:</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
   <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
   <div class="sidebar-author-name">zer00ne</div>
   <div class="sidebar-description"></div>
@@ -450,9 +572,17 @@
     
   
 </div>
-
+</div>
+      
     
   </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
   
 </nav>
 
@@ -536,13 +666,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "zer00ne",
-          title: "自我介绍",
-          url: "https://khighl.github.io.git/about/index.html",
+          title: "",
+          url: "https://khighl.github.io.git/2025/04/20/io_uring/",
           excerpt: "",
           description: "",
-          stripContent: "关于我是01,24级二进制手,也是一名东方厨 我会在博客中分享一些二进制安全相关技术与ctf比赛经历 希望我的文章能帮助到你:)  ",
-          date: "Tue Apr 15 2025 21:50:00 GMT+0800",
-          updated: "Tue Apr 15 2025 22:29:56 GMT+0800",
+          stripContent: "io_uring|0| 前言 在我打算认真了解前已经在校队面试,VN面试被问过io_uring,本来我想着考过就不会考的原则忽视这个内容,但昨晚被winmt大哥拷打完后又觉得不能自我欺骗,刚刚好复现actf_2023遇到了io_uring,打算认真了解一下.*  |1| 原理 io_uring是Linux 内核的高性能异步 I&amp;#x2F;O 框架 io_uring 特点：完全异步，支持任意类型的 I&amp;#x2F;O，灵活可拓展 io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内",
+          date: "Sun Apr 20 2025 15:08:22 GMT+0800",
+          updated: "Tue Apr 22 2025 19:40:18 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>
