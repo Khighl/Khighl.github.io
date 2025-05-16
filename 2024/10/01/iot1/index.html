@@ -1,0 +1,840 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    IoT 安全挑战 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="西湖论剑-linkone前言这是winmt师傅给我的第一个挑战,一道没有任何保护,甚至没有ALSR的iot漏洞挖掘题目.即使漏洞很明显,但是我一共用了两天.基本上碰上了第一次做iot的所有坑,最后还是难逃被🍐的命运…不过也学到了很多很多东西. 正式开始1.前置准备 题目的附件为:  debian虚拟机镜像 内核文件 镜像的用户名和密码 启动脚本  其中启动脚本 12#&#x2F;bin&#x2F;bashsudo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IoT 安全挑战">
+<meta property="og:url" content="https://khighl.github.io.git/2024/10/01/iot1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="西湖论剑-linkone前言这是winmt师傅给我的第一个挑战,一道没有任何保护,甚至没有ALSR的iot漏洞挖掘题目.即使漏洞很明显,但是我一共用了两天.基本上碰上了第一次做iot的所有坑,最后还是难逃被🍐的命运…不过也学到了很多很多东西. 正式开始1.前置准备 题目的附件为:  debian虚拟机镜像 内核文件 镜像的用户名和密码 启动脚本  其中启动脚本 12#&#x2F;bin&#x2F;bashsudo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/iota/0.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iota/1.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747054317205.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747054523450.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747064689768.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747066306291.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747066388596.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747135427370.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747135615546.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747137228986.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747137247950.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747137335485.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747137580877.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747138261402.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747140386417.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747140644580.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747140680156.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747140860778.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747140949391.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747141001603.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/iot1/1747141221963.png">
+<meta property="article:published_time" content="2024-09-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-15T15:45:37.577Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="IoT">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/iota/0.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="IoT 安全挑战">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">IoT 安全挑战</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91-linkone"><span class="toc-number">1.</span> <span class="toc-text">西湖论剑-linkone</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%BC%8F%E5%BC%80%E5%A7%8B"><span class="toc-number">1.2.</span> <span class="toc-text">正式开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.前置准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">提取文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gdbserver"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">gdbserver</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">开始漏洞挖掘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%87%E4%BB%B6%E5%AF%BB%E6%89%BE"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1.文件寻找</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E4%B8%8E%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.逆向与脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-web%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">1.web相关函数学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">2.逆向请求处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%BC%96%E5%86%99EXP"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">3.编写EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">4.调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#patch"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">patch</span></a></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">5</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-iot1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2024-09-30T16:00:00.000Z" itemprop="datePublished">2024-10-01</time>
+    <time style="display: none;" id="post-update-time">2025-05-15</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="西湖论剑-linkone"><a href="#西湖论剑-linkone" class="headerlink" title="西湖论剑-linkone"></a>西湖论剑-linkone</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是winmt师傅给我的第一个挑战,一道没有任何保护,甚至没有ALSR的iot漏洞挖掘题目.即使漏洞很明显,但是我一共用了两天.基本上碰上了第一次做iot的所有坑,最后还是难逃被🍐的命运…不过也学到了很多很多东西.</p>
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><h3 id="1-前置准备"><a href="#1-前置准备" class="headerlink" title="1.前置准备"></a><strong>1.前置准备</strong></h3><p><img src="/images/iota/0.png" alt="0"></p>
+<p>题目的附件为:</p>
+<ul>
+<li>debian虚拟机镜像</li>
+<li>内核文件</li>
+<li>镜像的用户名和密码</li>
+<li>启动脚本</li>
+</ul>
+<p>其中启动脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">/bin/bash</span></span><br><span class="line">sudo qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mipsel_standard.qcow2 -append &quot;root=/dev/sda1 console=tty0&quot;  -net user,hostfwd=tcp::80-:80,hostfwd=tcp::2222-:22 -net nic -nographic</span><br></pre></td></tr></table></figure>
+
+<p>大概的解释就是:</p>
+<p><img src="/images/iota/1.png" alt="1"></p>
+<h4 id="调试"><a href="#调试" class="headerlink" title="调试"></a><strong>调试</strong></h4><p>为了方便调试.我们添加一个端口映射<code>hostfwd=tcp::9999-:9999</code>,这样可以将qemu的9999端口转发到宿主机的9999端口上,这样就可以在宿主机上通过9999端口进行gdb调试</p>
+<h4 id="提取文件"><a href="#提取文件" class="headerlink" title="提取文件"></a><strong>提取文件</strong></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">/bin/bash</span></span><br><span class="line">sudo tunctl -d tap0</span><br><span class="line">sudo ifconfig virbr0 down</span><br><span class="line">sudo brctl delbr virbr0</span><br><span class="line"></span><br><span class="line">sudo brctl addbr virbr0</span><br><span class="line">sudo ifconfig virbr0 192.168.52.127/24 up</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">sudo</span> brctl addif virbr0 ens33</span></span><br><span class="line">sudo iptables -t nat -A POSTROUTING -s 192.168.52.0/24 -o ens33 -j MASQUERADE</span><br><span class="line"></span><br><span class="line">sudo tunctl -t tap0</span><br><span class="line">sudo ifconfig tap0 192.168.52.129/24 up</span><br><span class="line">sudo brctl addif virbr0 tap0</span><br><span class="line">sudo qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mipsel_standard.qcow2 -append &quot;root=/dev/sda1 console=tty0&quot;  -net nic -net tap,ifname=tap0 -nographic</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">sudo</span> qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mipsel_standard.qcow2 -append <span class="string">&quot;root=/dev/sda1 console=tty0&quot;</span>  -net user,hostfwd=tcp::80-:80,hostfwd=tcp::2222-:22,hostfwd=tcp::9999-:9999 -net nic -net tap,ifname=tap0 -nographic</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样配置出来的qemu是可以和主机间使用通信,方便我们使用scp命令将文件复制到主机中</p>
+<p>scp可以将文件从qemu中提取到宿主机,或将宿主机中的文件挂入qemu中:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp path_to_src path_to_dest</span><br></pre></td></tr></table></figure>
+
+<p>其中qemu的路径为:<code>root@ip(192.168.52.130):path_to_target</code></p>
+<p>path_to_target为qemu中目标文件的绝对路径</p>
+<p><em><strong><del>很烦人,我一定要找个能同时传输文件和调试的qemu启动模式</del></strong></em></p>
+<h4 id="gdbserver"><a href="#gdbserver" class="headerlink" title="gdbserver"></a><strong>gdbserver</strong></h4><p>提前将gdbserver传入qemu中,调试必要的组件</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+----------------+                         +-------------------+</span><br><span class="line">|   本地机器     |                         |   目标系统         |</span><br><span class="line">| (x86_64/Linux) | &lt;==== 网络连接 =====&gt;   | (MIPS/ARM/Linux等) |</span><br><span class="line">|                |                         |                   |</span><br><span class="line">|  gdb (客户端)  |   &lt;==== TCP/IP =====&gt;   |  gdbserver (服务端)|</span><br><span class="line">+----------------+                         +-------------------+</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>具体使用方法为:</p>
+<ol>
+<li>启动二进制文件</li>
+<li>发送exp,使得二进制文件被卡在某个地方</li>
+<li>在qemu中使用<code>ps -ef</code>查看二进制文件的pid</li>
+<li>在qemu中启动gdbserver&#x3D;&gt;<code>./gdbserver :9999 --attach pid</code></li>
+<li>在宿主机中使用gdb-multiarch加载elf&#x3D;&gt;<code>gdb-multiarch ./elf</code></li>
+<li>在gdb-multiarch中连接远程9999端口&#x3D;&gt;<code>target remote : 9999</code></li>
+</ol>
+<hr>
+<h3 id="开始漏洞挖掘"><a href="#开始漏洞挖掘" class="headerlink" title="开始漏洞挖掘"></a><strong>开始漏洞挖掘</strong></h3><h4 id="1-文件寻找"><a href="#1-文件寻找" class="headerlink" title="1.文件寻找"></a>1.文件寻找</h4><p>随便输入个账号密码,在brup里抓包发现了</p>
+<p><img src="/images/iot1/1747054317205.png" alt="1747054317205"></p>
+<p>发现会运行一个login.cgi文件,这多半就是目标漏洞文件</p>
+<p>于是在qemu中寻找</p>
+<p><img src="/images/iot1/1747054523450.png" alt="1747054523450"></p>
+<p>我们使用scp将这个文件提取到宿主机中,发现是个elf文件</p>
+<p>其实我们可以顺便把libc提取出来</p>
+<p><img src="/images/iot1/1747064689768.png" alt="1747064689768"></p>
+<hr>
+<h3 id="2-逆向与脚本编写"><a href="#2-逆向与脚本编写" class="headerlink" title="2.逆向与脚本编写"></a><strong>2.逆向与脚本编写</strong></h3><h4 id="1-web相关函数学习"><a href="#1-web相关函数学习" class="headerlink" title="1.web相关函数学习"></a>1.w<em>eb相关函数学习</em></h4><ol>
+<li>getenv(“REQUEST_METHOD”)<br><strong>从数据包中获取亲求格式</strong></li>
+<li>getenv(“QUERY_STRING”)<br>从数据包中获取查询字符串</li>
+<li>getenv(“CONTENT_LENGTH”)<br>从数据包中HTTP请求体的长度（以字节为单位）</li>
+<li>web_get(“page”, v3, 0)<br>从数据包中获取请求的 URL 路径或页面名称</li>
+</ol>
+<h4 id="2-逆向请求处理"><a href="#2-逆向请求处理" class="headerlink" title="2.逆向请求处理"></a><strong>2.逆向请求处理</strong></h4><p><img src="/images/iot1/1747066306291.png" alt="1747066306291"></p>
+<p>从page获取类型后会调用不同的函数,</p>
+<p>其中Goto_chidx中</p>
+<p><img src="/images/iot1/1747066388596.png" alt="1747066388596"></p>
+<p>sprintf会将wlanUrl格式化放入v9,但是没有检查wlanUrl的长度,会导致<strong>栈溢出</strong></p>
+<p>由于ALSR&#x3D;0,所以栈,libc地址都是可以直接用</p>
+<h4 id="3-编写EXP"><a href="#3-编写EXP" class="headerlink" title="3.编写EXP"></a><strong>3.编写EXP</strong></h4><p><img src="/images/iot1/1747135427370.png" alt="1747135427370"></p>
+<p>首先观察缓冲区与返回地址,缓冲区位于sp+0x20的地方,返回地址位于sp+0xac的地方,所以需要填充的字符长度为{<em>0xac-0x20</em>},此时我们前往libwebutil.so中寻找可以执行system的片段</p>
+<p><img src="/images/iot1/1747135615546.png" alt="1747135615546"></p>
+<p>在do_system中,会将第一个参数(a1)复制到bss上,然后拼接后作为system的参数.</p>
+<p>此时我们还有一个重要的步骤:<em><strong>修改$GP</strong></em></p>
+<blockquote>
+<p>MIPS 架构使用 <code>$gp</code> 来提高访问<strong>全局变量</strong>或<strong>静态变量</strong>的效率。它通常指向一个<strong>全局数据区的中间位置</strong>，这样访问某些偏移量范围内的全局变量就只需要一次 <code>lw</code>（或 <code>sw</code>）加偏移，不需要多步地址计算。</p>
+</blockquote>
+<p>在这里,<code>$GP</code>用于访问libc中的相关函数,所以必须要正确设置<code>$GP</code>,才能调用到system,sprintf等函数</p>
+<p><img src="/images/iot1/1747137228986.png" alt="1747137228986"></p>
+<p><img src="/images/iot1/1747137247950.png" alt="1747137247950"></p>
+<p>可以看到这里的vsprintf就要由<code>$GP+offset</code>进行寻址的</p>
+<p>恢复<code>$GP</code>:首先来到do_system的开头</p>
+<p><img src="/images/iot1/1747137335485.png" alt="1747137335485"></p>
+<p>按照这里的<code>$GP</code>恢复,<code>$GP=libc_base+0x7ff0+_GLOBAL_OFFSET_TABLE_</code>,双击<code>_GLOBAL_OFFSET_TABLE_</code>查看得到<code>0x55560</code></p>
+<p>我们还需要寻找用于恢复<code>$GP</code>的gadget,首先查看libc对do_system的交叉引用</p>
+<p><img src="/images/iot1/1747137580877.png" alt="1747137580877"></p>
+<p>我们可以在这里布置<code>$GP</code>,同时发现do_system的延时槽中为do_system装填了<code>$a0</code>,由<code>$s0</code>决定,刚刚好在login.cgi的ret时可以控制<code>$s0</code>的值.此时我们可以画出来执行<code>ROP</code>时的栈帧分布</p>
+<p><img src="/images/iot1/1747138261402.png" alt="1747138261402"></p>
+<p>据此我写出payload:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">base=<span class="number">0x77e1e000</span></span><br><span class="line">stack=<span class="number">0x7ffd6000</span></span><br><span class="line">payload =<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x80</span>+p32(<span class="number">0x7fff6560</span>+<span class="number">0x80</span>+<span class="number">0x38</span>+<span class="number">0x20</span>+<span class="number">4</span>)<span class="comment">#cp /flag /etc_ro/lighttpd/www/FLAG;</span></span><br><span class="line">payload+=<span class="string">b&#x27;b&#x27;</span>*<span class="number">8</span>+p32(base+<span class="number">0x7970</span>)<span class="comment">#function set $GP</span></span><br><span class="line">payload+=<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x28</span>+p32(<span class="number">0x77e7b550</span>)<span class="comment">#$GP</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&quot;cp /flag /etc_ro/lighttpd/www/FLAG;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>关键点:</strong><code>cp /flag /etc_ro/lighttpd/www/FLAG</code></p>
+<ul>
+<li>&#x2F;flag是我们的攻击目标</li>
+<li>在web进行资源配置时,会将<code>/etc_ro/lighttpd/www</code>挂载到<code>url</code>中,此时<code>/etc_ro/lighttpd/www</code>的资源被映射到<code>url</code>中</li>
+<li>那么我们在WIFI登录界面的<code>url</code>后输入<code>/FLAG.txt</code>就可以访问到<code>/etc_ro/lighttpd/www/FLAG.txt</code>实现了对不可访问<code>/flag</code>的泄露</li>
+</ul>
+<h3 id="4-调试"><a href="#4-调试" class="headerlink" title="4.调试"></a><strong>4.调试</strong></h3><p>调试是iot类题目最重要的一环,其实以上payload是通过大量调试后调整才写出来的</p>
+<p>难点:</p>
+<blockquote>
+<p>在我们发送exp后的瞬间,httpd程序开始运行cgi文件,然后cgi文件瞬间运行结束,这导致我们无法将gdb挂入cgi中</p>
+<p>如果不发送exp,就不会触发cgi文件</p>
+</blockquote>
+<p>解决方案:</p>
+<ul>
+<li>我们对cgi文件进行patch,在缓冲区溢出的附件将代码修改为<code>while 1(死循环)</code>,这样cgi文件就会被卡住</li>
+<li>此时我们可以挂载gdb,通过set *$恢复<code>while 1</code>后就可以进行正常调试了</li>
+<li>patch这步要借助IDA PRO,通过patch生成一个全新的elf文件,再通过scp将这个文件传入qemu中</li>
+<li>此时发送payload,web上运行的cgi文件就是被我们patch过的elf</li>
+</ul>
+<h4 id="patch"><a href="#patch" class="headerlink" title="patch"></a><strong>patch</strong></h4><p><img src="/images/iot1/1747140386417.png" alt="1747140386417"></p>
+<p>在Goto_idx中的溢出前随便寻找一条指令(我选择一个nop,nop在mips中的机器码为<code>\x00\x00\x00\x00</code>)</p>
+<p>选中这个地址,转到Hex  View中选中nop指令</p>
+<p><img src="/images/iot1/1747140644580.png" alt="1747140644580"></p>
+<p>如图选择</p>
+<p><img src="/images/iot1/1747140680156.png" alt="1747140680156"></p>
+<p>while(1)在mips中的机器码为<code>FF FF 00 10</code></p>
+<p><img src="/images/iot1/1747140860778.png" alt="1747140860778"></p>
+<p>可以多试几个位置,有的地方patch后会反编译失败</p>
+<p>使用scp将这个cgi传入qemu后就可以开始调试了</p>
+<p><img src="/images/iot1/1747140949391.png" alt="1747140949391"></p>
+<p>此时挂载gdb可以看到cgi陷入死循环,我们通过set *0x404ce0&#x3D;0恢复</p>
+<p><img src="/images/iot1/1747141001603.png" alt="1747141001603"></p>
+<p>然后就可以正常调试了</p>
+<p><img src="/images/iot1/1747141221963.png" alt="1747141221963"></p>
+<p>成功 <em><strong>:)</strong></em></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/IoT/" rel="tag">IoT</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+      
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+          
+        
+        <a href="/2025/04/15/magic/"></a>
+        <div class="article-nav-caption">前一篇</div>
+        <h3 class="article-nav-title">
+          
+            Magic_gadget
+          
+        </h3>
+      </div>
+    
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        10.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        00:42
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91-linkone"><span class="toc-number">1.</span> <span class="toc-text">西湖论剑-linkone</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%AD%A3%E5%BC%8F%E5%BC%80%E5%A7%8B"><span class="toc-number">1.2.</span> <span class="toc-text">正式开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.前置准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E5%8F%96%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">提取文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gdbserver"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">gdbserver</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">开始漏洞挖掘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%87%E4%BB%B6%E5%AF%BB%E6%89%BE"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1.文件寻找</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E4%B8%8E%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.逆向与脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-web%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">1.web相关函数学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">2.逆向请求处理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%BC%96%E5%86%99EXP"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">3.编写EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">4.调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#patch"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">patch</span></a></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">5</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "IoT 安全挑战",
+          url: "https://khighl.github.io.git/2024/10/01/iot1/",
+          excerpt: "",
+          description: "",
+          stripContent: "西湖论剑-linkone前言这是winmt师傅给我的第一个挑战,一道没有任何保护,甚至没有ALSR的iot漏洞挖掘题目.即使漏洞很明显,但是我一共用了两天.基本上碰上了第一次做iot的所有坑,最后还是难逃被🍐的命运…不过也学到了很多很多东西. 正式开始1.前置准备 题目的附件为:  debian虚拟机镜像 内核文件 镜像的用户名和密码 启动脚本  其中启动脚本 12#/bin/bashsudo qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-",
+          date: "Tue Oct 01 2024 00:00:00 GMT+0800",
+          updated: "Thu May 15 2025 23:45:37 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
