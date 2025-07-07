@@ -213,7 +213,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -284,14 +284,51 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/04/15/01/" aria-label="something_interesting"></a>
+      <a class="post-link" href="/2025/04/28/io_uring/" aria-label="io_uring"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-04-28</span>
+        <span><span class="icon-pencil"></span>1.1k 字</span>
+        <span><span class="icon-clock"></span>4 分钟</span>
+      </div>
+      <h2 class="post-title">io_uring</h2>
+      <article class="post-article">
+        
+          io_uring|0| 前言
+在我打算认真了解前已经在校队面试,VN面试被问过io_uring,本来我想着考过就不会考的原则忽视这个内容,但昨晚被winmt大哥拷打完后又觉得不能自我欺骗,刚刚好复现actf_2023遇到了io_uring,打算认真了解一下.*
+
+|1| 原理
+io_uring是Linux 内核的高性能异步 I&amp;#x2F;O 框架
+io_uring 特点：完全异步，支持任意类型的 I&amp;#x2F;O，灵活可拓展
+io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一个从内核接收完成事件,io_uring 在当前进程和内核之间共享内存 (通过 mmap 在当前
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/04/15/01/" aria-label="something_interesting"></a>
+    
+    
+    <div class="post-cover-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
         
       
     </div>
@@ -322,23 +359,23 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/04/15/magic/" aria-label="Magic_gadget"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
         
       
     </div>
     <div class="post-info">
       <div class="post-meta">
         <span><span class="icon-calendar"></span>2025-04-15</span>
-        <span><span class="icon-pencil"></span>1.7k 字</span>
+        <span><span class="icon-pencil"></span>1.6k 字</span>
         <span><span class="icon-clock"></span>6 分钟</span>
       </div>
       <h2 class="post-title">Magic_gadget</h2>
@@ -346,11 +383,8 @@
         
           Magic Gadget
 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
-
-
-
-普遍性:&amp;emsp;&amp;emsp;1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中&amp;emsp;&amp;emsp;2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
-原理1.ret2csu:&amp;emsp;&amp;emsp;观察下列gadg
+普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
+原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器的值
         
       </article>
     </div>
@@ -359,12 +393,12 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2024/10/01/iot1/" aria-label="IoT 西湖论剑-linkone"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
@@ -435,10 +469,10 @@ debian虚拟机镜像
     
       <div>
         <span class="icon-brush"></span>
-        27.7k
+        30.7k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        02:00
+        02:14
       </div>
     
     
@@ -474,7 +508,7 @@ debian虚拟机镜像
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>

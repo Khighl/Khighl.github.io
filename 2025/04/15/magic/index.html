@@ -35,12 +35,12 @@
 
   
   
-    <meta name="description" content="Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血    普遍性:&emsp;&emsp;1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关">
+    <meta name="description" content="Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血 普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Magic_gadget">
 <meta property="og:url" content="https://khighl.github.io.git/2025/04/15/magic/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血    普遍性:&emsp;&emsp;1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关">
+<meta property="og:description" content="Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血 普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://khighl.github.io.git/images/csu1.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/csu2.png">
@@ -54,7 +54,7 @@
 <meta property="og:image" content="https://khighl.github.io.git/images/one.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/mls.png">
 <meta property="article:published_time" content="2025-04-15T09:49:32.000Z">
-<meta property="article:modified_time" content="2025-06-17T12:17:14.170Z">
+<meta property="article:modified_time" content="2025-07-04T06:17:32.656Z">
 <meta property="article:author" content="zer00ne">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -241,7 +241,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -318,7 +318,7 @@
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
     <time datetime="2025-04-15T09:49:32.000Z" itemprop="datePublished">2025-04-15</time>
-    <time style="display: none;" id="post-update-time">2025-06-17</time>
+    <time style="display: none;" id="post-update-time">2025-07-04</time>
   </span>
 </div>
 
@@ -333,18 +333,13 @@
       
         <h1 id="Magic-Gadget"><a href="#Magic-Gadget" class="headerlink" title="Magic Gadget"></a>Magic Gadget</h1><ol>
 <li><strong>前言:</strong><br>我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.<br>帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血</li>
-</ol>
-<hr>
-<ol start="2">
-<li><strong>普遍性:</strong><br>&emsp;&emsp;1.<strong>_do_global_dtors_aux</strong>函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数<strong>普遍存在</strong>于二进制文件中<br>&emsp;&emsp;2.<strong>_libc_csu_init</strong> 作为初始化函数,普遍存在于二进制文件中</li>
-<li><strong>原理</strong><br><strong>1.ret2csu:</strong><br>&emsp;&emsp;观察下列gadget,我将其分为csu1片段与cus2片段:<br><img src="/images/csu1.png" alt="csu1"><br>&emsp;&emsp;很明显我们可以操作这六个寄存器的值,虽然目前看起来r12-r15好像没什么用,但是结合csu2:<br><img src="/images/csu2.png" alt="csu2"><br>&emsp;&emsp;此时一切就清晰了:我们可以通过r12-r15操作调用的函数,前三个寄存器的值.而且假如rbx+1&#x3D;&#x3D;rbp,我们还可以继续通过rop控制执行流.<br>&emsp;&emsp;注意这里调用函数的形式为:<br><em>call [r12+rbx</em>8]*<br>&emsp;&emsp;对r12+8<em>rbx(通常rbx&#x3D;&#x3D;0)的值进行了解引用([]),所以如果想要调用目标函数.<br>&emsp;&emsp;我们应该控制r12为目标函数的got表,rbx&#x3D;&#x3D;0,那么此时rbp&#x3D;&#x3D;1.<br>&emsp;&emsp;r13,14,15为目标函数的第一,二,三个参数<br><strong>2.magic gadget:</strong><br><img src="/images/magic.png" alt="magic"><br>&emsp;&emsp;直接通过IDA查看,我们是看不到目标gadget的,magic_gadget的定位需要借助”pop rbp,ret;”这个gadget的定位:<br>&emsp;&emsp;address(magic)&#x3D;address(“pop rbp,ret;”)-1<br>&emsp;&emsp;在pwngdb,我们可以查看到这个magic_gadget:<br><img src="/images/Mag.png" alt="magic"><br>注意这个gadget,它将ebx的值加在了rbp-0x3d指向的空间,所以如果我们能控制ebx与rbp,我们就能在任意地址中进行偏移.<br><strong>3.综合利用:</strong><br>&emsp;&emsp;1.控制ebx与rbp可以通过cus1进行,偏移后的结果可以通过cus2调用<br>&emsp;&emsp;2.如果git表可写,我们甚至可以通过偏移直接修改任意got表内地址为system或one_gadget等函数而不需要泄露libc基地址<br>&emsp;&emsp;3.我们还可以在close(1)后将stdout指针内的值重定向到stderr或stdin,恢复回显<br>&emsp;&emsp;我在以下例题中简称这种技术为*<em>重定向</em></em></li>
+<li><strong>普遍性:</strong><br>1.<strong>_do_global_dtors_aux</strong>函数常见于编译后的二进制文件（尤其是 C&#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数<strong>普遍存在</strong>于二进制文件中<br>2.<strong>_libc_csu_init</strong> 作为初始化函数,普遍存在于二进制文件中</li>
+<li><strong>原理</strong><br><strong>1.ret2csu:<strong>观察下列gadget,我将其分为csu1片段与cus2片段:<br><img src="/images/csu1.png" alt="csu1"><br>很明显我们可以操作这六个寄存器的值,虽然目前看起来r12-r15好像没什么用,但是结合csu2:<br><img src="/images/csu2.png" alt="csu2"><br>此时一切就清晰了:我们可以通过r12-r15操作调用的函数,前三个寄存器的值.而且假如rbx+1&#x3D;&#x3D;rbp,我们还可以继续通过rop控制执行流.<br>&emsp;&emsp;注意这里调用函数的形式为:<br><em>call [r12+rbx</em>8]*<br>&emsp;&emsp;对r12+8*rbx(通常rbx&#x3D;&#x3D;0)的值进行了解引用([]),所以如果想要调用目标函数.<br>&emsp;&emsp;我们应该控制r12为目标函数的got表,rbx&#x3D;&#x3D;0,那么此时rbp&#x3D;&#x3D;1.<br>&emsp;&emsp;r13,14,15为目标函数的第一,二,三个参数<br><strong>2.magic gadget:</strong><br><img src="/images/magic.png" alt="magic"><br>&emsp;&emsp;直接通过IDA查看,我们是看不到目标gadget的,magic_gadget的定位需要借助”pop rbp,ret;”这个gadget的定位:<br>&emsp;&emsp;address(magic)&#x3D;address(“pop rbp,ret;”)-1<br>&emsp;&emsp;在pwngdb,我们可以查看到这个magic_gadget:<br><img src="/images/Mag.png" alt="magic"><br>注意这个gadget,它将ebx的值加在了rbp-0x3d指向的空间,所以如果我们能控制ebx与rbp,我们就能在任意地址中进行偏移.<br><strong>3.综合利用:</strong><br>&emsp;&emsp;1.控制ebx与rbp可以通过cus1进行,偏移后的结果可以通过cus2调用<br>&emsp;&emsp;2.如果git表可写,我们甚至可以通过偏移直接修改任意got表内地址为system或one_gadget等函数而不需要泄露libc基地址<br>&emsp;&emsp;3.我们还可以在close(1)后将stdout指针内的值重定向到stderr或stdin,恢复回显<br>&emsp;&emsp;我在以下例题中简称这种技术为</strong>重定向</strong></li>
 </ol>
 <h1 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h1><p>ret2dlresolve:<br>这道题一直困扰了我很久,我在想如果我不用ret2dlresolve的板子,我是不是就无法解决这个题了:(<br>当我学会这种方法时我发现:完全可以取代 ret2dlresolve的板子<br><img src="/images/timu.png" alt="csu2"><br>我没有放题目链接主要是这道题没什么特殊的地方,大家完全可以自己写个poc验证一下,保护只有NX,还有几个可以利用的got表,存在溢出,但没有合适的gadgetret2dlresolve:<br>这道题一直困扰了我很久,我在想如果我不用ret2dlresolve的板子,我是不是就无法解决这个题了:(<br>当我学会这种方法时我发现:完全可以取代 ret2dlresolve的板子</p>
 <ol>
-<li><p>定位我们所需的magic gadget与csu gadget,这部按我开头写的就可以,非常简单1.定位我们所需的magic gadget与csu gadget,这部按我开头写的就可以,非常简单</p>
-</li>
-<li><p>第一次栈溢出攻击,对write.got进行重定向,注意除了libc要正确,一般重定位所需的偏移会是负数,但是我们的p64()不会自动整形溢出,所以要在结果上加上0x10000000000000000手动整形溢出</p>
-</li>
+<li>定位我们所需的magic gadget与csu gadget,这部按我开头写的就可以,非常简单1.定位我们所需的magic gadget与csu gadget,这部按我开头写的就可以,非常简单</li>
+<li>第一次栈溢出攻击,对write.got进行重定向,注意除了libc要正确,一般重定位所需的偏移会是负数,但是我们的p64()不会自动整形溢出,所以要在结果上加上0x10000000000000000手动整形溢出</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">libc=ELF(<span class="string">&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;</span>)</span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">csu1=<span class="number">0x40076A</span></span><br><span class="line">magic=<span class="number">0x4005E8</span></span><br><span class="line">csu2=<span class="number">0x400750</span></span><br><span class="line">bss=<span class="number">0x600800</span></span><br><span class="line">offset=<span class="number">0x10000000000000000</span>+libc.sym[<span class="string">&#x27;system&#x27;</span>]-libc.sym[<span class="string">&#x27;write&#x27;</span>]</span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x78</span>+p64(csu1)+p64(offset)+p64(elf.got[<span class="string">&#x27;write&#x27;</span>]+<span class="number">0x3d</span>)+p64(<span class="number">0</span>)*<span class="number">4</span>+p64(magic)+p64(<span class="number">0x400607</span>)</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
 
@@ -467,10 +462,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        27.7k
+        30.7k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        02:00
+        02:14
       </div>
     
     
@@ -516,7 +511,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">13</div>
+    <div class="sidebar-state-number">14</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -665,9 +660,9 @@
           url: "https://khighl.github.io.git/2025/04/15/magic/",
           excerpt: "",
           description: "",
-          stripContent: "Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血    普遍性:&amp;emsp;&amp;emsp;1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中&amp;emsp;&amp;emsp;2._libc_csu_init 作为",
+          stripContent: "Magic Gadget 前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血 普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中 原理1.ret2c",
           date: "Tue Apr 15 2025 17:49:32 GMT+0800",
-          updated: "Tue Jun 17 2025 20:17:14 GMT+0800",
+          updated: "Fri Jul 04 2025 14:17:32 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>
