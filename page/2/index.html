@@ -213,7 +213,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">16</div>
+    <div class="sidebar-state-number">17</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -284,14 +284,54 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/05/15/MiniLCTF%202023/" aria-label="MiniLCTF 2023"></a>
+      <a class="post-link" href="/2025/05/27/%E9%9D%9E%E6%A0%88%E4%B8%8A%E7%9A%84fmt/" aria-label="LitCTF"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="MiniLCTF 2023" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="LitCTF" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-05-27</span>
+        <span><span class="icon-pencil"></span>1.4k 字</span>
+        <span><span class="icon-clock"></span>6 分钟</span>
+      </div>
+      <h2 class="post-title">LitCTF</h2>
+      <article class="post-article">
+        
+          一次有趣的非栈上格式化字符串攻击参考:孤鸿师傅的博客
+题目链接:NSS靶场
+前言:litctf中出现的一道奇怪的题目,打完比赛后gets师傅告诉我这种题出现过几次,还甩给我一篇博客.结果打开一看,发现是楠哥的文章.
+世界可真小
+glibc的知识怎么永远学不完啊
+题目分析
+题目给了我们栈地址和libc地址,,并给了我们一次非栈上格式化字符串的机会,之后立马使用_exit(0)退出
+由于使用的是_exit(0)我们无法使用exit_hook或FSOP
+本题几乎是摆明了要让我们修改printf的返回地址
+回顾:非栈上格式化字符串实现任意地址写在常规的非栈上格式化字符串利用中,我们总是有着无限的格式化
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/05/15/MiniLCTF%202023/" aria-label="MiniLCTF 2023"></a>
+    
+    
+    <div class="post-cover-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="MiniLCTF 2023" class="lazyload">
         
       
     </div>
@@ -325,16 +365,16 @@ main函数的核心功能与特点为:
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/05/15/house%20of%20some/" aria-label="house of some"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="house of some" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="house of some" class="lazyload">
         
       
     </div>
@@ -359,16 +399,16 @@ main函数的核心功能与特点为:
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/04/28/io_uring/" aria-label="io_uring"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
         
       
     </div>
@@ -396,16 +436,16 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/04/15/misc/" aria-label="something_interesting"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
         
       
     </div>
@@ -436,16 +476,16 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="Magic_gadget"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
         
       
     </div>
@@ -470,16 +510,16 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2024/10/01/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%20iot/" aria-label="IoT 西湖论剑-linkone"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
         
       
     </div>
@@ -546,10 +586,10 @@ debian虚拟机镜像
     
       <div>
         <span class="icon-brush"></span>
-        37.1k
+        38.5k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        02:40
+        02:46
       </div>
     
     
@@ -585,7 +625,7 @@ debian虚拟机镜像
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">16</div>
+    <div class="sidebar-state-number">17</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
