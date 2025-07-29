@@ -213,7 +213,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">18</div>
+    <div class="sidebar-state-number">19</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -284,10 +284,48 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/05/29/arm%E5%9F%BA%E7%A1%80/" aria-label="arm合集"></a>
+      <a class="post-link" href="/2025/06/11/CNVD-2013-11625%20%20DIR-815%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/" aria-label="CNVD-2013-11625"></a>
     
     
     <div class="post-cover-left">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="CNVD-2013-11625" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-06-11</span>
+        <span><span class="icon-pencil"></span>3.2k 字</span>
+        <span><span class="icon-clock"></span>12 分钟</span>
+      </div>
+      <h2 class="post-title">CNVD-2013-11625</h2>
+      <article class="post-article">
+        
+          DIR-815 栈溢出漏洞复现前言这是我选择复现的第一个iot漏洞,总是对栈溢出有种特别的执念,有种学了一大圈又绕回来的感觉
+同时这个固件也是Mips架构的,正好加强一下自己对mips的理解
+官方的漏洞报告：DIR-815
+| 0 | 准备固件下载地址:下载  (需要挂梯子)
+binwalk安装：sudo apt install binwalk
+sasquatch安装：https://github.com/devttys0/sasquatch
+| 1 | 固件提取将下载的bin文件传送到虚拟机中,使用如下命令
+1binwalk -e --preserve-symlinks firmware_n
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/05/29/arm%E5%9F%BA%E7%A1%80/" aria-label="arm合集"></a>
+    
+    
+    <div class="post-cover-right">
       
         
         
@@ -328,12 +366,12 @@ qemu设置架构,-g指定端口为1234,运行的文件为.&amp;#x2F;pwn
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/05/27/%E9%9D%9E%E6%A0%88%E4%B8%8A%E7%9A%84fmt/" aria-label="LitCTF"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
@@ -368,12 +406,12 @@ glibc的知识怎么永远学不完啊
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/05/15/MiniLCTF%202023/" aria-label="MiniLCTF 2023"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
@@ -411,12 +449,12 @@ main函数的核心功能与特点为:
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/05/15/house%20of%20some/" aria-label="house of some"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
@@ -445,12 +483,12 @@ main函数的核心功能与特点为:
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/04/28/io_uring/" aria-label="io_uring"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
@@ -474,40 +512,6 @@ main函数的核心功能与特点为:
 io_uring是Linux 内核的高性能异步 I&amp;#x2F;O 框架
 io_uring 特点：完全异步，支持任意类型的 I&amp;#x2F;O，灵活可拓展
 io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一个从内核接收完成事件,io_uring 在当前进程和内核之间共享内存 (通过 mmap 在当前
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
-      <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="Magic_gadget"></a>
-    
-    
-    <div class="post-cover-right">
-      
-        
-        
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-04-15</span>
-        <span><span class="icon-pencil"></span>1.6k 字</span>
-        <span><span class="icon-clock"></span>6 分钟</span>
-      </div>
-      <h2 class="post-title">Magic_gadget</h2>
-      <article class="post-article">
-        
-          Magic Gadget
-前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
-普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
-原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器的值
         
       </article>
     </div>
@@ -558,14 +562,48 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       <div class="post-wrapper">
   <div class="post-wrap-right" data-aos="fade-up">
     
-      <a class="post-link" href="/2024/10/01/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%20iot/" aria-label="IoT 西湖论剑-linkone"></a>
+      <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="Magic_gadget"></a>
     
     
     <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-04-15</span>
+        <span><span class="icon-pencil"></span>1.6k 字</span>
+        <span><span class="icon-clock"></span>6 分钟</span>
+      </div>
+      <h2 class="post-title">Magic_gadget</h2>
+      <article class="post-article">
+        
+          Magic Gadget
+前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
+普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
+原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器的值
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-left" data-aos="fade-up">
+    
+      <a class="post-link" href="/2024/10/01/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%20iot/" aria-label="IoT 西湖论剑-linkone"></a>
+    
+    
+    <div class="post-cover-left">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
         
       
     </div>
@@ -632,10 +670,10 @@ debian虚拟机镜像
     
       <div>
         <span class="icon-brush"></span>
-        43k
+        51.6k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        03:10
+        03:56
       </div>
     
     
@@ -671,7 +709,7 @@ debian虚拟机镜像
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">18</div>
+    <div class="sidebar-state-number">19</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
