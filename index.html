@@ -213,7 +213,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">19</div>
+    <div class="sidebar-state-number">20</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -284,14 +284,53 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/07/29/TOTOLINK/" aria-label="totolink"></a>
+      <a class="post-link" href="/2025/08/02/hosue%20of%20water/" aria-label="house of some"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="totolink" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="house of some" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-08-02</span>
+        <span><span class="icon-pencil"></span>1.5k 字</span>
+        <span><span class="icon-clock"></span>7 分钟</span>
+      </div>
+      <h2 class="post-title">house of some</h2>
+      <article class="post-article">
+        
+          house of water : 一种无泄露情况下的堆利用手法| 0 | 前言一种可以在没有显式打印函数存在情况下,将libc指针写入tcachebins的手法
+虽然条件苛刻但是思路十分巧妙
+| 1 | 利用条件
+我们可以对堆块进行use-after-free操作
+能够malloc/free一个较大堆块(0x9000)
+
+无需溢出与泄露内存即可完成攻击
+我们在攻击的过程中需要几枚悬空指针,如果在真实ctf环境中要先堆好风水,预留好指针的位置
+| 2 | 攻击演示0x00设置伪造chunksize当我们申请了0x3d0与0x3e0两种堆块并释放后,在tcachebins_struct中会出现一个
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/07/29/TOTOLINK/" aria-label="totolink"></a>
+    
+    
+    <div class="post-cover-right">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="totolink" class="lazyload">
         
       
     </div>
@@ -325,16 +364,16 @@ httpd获取client报文,将不
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/29/nep2025/" aria-label="NEPctf2025"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="NEPctf2025" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="NEPctf2025" class="lazyload">
         
       
     </div>
@@ -360,16 +399,16 @@ httpd获取client报文,将不
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/14/CVE-2005-2799%20linksys%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/" aria-label="CVE-2005-2799"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="CVE-2005-2799" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CVE-2005-2799" class="lazyload">
         
       
     </div>
@@ -400,16 +439,16 @@ httpd获取client报文,将不
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/" aria-label="NetCore RCE漏洞"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
         
       
     </div>
@@ -439,16 +478,16 @@ vmlinux-3.2.0-4-4kc-malta
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/10/PSV-2020-0211%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/" aria-label="PSV-2020-0211"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="PSV-2020-0211" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="PSV-2020-0211" class="lazyload">
         
       
     </div>
@@ -475,12 +514,12 @@ vmlinux-3.2.0-4-4kc-malta
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/08/TP-Link%20SR20%20RCE%E6%BC%8F%E6%B4%9E/" aria-label="TP-Link SR20 RCE漏洞"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
@@ -509,12 +548,12 @@ UPD通信协议的设计目的：轻便、快速、不建立连接(不像TCP那�
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/07/CVE-2018-7034%20%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2/" aria-label="CVE-2018-7034"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
@@ -546,16 +585,16 @@ UPD通信协议的设计目的：轻便、快速、不建立连接(不像TCP那�
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/06/28/fuzz/" aria-label="r树的秘密"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="r树的秘密" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="r树的秘密" class="lazyload">
         
       
     </div>
@@ -585,16 +624,16 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/06/16/CNVD-2018-01084%20%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/" aria-label="CNVD-2018-01084"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CNVD-2018-01084" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="CNVD-2018-01084" class="lazyload">
         
       
     </div>
@@ -616,40 +655,6 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
 
 
 | 2 | 文件
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
-      <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/06/13/ACTF%202025/" aria-label="only_read的三种解法"></a>
-    
-    
-    <div class="post-cover-right">
-      
-        
-        
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="only_read的三种解法" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-06-13</span>
-        <span><span class="icon-pencil"></span>2.8k 字</span>
-        <span><span class="icon-clock"></span>13 分钟</span>
-      </div>
-      <h2 class="post-title">only_read的三种解法</h2>
-      <article class="post-article">
-        
-          2025 ACTF only_read的三种解法| 0 | 前言回顾2025actf,常规glibc_ctf只有一道only_read,虽然我最后成功解出来了(偷跑),但是在看了Unauth师傅的ret2dlresolve和星盟师傅的magic_gadget利用后越来越感觉自己的手法丑陋无比,所以今天在这里将三种解法都展现出来
-同时十分感谢星盟师傅教会了我如何在没有csu片段的情况下利用magic_gadget重定向函数的got表
-题目链接:攻防世界
-| 1 | 题目分析123456789[*] &amp;#x27;/home/zer00ne/Desktop/ACTF/3/pwn&amp;#x27;    A
         
       </article>
     </div>
@@ -693,10 +698,10 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
     
       <div>
         <span class="icon-brush"></span>
-        51.6k
+        53.1k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        03:56
+        04:03
       </div>
     
     
@@ -732,7 +737,7 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">19</div>
+    <div class="sidebar-state-number">20</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
