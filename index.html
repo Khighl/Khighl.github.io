@@ -213,7 +213,7 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">20</div>
+    <div class="sidebar-state-number">22</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
@@ -284,6 +284,78 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
+      <a class="post-link" href="/2025/09/16/%E6%B8%AF%E6%B9%BE%E6%9D%AF/" aria-label="babyshark"></a>
+    
+    
+    <div class="post-cover-left">
+      
+        
+        
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="babyshark" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-09-16</span>
+        <span><span class="icon-pencil"></span>3.2k 字</span>
+        <span><span class="icon-clock"></span>16 分钟</span>
+      </div>
+      <h2 class="post-title">babyshark</h2>
+      <article class="post-article">
+        
+          前言昨天刚刚结束的湾区杯全场只有5解的pwn题,差点拿到3血(其实差了不少: &amp;#x2F;  )失去了AI的辅助,全身心投入逆向分析,看起来也不是件坏事
+附件分析附件可以到看雪上下载: 下载链接本题的数据传输采取了类似protobuf的序列化&amp;#x2F;反序列化数据包传输指令所以我们在进行堆利用前要将自定义的vm操作梳理清楚
+数据包逆向在主逻辑前,先是进行了对时间种子的设置经典的伪随机数
+随后是个循环读入注意看这里读入的循环判断,是当前读入的字节(char)为负数
+字符串与数字的转化读入后进行了dump_num操作,按照一定格式把str转化为__int64
+123456789101112131
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/09/11/offbuynull/" aria-label=""></a>
+    
+    
+    <div class="post-cover-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-09-11</span>
+        <span><span class="icon-pencil"></span>514 字</span>
+        <span><span class="icon-clock"></span>1 分钟</span>
+      </div>
+      <h2 class="post-title"></h2>
+      <article class="post-article">
+        
+          off_by_null—-从null戳到getshell| 0 | 前言好久没写博客了……最近发生了很多事情,有点疲惫  :_(
+选择了二进制安全,再痛苦也要走完,只是最近精神上有些失落 :(
+好羡慕铃仙师傅啊
+| 1 | 基础知识在ctf的二进制安全的对堆利用板块,有一种特殊的漏洞 : off_by_null
+这种漏洞指的是我们能对一个堆块越界写一个字节,且这个字节是&amp;#39;\x00&amp;#39;
+从直觉上看,这几乎没有任何一点点利用价值                                   heap_overflow &amp;gt;&amp;gt; off_by_one &amp;gt;&amp;gt; o
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-left" data-aos="fade-up">
+    
       <a class="post-link" href="/2025/08/02/hosue%20of%20water/" aria-label="house of water"></a>
     
     
@@ -291,7 +363,7 @@
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="house of water" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="house of water" class="lazyload">
         
       
     </div>
@@ -330,7 +402,7 @@
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="totolink" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="totolink" class="lazyload">
         
       
     </div>
@@ -373,7 +445,7 @@ httpd获取client报文,将不
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="NEPctf2025" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="NEPctf2025" class="lazyload">
         
       
     </div>
@@ -408,7 +480,7 @@ httpd获取client报文,将不
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="CVE-2005-2799" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="CVE-2005-2799" class="lazyload">
         
       
     </div>
@@ -448,7 +520,7 @@ httpd获取client报文,将不
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
         
       
     </div>
@@ -487,7 +559,7 @@ vmlinux-3.2.0-4-4kc-malta
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="PSV-2020-0211" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="PSV-2020-0211" class="lazyload">
         
       
     </div>
@@ -584,90 +656,12 @@ UPD通信协议的设计目的：轻便、快速、不建立连接(不像TCP那�
 </div>
       
     
-      <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/06/28/fuzz/" aria-label="r树的秘密"></a>
-    
-    
-    <div class="post-cover-left">
-      
-        
-        
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="r树的秘密" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-06-28</span>
-        <span><span class="icon-pencil"></span>4.5k 字</span>
-        <span><span class="icon-clock"></span>21 分钟</span>
-      </div>
-      <h2 class="post-title">r树的秘密</h2>
-      <article class="post-article">
-        
-          fuzzing?fuzzing!(ᗜᴗᗜ)| 0 | 前言如果你也遇到过:IDA反编译出来的数据结构充满了各种交叉引用与奇奇怪怪的数据结构,别说逆向分析了,就算是用gdb调试出来都是越看越晕✋别担心,fuzzing会帮你解决一切😇😇😇
-| 1 | 原理通过查询gpt,我们获得以下信息
-Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技术，主要用于发现程序中的漏洞和异常行为。它的核心思想就像是：
-
-「嘿我往你的程序里灌各种奇怪、乱七八糟的输入，看看你会不会崩溃(*≧▽≦)ﾉｼ）」
-
-比如你有个程序需要用户输入用户名，那Fuzzer就会试着输入：
-
-超长字符串（比如上万字节的“A
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
-      <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/06/16/CNVD-2018-01084%20%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/" aria-label="CNVD-2018-01084"></a>
-    
-    
-    <div class="post-cover-right">
-      
-        
-        
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CNVD-2018-01084" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-06-16</span>
-        <span><span class="icon-pencil"></span>863 字</span>
-        <span><span class="icon-clock"></span>3 分钟</span>
-      </div>
-      <h2 class="post-title">CNVD-2018-01084</h2>
-      <article class="post-article">
-        
-          CNVD-2018-01084 命令注入漏洞复现| 0 | 前言第一次摸到命令注入漏洞,和CNVD-2013-11625有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧
-全程看着winmt大哥的记录复现的
-官方报告: D-Link DIR 615&amp;#x2F;645&amp;#x2F;815 service.cgi远程命令执行漏洞
-固件获取: 固件下载
-| 1 | 前期准备仍然使用binwlak解包,目前还没遇到过加密的固件包,不过估计快了
-1binwalk -e --preserve-symlinks DIR-815\ FW\ 1.01b14_1.01b14.bin
-
-
-| 2 | 文件
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
   
 
 
   <nav id="page-nav" data-aos="fade-up">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
   </nav>
 
 
@@ -698,10 +692,10 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
     
       <div>
         <span class="icon-brush"></span>
-        53.1k
+        56.8k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        04:03
+        04:20
       </div>
     
     
@@ -737,7 +731,7 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">20</div>
+    <div class="sidebar-state-number">22</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>

