@@ -284,36 +284,30 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/04/15/misc/" aria-label="something_interesting"></a>
+      <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="Magic_gadget"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
         
       
     </div>
     <div class="post-info">
       <div class="post-meta">
         <span><span class="icon-calendar"></span>2025-04-15</span>
-        <span><span class="icon-pencil"></span>3.4k 字</span>
-        <span><span class="icon-clock"></span>15 分钟</span>
+        <span><span class="icon-pencil"></span>1.6k 字</span>
+        <span><span class="icon-clock"></span>6 分钟</span>
       </div>
-      <h2 class="post-title">something_interesting</h2>
+      <h2 class="post-title">Magic_gadget</h2>
       <article class="post-article">
         
-          奇奇怪怪的技巧前言:
-
-主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了
-主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :(
-部分题目因为供题人的要求不能发出附件 :( 不好意思
-
-1.execv调用
-此处可以布置一个ROP,没有沙箱可以直接获取shell
-我在之前进行了多次栈迁移(迁移到bss上),导致无法调用system(“&amp;#x2F;bin&amp;#x2F;sh”)
-1system(&amp;quot;/bin/sh&amp;quot;)会使用大量push操作(俗称抬栈),如果我们的&amp;quot;栈&amp;quot;处于一个比较
+          Magic Gadget
+前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
+普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
+原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器的值
         
       </article>
     </div>
@@ -331,7 +325,7 @@
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
         
       
     </div>

