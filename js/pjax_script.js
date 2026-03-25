@@ -153,6 +153,73 @@ _$$(".article-entry img").forEach((element) => {
   element.removeAttribute("src");
 });
 
+// Decorative corner emj for cards.
+(() => {
+  const emjPool = ["⏱️", "🦇", "🧸", "📖"];
+  const hashString = (str) => {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = (h * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h);
+  };
+  const getCardKey = (card) => {
+    const link = card.querySelector(".post-link");
+    const ariaLabel = link?.getAttribute("aria-label")?.trim();
+    if (ariaLabel) return ariaLabel;
+    const postTitle = card.querySelector(".post-title")?.textContent?.trim();
+    if (postTitle) return postTitle;
+    const categoryTitle = card
+      .querySelector(".post-categories-cover h2")
+      ?.textContent?.trim();
+    if (categoryTitle) return categoryTitle;
+    return link?.getAttribute("href") || "card";
+  };
+  const getSideByCard = (card, hash) => {
+    // Keep emj on the opposite side of the cover image for post cards.
+    if (card.classList.contains("post-wrap-left")) return "right";
+    if (card.classList.contains("post-wrap-right")) return "left";
+    // Category cards: deterministic side by hash.
+    return hash % 2 === 0 ? "left" : "right";
+  };
+  const cards = _$$(".post-wrap-left, .post-wrap-right, .post-categories-wrap");
+  cards.forEach((card) => {
+    const key = getCardKey(card);
+    const hash = hashString(key);
+    const emj = emjPool[hash % emjPool.length];
+    const side = getSideByCard(card, hash);
+    const rotateDeg = side === "left" ? -20 : 20;
+
+    let icon = card.querySelector(".card-corner-emj");
+    if (!icon) {
+      icon = document.createElement("span");
+      icon.className = "card-corner-emj";
+      card.appendChild(icon);
+    }
+    icon.textContent = emj;
+    icon.style.setProperty("--corner-emj-rotate", `${rotateDeg}deg`);
+    icon.style.left = side === "left" ? "10px" : "auto";
+    icon.style.right = side === "right" ? "10px" : "auto";
+    const height = card.clientHeight || 180;
+    icon.style.setProperty("--corner-emj-size", `${Math.round(height * 0.66)}px`);
+  });
+
+  if (window.__cornerEmjResizeHandler) {
+    window.off("resize", window.__cornerEmjResizeHandler);
+  }
+  window.__cornerEmjResizeHandler = window.throttle
+    ? window.throttle(() => {
+        _$$(".post-wrap-left, .post-wrap-right, .post-categories-wrap").forEach((card) => {
+          const icon = card.querySelector(".card-corner-emj");
+          if (!icon) return;
+          const height = card.clientHeight || 180;
+          icon.style.setProperty("--corner-emj-size", `${Math.round(height * 0.66)}px`);
+        });
+      }, 200)
+    : () => {};
+  window.on("resize", window.__cornerEmjResizeHandler);
+})();
+
 // to top
 var sidebarTop = _$(".sidebar-top");
 if (sidebarTop) {

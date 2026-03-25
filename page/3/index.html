@@ -14,7 +14,7 @@
 
   
 
-  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"复制成功(*^▽^*)","fail":"复制失败 (ﾟ⊿ﾟ)ﾂ","copyright":{"enable":false,"count":100,"content":"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
   
   <title>
     
@@ -87,7 +87,7 @@
           </svg>
         
       </div>
-      <div class="loading-word">少女祈祷中...</div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
     </div>
   </div>
   </div>
@@ -213,15 +213,15 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">
@@ -278,20 +278,102 @@
 
           <section id="main">
   
+    <div class="post-categories-wrapper" data-aos="fade-up">
+      
+        
+        <div class="post-categories-wrap">
+          
+          <a class="post-link" href="/categories/cve%E5%A4%8D%E7%8E%B0" aria-label=""></a>
+          <div class="post-categories-cover">
+            
+              <img data-src="/images/magic.png" data-sizes="auto" alt="cve复现" class="lazyload">
+            
+            <h2>cve复现</h2>
+            <h3>8 篇文章</h3>
+          </div>
+        </div>
+        
+      
+        
+        <div class="post-categories-wrap">
+          
+          <a class="post-link" href="/categories/ctf" aria-label=""></a>
+          <div class="post-categories-cover">
+            
+              <img data-src="/images/mls.png" data-sizes="auto" alt="ctf" class="lazyload">
+            
+            <h2>ctf</h2>
+            <h3>17 篇文章</h3>
+          </div>
+        </div>
+        
+      
+        
+        <div class="post-categories-wrap">
+          
+          <a class="post-link" href="/categories/%E7%94%9F%E6%B4%BB" aria-label=""></a>
+          <div class="post-categories-cover">
+            
+              <img data-src="/images/one.png" data-sizes="auto" alt="生活" class="lazyload">
+            
+            <h2>生活</h2>
+            <h3>0 篇文章</h3>
+          </div>
+        </div>
+        
+      
+    </div>
+  
   
     
     
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/04/28/io_uring/" aria-label="io_uring"></a>
+      <a class="post-link" href="/2025/05/15/house%20of%20some/" aria-label="house of some"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="house of some" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-05-15</span>
+        <span><span class="icon-pencil"></span>1.9k 字</span>
+        <span><span class="icon-clock"></span>9 分钟</span>
+      </div>
+      <h2 class="post-title">house of some</h2>
+      <article class="post-article">
+        
+          House of some前言:
+在22年,roderick01师傅发现了hosue of apple手法,宽字节跳表攻击几乎成为了每位pwn手的必备技能.house of apple2更是以简单的模板,极高的效率成为了传播范围,利用效率最高的IO攻击手法
+
+之所以house of apple2有效是因为glibc没有对wide_data结构体中的跳表指针进行范围的检查,但是我们通过_IO_wfile_overflow调用位于wide_data(0x68)处的任意函数指针(system,one_gadget,setcontext,swapcontext)实现getshell或orw
+
+总有一天
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2025/04/28/io_uring/" aria-label="io_uring"></a>
+    
+    
+    <div class="post-cover-right">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="io_uring" class="lazyload">
         
       
     </div>
@@ -309,42 +391,10 @@
 
 |1| 原理
 io_uring是Linux 内核的高性能异步 I&amp;#x2F;O 框架
+
 io_uring 特点：完全异步，支持任意类型的 I&amp;#x2F;O，灵活可拓展
-io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一个从内核接收完成事件,io_uring 在当前进程和内核之间共享内存 (通过 mmap 在当前
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
-      <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="Magic_gadget"></a>
-    
-    
-    <div class="post-cover-right">
-      
-        
-        
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="Magic_gadget" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-04-15</span>
-        <span><span class="icon-pencil"></span>1.6k 字</span>
-        <span><span class="icon-clock"></span>6 分钟</span>
-      </div>
-      <h2 class="post-title">Magic_gadget</h2>
-      <article class="post-article">
-        
-          Magic Gadget
-前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
-普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
-原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器的值
+
+io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一个从内核接收完成事件,io_uring 在当前进程和内核之间共享内存 (通过 mmap 在
         
       </article>
     </div>
@@ -355,36 +405,32 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/04/15/misc/" aria-label="something_interesting"></a>
+      <a class="post-link" href="/2025/04/15/magic_gadget/" aria-label="magic_gadget"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="something_interesting" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="magic_gadget" class="lazyload">
         
       
     </div>
     <div class="post-info">
       <div class="post-meta">
         <span><span class="icon-calendar"></span>2025-04-15</span>
-        <span><span class="icon-pencil"></span>3.4k 字</span>
-        <span><span class="icon-clock"></span>15 分钟</span>
+        <span><span class="icon-pencil"></span>1.6k 字</span>
+        <span><span class="icon-clock"></span>6 分钟</span>
       </div>
-      <h2 class="post-title">something_interesting</h2>
+      <h2 class="post-title">magic_gadget</h2>
       <article class="post-article">
         
-          奇奇怪怪的技巧前言:
+          Magic Gadget
+前言:我在最近两周接触到了这个技巧,在不断的学习中发现这个技巧的巧妙,运用之广,真的让人惊讶.帮我解决了此前的栈相关的两道难题,并在TGCTF中抢到only_gets的一血
 
-主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了
-主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :(
-部分题目因为供题人的要求不能发出附件 :( 不好意思
+普遍性:1._do_global_dtors_aux函数常见于编译后的二进制文件（尤其是 C&amp;#x2F;C++ 程序），它与 全局对象析构 和 程序终止时的清理逻辑 相关.说明是这个函数普遍存在于二进制文件中2._libc_csu_init 作为初始化函数,普遍存在于二进制文件中
 
-1.execv调用
-此处可以布置一个ROP,没有沙箱可以直接获取shell
-我在之前进行了多次栈迁移(迁移到bss上),导致无法调用system(“&amp;#x2F;bin&amp;#x2F;sh”)
-1system(&amp;quot;/bin/sh&amp;quot;)会使用大量push操作(俗称抬栈),如果我们的&amp;quot;栈&amp;quot;处于一个比较
+原理1.ret2csu:观察下列gadget,我将其分为csu1片段与cus2片段:很明显我们可以操作这六个寄存器
         
       </article>
     </div>
@@ -395,24 +441,67 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
       <div class="post-wrapper">
   <div class="post-wrap-right" data-aos="fade-up">
     
-      <a class="post-link" href="/2024/10/01/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%20iot/" aria-label="IoT 西湖论剑-linkone"></a>
+      <a class="post-link" href="/2025/04/15/misc/" aria-label="misc"></a>
     
     
     <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="IoT 西湖论剑-linkone" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="misc" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2025-04-15</span>
+        <span><span class="icon-pencil"></span>3.4k 字</span>
+        <span><span class="icon-clock"></span>15 分钟</span>
+      </div>
+      <h2 class="post-title">misc</h2>
+      <article class="post-article">
+        
+          奇奇怪怪的技巧前言:
+
+主播最近打了一些比赛,遇到了不少奇奇怪怪的手法,不过好在几乎都有惊无险地打过去了
+
+主播还是没能学会ret2dlresolve,不知道ret2dlresolve的博客什么时候才能发出来  :(
+
+部分题目因为供题人的要求不能发出附件 :( 不好意思
+
+
+1.execv调用
+此处可以布置一个ROP,没有沙箱可以直接获取shell
+我在之前进行了多次栈迁移(迁移到bss上),导致无法调用system(“&amp;#x2F;bin&amp;#x2F;sh”)
+1system(&amp;quot;/bin/sh&amp;quot;)会使用大量push操作(俗称抬栈),如果我们的&amp;quot;栈&amp;quot;处于一
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-left" data-aos="fade-up">
+    
+      <a class="post-link" href="/2024/10/01/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%20iot/" aria-label="西湖论剑 iot"></a>
+    
+    
+    <div class="post-cover-left">
+      
+        
+        
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="西湖论剑 iot" class="lazyload">
         
       
     </div>
     <div class="post-info">
       <div class="post-meta">
         <span><span class="icon-calendar"></span>2024-10-01</span>
-        <span><span class="icon-pencil"></span>1.7k 字</span>
+        <span><span class="icon-pencil"></span>1.8k 字</span>
         <span><span class="icon-clock"></span>7 分钟</span>
       </div>
-      <h2 class="post-title">IoT 西湖论剑-linkone</h2>
+      <h2 class="post-title">西湖论剑 iot</h2>
       <article class="post-article">
         
           西湖论剑-linkone前言这是winmt师傅给我的第一个挑战,一道没有任何保护,甚至没有ALSR的iot漏洞挖掘题目.即使漏洞很明显,但是我一共用了两天.基本上碰上了第一次做iot的所有坑,最后还是难逃被🍐的命运…不过也学到了很多很多东西.
@@ -420,12 +509,16 @@ io_uring 提供两个接口，一个将 I&amp;#x2F;O 请求提交到内核，一
 题目的附件为:
 
 debian虚拟机镜像
+
 内核文件
+
 镜像的用户名和密码
+
 启动脚本
 
+
 其中启动脚本
-12#/bin/bashsudo qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mipsel_standard.qco
+12#/bin/bashsudo qemu-system-mipsel -M malta -kernel vmlinux-3.2.0-4-4kc-malta -hda debian_wheezy_mipsel_standard
         
       </article>
     </div>
@@ -469,10 +562,10 @@ debian虚拟机镜像
     
       <div>
         <span class="icon-brush"></span>
-        74.8k
+        71.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:57
+        05:34
       </div>
     
     
@@ -508,15 +601,15 @@ debian虚拟机镜像
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">24</div>
+    <div class="sidebar-state-number">25</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">0</div>
+    <div class="sidebar-state-number">2</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
-    <div class="sidebar-state-number">9</div>
+    <div class="sidebar-state-number">0</div>
   </div>
 </div>
 <div class="sidebar-social">

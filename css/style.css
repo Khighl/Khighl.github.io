@@ -1523,6 +1523,113 @@ a {
 .post-sticky:before {
   margin-right: 5px;
 }
+.card-corner-emj {
+  position: absolute;
+  bottom: -8px;
+  line-height: 1;
+  font-size: var(--corner-emj-size, 96px);
+  transform: rotate(var(--corner-emj-rotate, -20deg));
+  opacity: 0.14;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+  filter: saturate(0.9);
+  transition: opacity 0.3s, transform 0.3s;
+}
+@media screen and (min-width: 768px) {
+  .post-wrap-left:hover .card-corner-emj,
+  .post-wrap-right:hover .card-corner-emj,
+  .post-categories-wrap:hover .card-corner-emj {
+    opacity: 0.2;
+    transform: rotate(var(--corner-emj-rotate, -20deg)) scale(1.03);
+  }
+}
+.post-categories-wrapper {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+@media screen and (max-width: 767px) {
+  .post-categories-wrapper {
+    flex-direction: column;
+  }
+}
+.post-categories-wrapper.aos-animate {
+  transition-property: initial !important;
+}
+.post-categories-wrap {
+  width: calc((100% - 80px) / 3);
+  flex-grow: 1;
+  height: 230px;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: 1s;
+}
+@media screen and (max-width: 767px) {
+  .post-categories-wrap {
+    width: 100%;
+    height: 180px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .post-categories-wrap:hover {
+    transform: scale(1.01);
+  }
+  .post-categories-wrap:hover img {
+    opacity: 0.6 !important;
+    transform: scale(1.05);
+  }
+}
+.post-categories-cover {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  min-height: 95px;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: 0.6s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+}
+@media screen and (max-width: 767px) {
+  .post-categories-cover {
+    width: 100%;
+  }
+}
+.post-categories-cover img {
+  display: block;
+  opacity: 0;
+  transition: 0.6s;
+  position: absolute;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+.post-categories-cover img.lazyloaded {
+  opacity: 0.7;
+  animation: blur 0.8s forwards;
+}
+.post-categories-cover h2,
+.post-categories-cover h3 {
+  z-index: 1;
+  color: #fff;
+  text-shadow: 0 0.2rem 0.3rem rgba(0,0,0,0.5);
+  margin: 0 5px;
+}
+.post-categories-cover h2 {
+  font-size: 35px;
+}
+.post-categories-cover h3 {
+  font-size: 20px;
+  margin-top: 30px;
+}
 #comments {
   background: var(--color-wrap);
   padding: 20px 35px;
