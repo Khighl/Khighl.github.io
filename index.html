@@ -213,11 +213,11 @@
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">25</div>
+    <div class="sidebar-state-number">26</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">3</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
@@ -330,10 +330,50 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2026/03/25/SU_Ezbuff/" aria-label="Ezbuff"></a>
+      <a class="post-link" href="/2026/08/21/nepctf_iot/" aria-label="nepctf What&#39;s the IPC"></a>
     
     
     <div class="post-cover-left">
+      
+        
+        
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="nepctf What&#39;s the IPC" class="lazyload">
+        
+      
+    </div>
+    <div class="post-info">
+      <div class="post-meta">
+        <span><span class="icon-calendar"></span>2026-08-21</span>
+        <span><span class="icon-pencil"></span>2k 字</span>
+        <span><span class="icon-clock"></span>10 分钟</span>
+      </div>
+      <h2 class="post-title">nepctf What&#39;s the IPC</h2>
+      <article class="post-article">
+        
+          nepctf-2026-What’s the IPC解包+固件分析题目的描述很简答, 就说是一个有漏洞的摄像头
+附件是一个.bin固件, 用binwalk就能解开
+1binwalk -Me firmware.bin
+
+可以在
+1_firmware.bin-0.extracted/_romfs-x.squash.img.extracted/squashfs-root
+
+中找到文件系统
+因为这里指明了是摄像头, 所以可以快速去找Kylin文件
+最终在./_user-x.squash.img.extracted/squashfs-root/bin/Kylin中找到了 , 这个文件大概就是需要逆向分析
+        
+      </article>
+    </div>
+  </div>
+</div>
+      
+    
+      <div class="post-wrapper">
+  <div class="post-wrap-right" data-aos="fade-up">
+    
+      <a class="post-link" href="/2026/03/25/SU_Ezbuff/" aria-label="Ezbuff"></a>
+    
+    
+    <div class="post-cover-right">
       
         <img data-src="/images/lm.jpg" data-sizes="auto" alt="Ezbuff" class="lazyload">
       
@@ -359,12 +399,12 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2026/03/18/SU_Minivfs/" aria-label="minivfs"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         <img data-src="/images/mls.png" data-sizes="auto" alt="minivfs" class="lazyload">
       
@@ -389,16 +429,16 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2026/03/17/SU_Ez_Rounter/" aria-label="Ez_Rounter"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="Ez_Rounter" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="Ez_Rounter" class="lazyload">
         
       
     </div>
@@ -424,12 +464,12 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/12/08/%E8%AE%B0%E5%BD%95/" aria-label="v8利用入门"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
@@ -461,16 +501,16 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/09/16/%E6%B8%AF%E6%B9%BE%E6%9D%AF/" aria-label="港湾杯"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="港湾杯" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="港湾杯" class="lazyload">
         
       
     </div>
@@ -497,16 +537,16 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/08/02/hosue%20of%20water/" aria-label="hosue of water"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="hosue of water" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="hosue of water" class="lazyload">
         
       
     </div>
@@ -538,16 +578,16 @@
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/29/TOTOLINK/" aria-label="TOTOLINK"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="TOTOLINK" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="TOTOLINK" class="lazyload">
         
       
     </div>
@@ -585,12 +625,12 @@ httpd获取client报
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
+  <div class="post-wrap-left" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/29/nep2025/" aria-label="nep2025"></a>
     
     
-    <div class="post-cover-right">
+    <div class="post-cover-left">
       
         
         
@@ -620,12 +660,12 @@ httpd获取client报
       
     
       <div class="post-wrapper">
-  <div class="post-wrap-left" data-aos="fade-up">
+  <div class="post-wrap-right" data-aos="fade-up">
     
       <a class="post-link" href="/2025/07/14/CVE-2005-2799%20linksys%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/" aria-label="CVE-2005-2799 linksys 栈溢出漏洞"></a>
     
     
-    <div class="post-cover-left">
+    <div class="post-cover-right">
       
         
         
@@ -652,45 +692,6 @@ httpd获取client报
 可以看到有很多关于nvram函数的调用,我们使用qemu模拟不可能有nvram,所以要使用hook劫持这些函数
 工具 zcutlip修复NVRAM
 下载地址 https://github.c
-        
-      </article>
-    </div>
-  </div>
-</div>
-      
-    
-      <div class="post-wrapper">
-  <div class="post-wrap-right" data-aos="fade-up">
-    
-      <a class="post-link" href="/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/" aria-label="NetCore RCE漏洞"></a>
-    
-    
-    <div class="post-cover-right">
-      
-        
-        
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
-        
-      
-    </div>
-    <div class="post-info">
-      <div class="post-meta">
-        <span><span class="icon-calendar"></span>2025-07-10</span>
-        <span><span class="icon-pencil"></span>1.2k 字</span>
-        <span><span class="icon-clock"></span>5 分钟</span>
-      </div>
-      <h2 class="post-title">NetCore RCE漏洞</h2>
-      <article class="post-article">
-        
-          NetCore 后门RCE漏洞| 0 | 前言在netcore路由器设备中存在硬编码的登录密码,可以通过登录+命令注入实现执行任意系统命令、上传&amp;#x2F;下载文件、控制路由器任意命令执行
-| 1 | 固件下载&amp;amp;解包&amp;amp;qemu配置固件下载下载地址
-固件解包1binwalk -e --preserve-symlinks T1.bin
-
-qemu配置本固件是socket服务,我习惯使用qemu的system仿真
-下载所需的qemu,内核文件
-debian_wheezy_mipsel_standard.qcow2
-vmlinux-3.2.0-4-4kc-malta
-将文件复制到虚拟机
         
       </article>
     </div>
@@ -734,10 +735,10 @@ vmlinux-3.2.0-4-4kc-malta
     
       <div>
         <span class="icon-brush"></span>
-        71.3k
+        73.3k
         &nbsp;|&nbsp;
         <span class="icon-coffee"></span>
-        05:34
+        05:44
       </div>
     
     
@@ -773,11 +774,11 @@ vmlinux-3.2.0-4-4kc-malta
 <div class="sidebar-state">
   <div class="sidebar-state-article">
     <div>文章</div>
-    <div class="sidebar-state-number">25</div>
+    <div class="sidebar-state-number">26</div>
   </div>
   <div class="sidebar-state-category">
     <div>分类</div>
-    <div class="sidebar-state-number">2</div>
+    <div class="sidebar-state-number">3</div>
   </div>
   <div class="sidebar-state-tag">
     <div>标签</div>
