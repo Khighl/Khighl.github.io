@@ -330,35 +330,32 @@
       <div class="post-wrapper">
   <div class="post-wrap-left" data-aos="fade-up">
     
-      <a class="post-link" href="/2025/07/10/NetCore%20RCE%E6%BC%8F%E6%B4%9E/" aria-label="NetCore RCE漏洞"></a>
+      <a class="post-link" href="/2025/07/10/PSV-2020-0211%20%E6%A0%88%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E/" aria-label="PSV-2020-0211 栈溢出漏洞"></a>
     
     
     <div class="post-cover-left">
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="NetCore RCE漏洞" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="PSV-2020-0211 栈溢出漏洞" class="lazyload">
         
       
     </div>
     <div class="post-info">
       <div class="post-meta">
         <span><span class="icon-calendar"></span>2025-07-10</span>
-        <span><span class="icon-pencil"></span>1.2k 字</span>
-        <span><span class="icon-clock"></span>5 分钟</span>
+        <span><span class="icon-pencil"></span>2.3k 字</span>
+        <span><span class="icon-clock"></span>10 分钟</span>
       </div>
-      <h2 class="post-title">NetCore RCE漏洞</h2>
+      <h2 class="post-title">PSV-2020-0211 栈溢出漏洞</h2>
       <article class="post-article">
         
-          NetCore 后门RCE漏洞| 0 | 前言在netcore路由器设备中存在硬编码的登录密码,可以通过登录+命令注入实现执行任意系统命令、上传&amp;#x2F;下载文件、控制路由器任意命令执行
-| 1 | 固件下载&amp;amp;解包&amp;amp;qemu配置固件下载下载地址
-固件解包1binwalk -e --preserve-symlinks T1.bin
-
-qemu配置本固件是socket服务,我习惯使用qemu的system仿真
-下载所需的qemu,内核文件
-debian_wheezy_mipsel_standard.qcow2
-vmlinux-3.2.0-4-4kc-malta
-将文件复制到虚拟机
+          PSV-2020-0211:Netgear R8300 UPnP 栈溢出漏洞| 0 | 前言本次的漏洞复现比较特殊的是环境搭建中的 hook操作,属于 iot安全研究中一个很巧妙的手法
+我通过这个漏洞展现一个如何通过 hook绕过一些硬件的检测
+| 1 | 环境搭建1.1 下载官方提供了固件的下载,根据官网漏洞报告于 V1.0.2.134 中修复了该漏洞,所以可以选取任意之前的版本,我选择的是 V1.0.2.130
+下载地址 : netgear R8300
+解包依旧使用 binwalk解包
+1binwalk -e --preserve-symlinks R8300-V1.0.2.130_1.0
         
       </article>
     </div>
@@ -376,7 +373,7 @@ vmlinux-3.2.0-4-4kc-malta
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="TP-Link SR20 RCE漏洞" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="TP-Link SR20 RCE漏洞" class="lazyload">
         
       
     </div>
@@ -486,7 +483,7 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
       
         
         
-          <img data-src="/covers/as.jpg" data-sizes="auto" alt="CNVD-2018-01084 命令注入漏洞" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="CNVD-2018-01084 命令注入漏洞" class="lazyload">
         
       
     </div>
@@ -525,7 +522,7 @@ Fuzzing，中文一般翻译为“模糊测试”，是一种自动化测试技�
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="ACTF 2025" class="lazyload">
+          <img data-src="/covers/as.jpg" data-sizes="auto" alt="ACTF 2025" class="lazyload">
         
       
     </div>
@@ -597,7 +594,7 @@ sasquatch安装：https://github.com/devttys0/sasquatch
       
         
         
-          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="arm基础" class="lazyload">
+          <img data-src="/covers/er.jpg" data-sizes="auto" alt="arm基础" class="lazyload">
         
       
     </div>
@@ -645,7 +642,7 @@ qemu设置架构,-g指定端口为1234,运行的文件为.&amp;#x2F;pwn
       
         
         
-          <img data-src="/covers/er.jpg" data-sizes="auto" alt="非栈上的fmt" class="lazyload">
+          <img data-src="/covers/erj.jpg" data-sizes="auto" alt="非栈上的fmt" class="lazyload">
         
       
     </div>
